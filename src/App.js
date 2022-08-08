@@ -45,7 +45,9 @@ import './assets/demo/Demos.scss';
 import './assets/layout/layout.scss';
 import './App.scss';
 import Institution from './components/Institution';
-import Chauffeur from './components/Chauffeur';
+import Institution2 from './components/Institution2';
+import TextTable from './components/TextTable';
+import TestTableIns from './components/TestTableIns';
 
 
 const App = () => {
@@ -160,6 +162,15 @@ const App = () => {
 
     const menu = [
         {
+            label: 'Paramètre', icon: 'pi pi-fw pi-clone',
+            items: [
+                { label: 'Institution', icon: 'pi pi-fw pi-user-edit', to: '/institution' },
+                { label: 'Institution2', icon: 'pi pi-fw pi-calendar', to: '/institution2' },
+                { label: 'TestTable', icon: 'pi pi-fw pi-calendar', to: '/textTable' },
+                { label: 'TestTableIns', icon: 'pi pi-fw pi-calendar', to: '/testTableIns' }
+            ]
+        },
+        {
             label: 'Home',
             items: [{
                 label: 'Dashboard', icon: 'pi pi-fw pi-home', to: '/'
@@ -207,13 +218,7 @@ const App = () => {
                 { label: 'Empty', icon: 'pi pi-fw pi-circle-off', to: '/empty' }
             ]
         },
-        {
-            label: 'Paramètre', icon: 'pi pi-fw pi-clone',
-            items: [
-                { label: 'Institution', icon: 'pi pi-fw pi-user-edit', to: '/institution' },
-                { label: 'Chauffeur', icon: 'pi pi-fw pi-calendar', to: '/chauffeur' },
-            ]
-        },
+        
         {
             label: 'Menu Hierarchy', icon: 'pi pi-fw pi-search',
             items: [
@@ -330,7 +335,9 @@ const App = () => {
                     <Route path="/empty" component={EmptyPage} />
                     <Route path="/documentation" component={Documentation} />
                     <Route path="/institution" component={Institution} />
-                    <Route path="/chauffeur" component={Chauffeur} />
+                    <Route path="/institution2" component={Institution2} />
+                    <Route path="/textTable" component={TextTable} />
+                    <Route path="/testTableIns" component={TestTableIns} />
                 </div>
 
                 <AppFooter layoutColorMode={layoutColorMode} />
