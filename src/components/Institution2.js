@@ -196,40 +196,6 @@ const Institution2 = () => {
         );
     }
 
-    const nomChefParcBodyTemplate = (rowData) => {
-        return (
-            <>
-                <span className="p-column-title">Nom chef Parc</span>
-                {rowData.nomChefParc}
-            </>
-        );
-    }
-
-    const prenomChefParcBodyTemplate = (rowData) => {
-        return (
-            <>
-                <span className="p-column-title">Prénom chef Parc</span>
-                {rowData.prenomChefParc}
-            </>
-        );
-    }
-    const emailChefParcBodyTemplate = (rowData) => {
-        return (
-            <>
-               <span className="p-column-title">Email Chef Parc</span>
-                {rowData.emailChefParc}
-            </>
-        )
-    }
-    const contactBodyTemplate = (rowData) => {
-        return (
-            <>
-               <span className="p-column-title">Contact</span>
-                {rowData.contact}
-            </>
-        )
-    }
-
     const nomResponsableBodyTemplate = (rowData) => {
         return (
             <>
@@ -344,7 +310,7 @@ const Institution2 = () => {
                     <Dialog visible={deleteInstitutDialog} style={{ width: '450px' }} header="Confirm" modal footer={deleteInstitutDialogFooter} onHide={hideDeleteInstitutDialog}>
                         <div className="flex align-items-center justify-content-center">
                             <i className="pi pi-exclamation-triangle mr-3" style={{ fontSize: '2rem' }} />
-                            {institut && <span>Are you sure you want to delete <b>{institut.name}</b>?</span>}
+                            {institut && <span>Are you sure you want to delete <b>{institut.libelle}</b>?</span>}
                         </div>
                     </Dialog>
 

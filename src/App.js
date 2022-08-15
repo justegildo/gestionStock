@@ -48,6 +48,16 @@ import Institution from './components/Institution';
 import Institution2 from './components/Institution2';
 import TextTable from './components/TextTable';
 import TestTableIns from './components/TestTableIns';
+import Suppression from './components/Suppression';
+import Niveau from './components/Niveau';
+import Structure from './components/Structure';
+import Utilisateur from './components/Utilisateur';
+import Vehicule from './components/Vehicule';
+import Chauffeur from './components/Chauffeur';
+import Compte from './components/Compte';
+import DemandeVehicule from './components/DemandeVehicule';
+import Form from './components/Form';
+
 
 
 const App = () => {
@@ -162,14 +172,35 @@ const App = () => {
 
     const menu = [
         {
-            label: 'Paramètre', icon: 'pi pi-fw pi-clone',
+            label: 'Menu principal ', icon: 'pi pi-fw pi-clone',
             items: [
-                { label: 'Institution', icon: 'pi pi-fw pi-user-edit', to: '/institution' },
-                { label: 'Institution2', icon: 'pi pi-fw pi-calendar', to: '/institution2' },
-                { label: 'TestTable', icon: 'pi pi-fw pi-calendar', to: '/textTable' },
-                { label: 'TestTableIns', icon: 'pi pi-fw pi-calendar', to: '/testTableIns' }
+                { label: 'CHAUFFEUR', icon: ' pi pi-fw pi-users', to: '/chauffeur' },
+                { label: 'COMPTE', icon: ' pi pi-fw pi-users', to: '/compte' },
+                { label: 'INSTITUTION', icon: 'pi pi-fw pi-calendar', to: '/institution' },
+                { label: 'NIVEAU', icon: 'pi pi-fw pi-list', to: '/niveau' },
+                { label: 'STRUCTURE', icon: 'pi pi-fw pi-book', to: '/structure' },
+                { label: 'UTILISATEUR', icon: 'pi pi-fw pi-users', to: '/utilisateur' },
+                { label: 'VEHICULE', icon: 'pi pi-fw pi-calendar', to: '/vehicule' }
             ]
         },
+        {
+            label: 'OPERATION', icon: 'pi pi-fw pi-clone',
+            items: [
+                { label: 'DEMANDE VEHICULE', icon: 'pi pi-fw pi-calendar', to: '/demande' },
+                { label: 'FORMULAIRE DE CONNEXION', icon: 'pi pi-fw pi-user-edit', to: '/form' },
+                
+            ] 
+        },
+        {
+            label: 'Paramètre', icon: 'pi pi-fw pi-clone',
+            items: [
+                { label: 'Institution2', icon: 'pi pi-fw pi-calendar', to: '/institution2' },
+                { label: 'TestTable', icon: 'pi pi-fw pi-calendar', to: '/textTable' },
+                { label: 'TestTableIns', icon: 'pi pi-fw pi-calendar', to: '/testTableIns' },
+                { label: 'Sup', icon: 'pi pi-fw pi-calendar', to: '/sup' }
+            ]
+        },
+        
         {
             label: 'Home',
             items: [{
@@ -338,6 +369,17 @@ const App = () => {
                     <Route path="/institution2" component={Institution2} />
                     <Route path="/textTable" component={TextTable} />
                     <Route path="/testTableIns" component={TestTableIns} />
+                    <Route path="/sup" component={Suppression} />
+                    <Route path="/niveau" component={Niveau} />
+                    <Route path="/structure" component={Structure} />
+                    <Route path="/utilisateur" component={Utilisateur} />
+                    <Route path="/vehicule" component={Vehicule} />
+                    <Route path="/chauffeur" component={Chauffeur} />
+                    <Route path="/compte" component={Compte} />
+                    <Route path="/demande" component={DemandeVehicule} />
+                    <Route path="/form" component={Form} />
+                 
+                
                 </div>
 
                 <AppFooter layoutColorMode={layoutColorMode} />
