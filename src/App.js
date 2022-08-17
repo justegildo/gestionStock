@@ -172,27 +172,40 @@ const App = () => {
 
     const menu = [
         {
-            label: 'Menu principal ', icon: 'pi pi-fw pi-clone',
+            label: 'Accueil',
+            items: [{
+                label: 'Tableau de bord', icon: 'pi pi-fw pi-home', to: '/'
+            }]
+        },
+        {
+            label: 'Operation',
             items: [
-                { label: 'CHAUFFEUR', icon: ' pi pi-fw pi-users', to: '/chauffeur' },
-                { label: 'COMPTE', icon: ' pi pi-fw pi-users', to: '/compte' },
-                { label: 'INSTITUTION', icon: 'pi pi-fw pi-calendar', to: '/institution' },
-                { label: 'NIVEAU', icon: 'pi pi-fw pi-list', to: '/niveau' },
-                { label: 'STRUCTURE', icon: 'pi pi-fw pi-book', to: '/structure' },
-                { label: 'UTILISATEUR', icon: 'pi pi-fw pi-users', to: '/utilisateur' },
-                { label: 'VEHICULE', icon: 'pi pi-fw pi-calendar', to: '/vehicule' }
+                { label: 'Demande de véhicule', icon: 'pi pi-fw pi-list', to: '/demande' },
+                { label: 'Traitement des demandes', icon: 'pi pi-fw pi-list', to: '/form' },
+                { label: 'Point du parking', icon: 'pi pi-fw pi-list', to: '' },
             ]
         },
         {
-            label: 'OPERATION', icon: 'pi pi-fw pi-clone',
+            label: 'Paramètre',
             items: [
-                { label: 'DEMANDE VEHICULE', icon: 'pi pi-fw pi-calendar', to: '/demande' },
-                { label: 'FORMULAIRE DE CONNEXION', icon: 'pi pi-fw pi-user-edit', to: '/form' },
-                
+                { label: 'Chauffeur', icon: ' pi pi-fw pi-list', to: '/chauffeur' },
+                { label: 'Compte', icon: ' pi pi-fw pi-list', to: '/compte' },
+                { label: 'Institution', icon: 'pi pi-fw pi-list', to: '/institution' },
+                { label: 'Niveau', icon: 'pi pi-fw pi-list', to: '/niveau' },
+                { label: 'Structure', icon: 'pi pi-fw pi-list', to: '/structure' },
+                { label: 'Utilisateur', icon: 'pi pi-fw pi-list', to: '/utilisateur' },
+                { label: 'Véhicule', icon: 'pi pi-fw pi-list', to: '/vehicule' }
+            ]
+        },
+        {
+            label: 'Administration',
+            items: [
+                { label: 'Modifier mot de passe', icon: 'pi pi-fw pi-cog', to: '/demande' },
+                { label: 'Réinitialiser mot de passe', icon: 'pi pi-fw pi-list', },
             ] 
         },
         {
-            label: 'Paramètre', icon: 'pi pi-fw pi-clone',
+            label: 'Test',
             items: [
                 { label: 'Institution2', icon: 'pi pi-fw pi-calendar', to: '/institution2' },
                 { label: 'TestTable', icon: 'pi pi-fw pi-calendar', to: '/textTable' },
@@ -200,7 +213,6 @@ const App = () => {
                 { label: 'Sup', icon: 'pi pi-fw pi-calendar', to: '/sup' }
             ]
         },
-        
         {
             label: 'Home',
             items: [{
@@ -332,7 +344,7 @@ const App = () => {
     return (
         <div className={wrapperClass} onClick={onWrapperClick}>
             <Tooltip ref={copyTooltipRef} target=".block-action-copy" position="bottom" content="Copied to clipboard" event="focus" />
-
+            
             <AppTopbar onToggleMenuClick={onToggleMenuClick} layoutColorMode={layoutColorMode}
                 mobileTopbarMenuActive={mobileTopbarMenuActive} onMobileTopbarMenuClick={onMobileTopbarMenuClick} onMobileSubTopbarMenuClick={onMobileSubTopbarMenuClick} />
 
