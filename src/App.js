@@ -394,7 +394,7 @@ const App = () => {
                 
                 </div>
 
-                <AppFooter layoutColorMode={layoutColorMode} />
+                {/* <AppFooter layoutColorMode={layoutColorMode} /> */}
             </div>
 
             <AppConfig rippleEffect={ripple} onRippleEffect={onRipple} inputStyle={inputStyle} onInputStyleChange={onInputStyleChange}
