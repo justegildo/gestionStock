@@ -3,35 +3,35 @@ import classNames from 'classnames';
 import { Route, useLocation } from 'react-router-dom';
 import { CSSTransition } from 'react-transition-group';
 
-import { AppTopbar } from './AppTopbar';
-import { AppFooter } from './AppFooter';
-import { AppMenu } from './AppMenu';
-import { AppConfig } from './AppConfig';
+import { AppTopbar } from '../AppTopbar';
+import { AppFooter } from '../AppFooter';
+import { AppMenu } from '../AppMenu';
+import { AppConfig } from '../AppConfig';
 
-import Dashboard from './components2/Dashboard';
-import ButtonDemo from './components2/ButtonDemo';
-import ChartDemo from './components2/ChartDemo';
-import Documentation from './components2/Documentation';
-import FileDemo from './components2/FileDemo';
-import FloatLabelDemo from './components2/FloatLabelDemo';
-import FormLayoutDemo from './components2/FormLayoutDemo';
-import InputDemo from './components2/InputDemo';
-import ListDemo from './components2/ListDemo';
-import MenuDemo from './components2/MenuDemo';
-import MessagesDemo from './components2/MessagesDemo';
-import MiscDemo from './components2/MiscDemo';
-import OverlayDemo from './components2/OverlayDemo';
-import MediaDemo from './components2/MediaDemo';
-import PanelDemo from './components2/PanelDemo';
-import TableDemo from './components2/TableDemo';
-import TreeDemo from './components2/TreeDemo';
-import InvalidStateDemo from './components2/InvalidStateDemo';
-import BlocksDemo from './components2/BlocksDemo';
-import IconsDemo from './components2/IconsDemo';
+import Dashboard from '../components2/Dashboard';
+import ButtonDemo from '../components2/ButtonDemo';
+import ChartDemo from '../components2/ChartDemo';
+import Documentation from '../components2/Documentation';
+import FileDemo from '../components2/FileDemo';
+import FloatLabelDemo from '../components2/FloatLabelDemo';
+import FormLayoutDemo from '../components2/FormLayoutDemo';
+import InputDemo from '../components2/InputDemo';
+import ListDemo from '../components2/ListDemo';
+import MenuDemo from '../components2/MenuDemo';
+import MessagesDemo from '../components2/MessagesDemo';
+import MiscDemo from '../components2/MiscDemo';
+import OverlayDemo from '../components2/OverlayDemo';
+import MediaDemo from '../components2/MediaDemo';
+import PanelDemo from '../components2/PanelDemo';
+import TableDemo from '../components2/TableDemo';
+import TreeDemo from '../components2/TreeDemo';
+import InvalidStateDemo from '../components2/InvalidStateDemo';
+import BlocksDemo from '../components2/BlocksDemo';
+import IconsDemo from '../components2/IconsDemo';
 
-import Crud from './pages/Crud';
-import EmptyPage from './pages/EmptyPage';
-import TimelineDemo from './pages/TimelineDemo';
+import Crud from '../pages/Crud';
+import EmptyPage from '../pages/EmptyPage';
+import TimelineDemo from '../pages/TimelineDemo';
 
 import PrimeReact from 'primereact/api';
 import { Tooltip } from 'primereact/tooltip';
@@ -44,19 +44,19 @@ import './assets/demo/flags/flags.css';
 import './assets/demo/Demos.scss';
 import './assets/layout/layout.scss';
 import './App.scss';
-import Institution from './components2/Institution';
-import Institution2 from './components2/Institution2';
-import TextTable from './components2/TextTable';
-import TestTableIns from './components2/TestTableIns';
-import Suppression from './components2/Suppression';
-import Niveau from './components2/Niveau';
-import Structure from './components2/Structure';
-import Utilisateur from './components2/Utilisateur';
-import Vehicule from './components2/Vehicule';
-import Chauffeur from './components2/Chauffeur';
-import Compte from './components2/Compte';
-import DemandeVehicule from './components2/DemandeVehicule';
-import Form from './components2/Form';
+import Institution from '../components2/Institution';
+import Institution2 from '../components2/Institution2';
+import TextTable from '../components2/TextTable';
+import TestTableIns from '../components2/TestTableIns';
+import Suppression from '../components2/Suppression';
+import Niveau from '../components2/Niveau';
+import Structure from '../components2/Structure';
+import Utilisateur from '../components2/Utilisateur';
+import Vehicule from '../components2/Vehicule';
+import Chauffeur from '../components2/Chauffeur';
+import Compte from '../components2/Compte';
+import DemandeVehicule from '../components2/DemandeVehicule';
+import Form from '../components2/Form';
 
 
 
@@ -174,15 +174,15 @@ const App = () => {
         {
             label: 'Accueil',
             items: [{
-                label: 'Tableau de bord', icon: 'pi pi-fw pi-home', to: '/dashboard'
+                label: 'Tableau de bord', icon: 'pi pi-fw pi-home', to: '/'
             }]
         },
         {
             label: 'Operation',
             items: [
                 { label: 'Demande de véhicule', icon: 'pi pi-fw pi-list', to: '/demande' },
-                { label: 'Traitement des demandes', icon: 'pi pi-fw pi-list' },
-                { label: 'Point du parking', icon: 'pi pi-fw pi-list' },
+                { label: 'Traitement des demandes', icon: 'pi pi-fw pi-list', to: '/form' },
+                { label: 'Point du parking', icon: 'pi pi-fw pi-list', to: '' },
             ]
         },
         {
@@ -354,15 +354,7 @@ const App = () => {
 
             <div className="layout-main-container">
                 <div className="layout-main">
-                    <Route path="/dashboard" exact render={() => <Dashboard colorMode={layoutColorMode} location={location} />} />
-                    <Route path="/niveau" component={Niveau} />
-                    <Route path="/structure" component={Structure} />
-                    <Route path="/utilisateur" component={Utilisateur} />
-                    <Route path="/vehicule" component={Vehicule} />
-                    <Route path="/chauffeur" component={Chauffeur} />
-                    <Route path="/compte" component={Compte} />
-                    <Route path="/demande" component={DemandeVehicule} />
-                
+                    <Route path="/" exact render={() => <Dashboard colorMode={layoutColorMode} location={location} />} />
                     <Route path="/formlayout" component={FormLayoutDemo} />
                     <Route path="/input" component={InputDemo} />
                     <Route path="/floatlabel" component={FloatLabelDemo} />
@@ -390,6 +382,13 @@ const App = () => {
                     <Route path="/textTable" component={TextTable} />
                     <Route path="/testTableIns" component={TestTableIns} />
                     <Route path="/sup" component={Suppression} />
+                    <Route path="/niveau" component={Niveau} />
+                    <Route path="/structure" component={Structure} />
+                    <Route path="/utilisateur" component={Utilisateur} />
+                    <Route path="/vehicule" component={Vehicule} />
+                    <Route path="/chauffeur" component={Chauffeur} />
+                    <Route path="/compte" component={Compte} />
+                    <Route path="/demande" component={DemandeVehicule} />
                     <Route path="/form" component={Form} />
                  
                 

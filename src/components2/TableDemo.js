@@ -13,8 +13,8 @@ import { Slider } from 'primereact/slider';
 import { TriStateCheckbox } from 'primereact/tristatecheckbox';
 import { ToggleButton } from 'primereact/togglebutton';
 import { Rating } from 'primereact/rating';
-import { CustomerService } from '../service/CustomerService';
-import { ProductService } from '../service/ProductService';
+import { CustomerService } from '../service2/CustomerService';
+import { ProductService } from '../service2/ProductService';
 
 const TableDemo = () => {
     const [customers1, setCustomers1] = useState(null);

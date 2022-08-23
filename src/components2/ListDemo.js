@@ -5,7 +5,7 @@ import { Dropdown } from 'primereact/dropdown';
 import { Rating } from 'primereact/rating';
 import { PickList } from 'primereact/picklist';
 import { OrderList } from 'primereact/orderlist';
-import { ProductService } from '../service/ProductService';
+import { ProductService } from '../service2/ProductService';
 
 const ListDemo = () => {
     const listValue = [

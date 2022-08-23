@@ -3,8 +3,8 @@ import { Carousel } from 'primereact/carousel';
 import { Galleria } from 'primereact/galleria';
 import { Button } from 'primereact/button';
 import { Image } from "primereact/image";
-import { ProductService } from '../service/ProductService';
-import { PhotoService } from '../service/PhotoService';
+import { ProductService } from '../service2/ProductService';
+import { PhotoService } from '../service2/PhotoService';
 
 const MediaDemo = () => {
     const [products, setProducts] = useState([]);
