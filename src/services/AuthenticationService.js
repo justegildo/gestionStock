@@ -1,13 +1,10 @@
 import axios from "axios";
 import { url as apiUrl } from '../baseUrls/functions';
+import Service from "./bak/Service";
 
 export class AuthenticationService {
-
-    token() {
-        return window.localStorage.getItem('token');
-    }
     
-    authenticate(credentials) {
-        return axios.post(apiUrl('/authenticate'), )
+    authenticate(credentials, callback) {
+        Service.post(apiUrl('/api/authentication/authenticate'), credentials, callback);
     }
 }

@@ -6,9 +6,11 @@ import App from './App';
 import { HashRouter } from 'react-router-dom'
 import ScrollToTop from './ScrollToTop';
 import Main from './Main';
+import { AxiosComponent } from './services/AxiosComponent';
 
 ReactDOM.render(
     <HashRouter>
+        <AxiosComponent />
         <ScrollToTop>
             <Main></Main>
         </ScrollToTop>

@@ -1,16 +1,24 @@
 import { Button } from 'primereact/button';
 import { Checkbox } from 'primereact/checkbox';
 import { InputText } from 'primereact/inputtext';
-import React, { useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
+import { AuthenticationService } from './services/AuthenticationService';
+import axios from 'axios';
+import { url as apiUrl } from './baseUrls/functions';
+import AxiosService from './services/AxiosService'
 
 function Login(props) {
     const [checked, setChecked] = useState(false);
+    const [credentials, setCredentials] = useState({username: "amedoatinsa", password: "12345678"});
 
-    function authenticate(credentials) {
+    function authenticate() {
+        let service = new AuthenticationService();
+        AxiosService.post(apiUrl('/api/authentication/authenticate'), credentials, (data)=> {
 
+        });
     }
-    
+
     return (
         <div className="surface-card p-4 shadow-2 border-round w-full lg:w-6">
             <div className="text-center mb-5">
@@ -34,8 +42,8 @@ function Login(props) {
                     </div>
                     <a className="font-medium no-underline ml-2 text-blue-500 text-right cursor-pointer">Forgot password?</a>
                 </div>
-
-                <Link to="/dashboard"><Button label="Sign In" icon="pi pi-user" className="w-full" /></Link>
+                {/* <Button label="Sign In" icon="pi pi-user" className="w-full" onClick={authenticate}/> */}
+                <Link to="/dashboard"><Button label="Sign In" icon="pi pi-user" className="w-full" onClick={authenticate}/></Link>
             </div>
         </div>
     );

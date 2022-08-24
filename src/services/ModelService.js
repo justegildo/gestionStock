@@ -1,6 +1,8 @@
 import axios from "axios";
 import { url as apiUrl } from '../baseUrls/functions';
 
+// https://www.digitalocean.com/community/tutorials/react-axios-react-fr
+// https://reflectoring.io/tutorial-guide-axios/
 export class AuthenticationService {
 
     token() {
@@ -128,6 +130,49 @@ export class AuthenticationService {
           });
     }
     
+    downloadImage() {
+        const axios = require('axios');
+        const fs = require('fs');
+
+        var config = {
+            responseType: 'stream'
+        };
+
+        let url = 'https://images.dog.ceo/breeds/setter-english/n02100735_4870.jpg';
+
+        async function getImage() {
+
+            let resp = await axios.get(url, config);
+            resp.data.pipe(fs.createWriteStream('image.jpg'));
+        }
+
+        getImage();
+    }
+
+    multipleRequest() {
+        const axios = require('axios');
+
+        async function doRequests(urls) {
+
+            const fetchUrl = (url) => axios.get(url);
+            const promises = urls.map(fetchUrl);
+
+            let responses = await Promise.all(promises);
+
+            responses.forEach(resp => {
+                let msg = `${resp.config.url} -> ${resp.headers.server}: ${resp.status}`;
+                console.log(msg);
+            });
+        }
+
+        let urls = [
+            'http://webcode.me',
+            'https://example.com'
+        ];
+
+        doRequests(urls);
+    }
+
     response = {
         // `data` is the response that was provided by the server
         data: {},

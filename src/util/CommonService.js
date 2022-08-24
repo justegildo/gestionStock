@@ -7,6 +7,10 @@ export class CommonService {
         console.log(JSON.stringify(data, null, 2));
     }
 
+    log2(data) {
+        console.table(JSON.stringify(data));
+    }
+    
     show(data) {
         alert(data);
     }
