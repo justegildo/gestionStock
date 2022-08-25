@@ -49,7 +49,7 @@ import Institution2 from './components2/Institution2';
 import TextTable from './components2/TextTable';
 import TestTableIns from './components2/TestTableIns';
 import Suppression from './components2/Suppression';
-import Niveau from './components2/Niveau';
+import Niveau from './components/Niveau';
 import Structure from './components2/Structure';
 import Utilisateur from './components2/Utilisateur';
 import Vehicule from './components2/Vehicule';

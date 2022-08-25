@@ -6,6 +6,8 @@ import { Toolbar } from 'primereact/toolbar';
 import { InputText } from 'primereact/inputtext';
 import { Dialog } from 'primereact/dialog';
 import { Toast } from 'primereact/toast';
+import NiveauService from '../services/NiveauService';
+import { itemPerPage } from '../baseUrls/consts';
 
 const Niveau = () => {
     let emptyNiveau = {
@@ -23,21 +25,11 @@ const Niveau = () => {
 
 
     useEffect(() => {
-        const axios = require('axios');
-        axios.get('https://ms-parc.herokuapp.com/api/crud/niveau/get?', {
-            params: {
-                size: 20
-            }
-        })
-            .then(function (response) {
-                console.log(JSON.stringify(response.data, null, 2));
-                setNiveaux(response.data); 
-                setLoading(false);
-            })
-            .catch(function (error) {
-                console.log(error);
-            })
-
+        NiveauService.get((data) => {
+            setNiveaux(data); 
+            setLoading(false);
+        }, 
+        {size: itemPerPage});
     }, []);
 
     const openNew = () => {
@@ -109,7 +101,7 @@ const Niveau = () => {
                 <h5>Liste des niveaux</h5>
                 <Toast ref={toast} />
                 <Toolbar className="mb-4" left={leftToolbarTemplate} right={rightToolbarTemplate}></Toolbar>
-                <DataTable value={niveaux} rows={4} paginator responsiveLayout="scroll"  
+                <DataTable value={niveaux} rows={itemPerPage} paginator responsiveLayout="scroll"  
                     loading={loading} globalFilter={globalFilter} emptyMessage="Aucun niveau disponible.">
                     <Column field="id" header="Matricule" sortable style={{width: '10%', textAlign: 'center'}} />
                     <Column field="libelle" header="Libellé" sortable style={{width: '70%', fontWeight: 'bold'}} />
