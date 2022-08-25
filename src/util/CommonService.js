@@ -44,4 +44,17 @@ export class CommonService {
             return d;
         });
     }
+
+    objectProperties(obj) {
+        var keys = [];
+        for(var key in obj){
+            keys.push(key);
+        }
+        console.log(keys)
+    }
+
+    objectOwnedAttributes(obj) {
+        var keys1 = Object.keys(obj);
+        var keys2 = Object.getOwnPropertyNames(obj);
+    }
 }

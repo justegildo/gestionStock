@@ -1,5 +1,5 @@
 import { baseUrls } from "./consts";
 
-export function url(path) {
+export default function apiUrl(path) {
     return baseUrls + path;
 }

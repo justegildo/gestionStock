@@ -6,7 +6,7 @@ import App from './App';
 import { HashRouter } from 'react-router-dom'
 import ScrollToTop from './ScrollToTop';
 import Main from './Main';
-import { AxiosComponent } from './services/AxiosComponent';
+import { AxiosComponent } from './axiosConfig/AxiosComponent';
 
 ReactDOM.render(
     <HashRouter>

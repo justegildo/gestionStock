@@ -13,18 +13,18 @@ export const AxiosComponent = () => {
     const interceptorId = useRef(null);
     
     useEffect(() => {
+        /*
         axios.interceptors.request.use(config => {
             console.log(JSON.stringify(config.headers, null, 2))
             return config;
         } )
-
-
+        */
         interceptorId.current = axios.interceptors.response.use(handleSuccess, handleError);
         return () => {
             axios.interceptors.response.eject(interceptorId.current);
         };
     }, []);
-
+    
     const handleSuccess = (response) => {
         return response;
     }

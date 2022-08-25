@@ -4,7 +4,7 @@ import { useHistory } from 'react-router-dom';
 function Splash(props) {
     const history = useHistory();
     //setInterval(()=>{history.replace("/dashboard")}, 3000);
-    const token = localStorage.getItem("AUTHORIZATION");
+    const token = localStorage.getItem("token");
     if(token == null) {
         history.replace("/login")
     }else{

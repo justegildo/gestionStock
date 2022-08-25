@@ -1,10 +1,9 @@
 import axios from "axios";
-import { url as apiUrl } from '../baseUrls/functions';
-import Service from "./bak/Service";
+import apiUrl from '../baseUrls/functions';
+import AxiosService from '../axiosConfig/AxiosService';
 
-export class AuthenticationService {
+export default new class AuthenticationService {
     
-    authenticate(credentials, callback) {
-        Service.post(apiUrl('/api/authentication/authenticate'), credentials, callback);
-    }
+    authenticate = (credentials, callback) => AxiosService.post(apiUrl('/api/authentication/authenticate'), credentials, callback);
+
 }

@@ -2,23 +2,33 @@ import { Button } from 'primereact/button';
 import { Checkbox } from 'primereact/checkbox';
 import { InputText } from 'primereact/inputtext';
 import React, { useEffect, useRef, useState } from 'react';
-import { Link } from 'react-router-dom';
-import { AuthenticationService } from './services/AuthenticationService';
+import { Link, useHistory } from 'react-router-dom';
+import AuthenticationService from './services/AuthenticationService';
 import axios from 'axios';
-import { url as apiUrl } from './baseUrls/functions';
-import AxiosService from './services/AxiosService'
+
+import apiUrl from './baseUrls/functions';
+import AxiosService from './axiosConfig/AxiosService';
 
 function Login(props) {
     const [checked, setChecked] = useState(false);
-    const [credentials, setCredentials] = useState({username: "amedoatinsa", password: "12345678"});
+    const [credentials, setCredentials] = useState(null);
+    let history = useHistory();
 
     function authenticate() {
-        let service = new AuthenticationService();
-        AxiosService.post(apiUrl('/api/authentication/authenticate'), credentials, (data)=> {
-
+        AuthenticationService.authenticate(credentials, (data)=> {
+            localStorage.setItem('token', data.token)
+            history.replace("/dashboard");
         });
     }
 
+    function bind(e) {
+        setCredentials({...credentials, [e.target.id]: e.target.value})
+        // if(e.target.checked !== undefined) {
+        //     console.log(e.target.checked)
+        // }
+        //if(e.target.checked !== undefined) setCredentials({...credentials, [e.target.inputId]: e.target.checked})
+    }
+    
     return (
         <div className="surface-card p-4 shadow-2 border-round w-full lg:w-6">
             <div className="text-center mb-5">
@@ -29,21 +39,22 @@ function Login(props) {
             </div>
 
             <div>
-                <label htmlFor="email1" className="block text-900 font-medium mb-2">Email</label>
-                <InputText id="email1" type="text" className="w-full mb-3" />
+                <label htmlFor="username" className="block text-900 font-medium mb-2">Nom d'utilisateur</label>
+                <InputText id="username" type="text" className="w-full mb-3" onChange={bind} required />
 
-                <label htmlFor="password1" className="block text-900 font-medium mb-2">Password</label>
-                <InputText id="password1" type="password" className="w-full mb-3" />
+                <label htmlFor="password" className="block text-900 font-medium mb-2">Mot de passe</label>
+                <InputText id="password" type="password" className="w-full mb-3" onChange={bind} required />
 
                 <div className="flex align-items-center justify-content-between mb-6">
                     <div className="flex align-items-center">
-                        <Checkbox inputId="rememberme1" binary className="mr-2" onChange={e => setChecked(e.checked)} checked={checked} />
-                        <label htmlFor="rememberme1">Remember me</label>
+                        {/* <Checkbox inputId="rememberMe" binary className="mr-2" onChange={bind} checked={checked} /> */}
+                        <Checkbox inputId="rememberMe" binary className="mr-2" onChange={e => setChecked(e.checked)} checked={checked} />
+                        <label htmlFor="rememberme1">Se souvenir de moi</label>
                     </div>
-                    <a className="font-medium no-underline ml-2 text-blue-500 text-right cursor-pointer">Forgot password?</a>
+                    <a className="font-medium no-underline ml-2 text-blue-500 text-right cursor-pointer" style={{display: 'none', visibility: 'hidden'}}>Forgot password?</a>
                 </div>
-                {/* <Button label="Sign In" icon="pi pi-user" className="w-full" onClick={authenticate}/> */}
-                <Link to="/dashboard"><Button label="Sign In" icon="pi pi-user" className="w-full" onClick={authenticate}/></Link>
+                <Button label="Se connecter" icon="pi pi-user" className="w-full" onClick={authenticate}/>
+                {/* <Link to="/dashboard"><Button label="Sign In" icon="pi pi-user" className="w-full" onClick={authenticate}/></Link> */}
             </div>
         </div>
     );
