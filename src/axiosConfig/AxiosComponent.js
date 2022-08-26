@@ -32,7 +32,7 @@ export const AxiosComponent = () => {
     const handleError = (error) => {
         if (error.response) {
             if(error.response.status == 401 || error.response.status == 403) {
-                history.push("/login");
+                history.push("/redirectLogin/goBack");
             }else{
                 showDialog(error.response.data.message);
             }

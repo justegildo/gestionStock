@@ -1,0 +1,108 @@
+import { Injectable } from '@angular/core';
+import { HttpClient, HttpEvent, HttpHeaders, HttpRequest } from '@angular/common/http';
+import { url as apiUrl } from '../../../shared/const-Functions/functions';
+import { map, catchError } from 'rxjs/operators';
+import { Observable } from 'rxjs/internal/Observable';
+import { User } from 'src/app/utils/shared/Models/user';
+
+@Injectable({
+  providedIn: 'root'
+})
+export class AfricaUsersService {
+
+  Token() {
+    const Token = window.localStorage.getItem('token');
+    return Token;
+  }
+
+  constructor(
+    private _http: HttpClient
+  ) {}
+
+  UsersListe() {
+    return this._http
+      .get<any>(apiUrl('/allUsers'), {
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: 'Bearer ' + this.Token(),
+        },
+        observe: 'response',
+        responseType: 'json',
+      })
+      .pipe(
+        map((resp: any) => {
+          return resp;
+        })
+      );
+  }
+
+  QuincList(id: any) {
+    return this._http
+      .get<any>(apiUrl('/allQuincailleireForUser/' + id), {
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: 'Bearer ' + this.Token(),
+        },
+        observe: 'response',
+        responseType: 'json',
+      })
+      .pipe(
+        map((resp: any) => {
+          return resp;
+        })
+      );
+  }
+
+  RoleList() {
+    return this._http
+      .get<any>(apiUrl('/allRoles'), {
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: 'Bearer ' + this.Token(),
+        },
+        observe: 'response',
+        responseType: 'json',
+      })
+      .pipe(
+        map((resp: any) => {
+          return resp;
+        })
+      );
+  }
+
+
+  AddUserInBase(model: User ) {
+    return this._http
+      .post<any>(apiUrl('/saveUser'), model, {
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: 'Bearer ' + this.Token(),
+        },
+        observe: 'response',
+        responseType: 'json',
+      })
+      .pipe(
+        map((resp: any) => {
+          return resp;
+        })
+      );
+  }
+
+
+  EditUserInBase(model: User ) {
+    return this._http
+      .put<any>(apiUrl('/editQuincaillerie'), model, {
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: 'Bearer ' + this.Token(),
+        },
+        observe: 'response',
+        responseType: 'json',
+      })
+      .pipe(
+        map((resp: any) => {
+          return resp;
+        })
+      );
+  }
+}

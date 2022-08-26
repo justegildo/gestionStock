@@ -33,11 +33,10 @@ const Vehicule = () => {
     const [loading, setLoading] = useState(true);
     const toast = useRef(null);
 
-
     useEffect(() => {
         VehiculeService.getVehicule( (data)=> {
-        setVehicules(data);
-        setLoading(false);
+            setVehicules(data);
+            setLoading(false);
         });
     }, []);
 
@@ -73,7 +72,6 @@ const Vehicule = () => {
         setVehicule(_vehicule);
     }
 
-
     const leftToolbarTemplate = () => {
         return (
             <React.Fragment>
@@ -83,8 +81,7 @@ const Vehicule = () => {
             </React.Fragment>
         )
     }
-
-  
+    
     const rightToolbarTemplate = () => {
         return (
             <React.Fragment>

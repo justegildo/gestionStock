@@ -47,9 +47,9 @@ const DemandeVehicule = () => {
 
     useEffect(() => {
         DemandeService.getDemandeVehicule( (data)=> {
-        setDemandes(data);
-        setLoading(false);
-    });
+            setDemandes(data);
+            setLoading(false);
+        });
     }, []);
 
     const openNew = () => {

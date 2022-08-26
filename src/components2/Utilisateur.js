@@ -35,12 +35,11 @@ const Utilisateur = () => {
     const [loading, setLoading] = useState(true);
     const toast = useRef(null);
 
-
     useEffect(() => {
         UtilisateurService.getutilisateur( (data)=> {
-        setUtilisateurs(data);
-        setLoading(false);
-    });
+            setUtilisateurs(data);
+            setLoading(false);
+        });
     }, []);
 
     const openNew = () => {

@@ -26,11 +26,10 @@ const Structure = () => {
     const [loading, setLoading] = useState(true);
     const toast = useRef(null);
 
-
     useEffect(() => {
         StructureService.getStructure( (data)=> {
-        setStructures(data);
-        setLoading(false);
+            setStructures(data);
+            setLoading(false);
         });
     }, []);
 
