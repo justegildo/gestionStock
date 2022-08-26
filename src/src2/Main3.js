@@ -1,8 +1,8 @@
 import React from 'react';
 import { Switch, Route } from 'react-router-dom';
 import App from './App';
-import Login from './Login';
-import Splash from './Splash';
+import Login from '../Login';
+import Splash from '../Splash';
 
 function Main(props) {
 
