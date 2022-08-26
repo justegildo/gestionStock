@@ -1,16 +1,16 @@
 import React, { useState, useEffect, useRef } from 'react';
 import classNames from 'classnames';
-import { useLocation } from 'react-router-dom';
+import { useLocation, Switch, Route} from 'react-router-dom';
 import { CSSTransition } from 'react-transition-group';
 
-import { AppTopbar } from './AppTopbar';
-import { AppFooter } from './AppFooter';
-import { AppMenu } from './AppMenu';
 import { AppConfig } from './AppConfig';
 import PrimeReact from 'primereact/api';
 import { Tooltip } from 'primereact/tooltip';
 
 import App2 from './App2';
+//import App from './App';
+import Login from './Login';
+import Splash from './Splash';
 
 import 'primereact/resources/primereact.css';
 import 'primeicons/primeicons.css';

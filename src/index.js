@@ -5,14 +5,14 @@ import App from './App';
 //import * as serviceWorker from './serviceWorker';
 import { HashRouter } from 'react-router-dom'
 import ScrollToTop from './ScrollToTop';
-import Main from './Main';
+import Main2 from './Main2';
 import { AxiosComponent } from './axiosConfig/AxiosComponent';
 
 ReactDOM.render(
     <HashRouter>
         <AxiosComponent />
         <ScrollToTop>
-            <Main></Main>
+            <Main2></Main2>
         </ScrollToTop>
     </HashRouter>,
     document.getElementById('root')
