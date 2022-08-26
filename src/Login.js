@@ -2,31 +2,26 @@ import { Button } from 'primereact/button';
 import { Checkbox } from 'primereact/checkbox';
 import { InputText } from 'primereact/inputtext';
 import React, { useEffect, useRef, useState } from 'react';
-import { Link, useHistory } from 'react-router-dom';
+import { Link, useHistory, useParams } from 'react-router-dom';
 import AuthenticationService from './services/AuthenticationService';
-import axios from 'axios';
-
-import apiUrl from './baseUrls/functions';
-import AxiosService from './axiosConfig/AxiosService';
 
 function Login(props) {
-    const [checked, setChecked] = useState(false);
-    const [credentials, setCredentials] = useState(null);
+    const [credentials, setCredentials] = useState({rememberMe: false});
     let history = useHistory();
+    let params = useParams();
 
     function authenticate() {
         AuthenticationService.authenticate(credentials, (data)=> {
             localStorage.setItem('token', data.token)
-            history.replace("/dashboard");
+            localStorage.setItem("user", JSON.stringify(data, null, 2))
+            if(params.state) history.goBack(); else history.replace("/dashboard");
         });
     }
 
     function bind(e) {
-        setCredentials({...credentials, [e.target.id]: e.target.value})
-        // if(e.target.checked !== undefined) {
-        //     console.log(e.target.checked)
-        // }
-        //if(e.target.checked !== undefined) setCredentials({...credentials, [e.target.inputId]: e.target.checked})
+        let type = e.target.type;
+        if(type == 'text' || 'password')  setCredentials({...credentials, [e.target.id]: e.target.value});
+        if(type == 'checkbox') setCredentials({...credentials, [e.target.id]: e.target.checked});
     }
     
     return (
@@ -48,8 +43,8 @@ function Login(props) {
                 <div className="flex align-items-center justify-content-between mb-6">
                     <div className="flex align-items-center">
                         {/* <Checkbox inputId="rememberMe" binary className="mr-2" onChange={bind} checked={checked} /> */}
-                        <Checkbox inputId="rememberMe" binary className="mr-2" onChange={e => setChecked(e.checked)} checked={checked} />
-                        <label htmlFor="rememberme1">Se souvenir de moi</label>
+                        <Checkbox id = "rememberMe" binary className="mr-2" onChange={bind} checked={credentials.rememberMe} />
+                        <label htmlFor="rememberMe">Se souvenir de moi</label>
                     </div>
                     <a className="font-medium no-underline ml-2 text-blue-500 text-right cursor-pointer" style={{display: 'none', visibility: 'hidden'}}>Forgot password?</a>
                 </div>
@@ -61,8 +56,3 @@ function Login(props) {
 }
 
 export default Login;
-
-
-
-
-    

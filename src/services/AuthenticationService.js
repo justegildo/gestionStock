@@ -1,4 +1,3 @@
-import axios from "axios";
 import apiUrl from '../baseUrls/functions';
 import AxiosService from '../axiosConfig/AxiosService';
 
