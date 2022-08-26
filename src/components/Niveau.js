@@ -7,6 +7,7 @@ import { InputText } from 'primereact/inputtext';
 import { Dialog } from 'primereact/dialog';
 import { Toast } from 'primereact/toast';
 import NiveauService from '../services/NiveauService';
+import { itemPerPage } from '../baseUrls/consts';
 
 const Niveau = () => {
     let emptyNiveau = {
@@ -24,10 +25,11 @@ const Niveau = () => {
 
 
     useEffect(() => {
-        NiveauService.getNiveau( (data)=> {
-        setNiveaux(data);
-        setLoading(false);
-        });
+        NiveauService.get((data) => {
+            setNiveaux(data); 
+            setLoading(false);
+        }, 
+        {size: itemPerPage});
     }, []);
 
     const openNew = () => {
@@ -99,7 +101,7 @@ const Niveau = () => {
                 <h5>Liste des niveaux</h5>
                 <Toast ref={toast} />
                 <Toolbar className="mb-4" left={leftToolbarTemplate} right={rightToolbarTemplate}></Toolbar>
-                <DataTable value={niveaux} rows={4} paginator responsiveLayout="scroll"  
+                <DataTable value={niveaux} rows={itemPerPage} paginator responsiveLayout="scroll"  
                     loading={loading} globalFilter={globalFilter} emptyMessage="Aucun niveau disponible.">
                     <Column field="id" header="Matricule" sortable style={{width: '10%', textAlign: 'center'}} />
                     <Column field="libelle" header="Libellé" sortable style={{width: '70%', fontWeight: 'bold'}} />

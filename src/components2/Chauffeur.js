@@ -3,13 +3,12 @@ import { Button } from 'primereact/button';
 import { DataTable } from 'primereact/datatable';
 import { Column } from 'primereact/column';
 import { Toolbar } from 'primereact/toolbar';
+import { Toast } from 'primereact/toast';
 import { InputText } from 'primereact/inputtext';
 import { Dialog } from 'primereact/dialog';
-import { Toast } from 'primereact/toast';
 import CvaService from '../services/CvaService';
 import { Calendar } from 'primereact/calendar';
-
-
+import { itemPerPage } from '../baseUrls/consts';
 
 const Chauffeur = () => {
     let emptyChauffeur = {
@@ -47,11 +46,11 @@ const Chauffeur = () => {
 
     useEffect(() => {
         CvaService.getCva( (data)=> {
-        setChauffeurs(data);
-        setLoading(false);
-        });
+            setChauffeurs(data);
+            setLoading(false);
+        },
+        {size: itemPerPage});
     }, []);
-
 
     const openNew = () => {
         setChauffeur(emptyChauffeur);
@@ -63,6 +62,7 @@ const Chauffeur = () => {
         setSubmitted(false);
         setChauffeurDialog(false);
     }
+
     const hideDeleteChauffeurDialog = () => {
         setDeleteChauffeurDialog(false);
     }
@@ -110,7 +110,7 @@ const Chauffeur = () => {
         });
        
     }
-
+    
     const findIndexById = (id) => {
         let index = -1;
         for (let i = 0; i < chauffeurs.length; i++) {
@@ -159,7 +159,6 @@ const Chauffeur = () => {
         )
     }
 
-  
     const rightToolbarTemplate = () => {
         return (
             <React.Fragment>
@@ -200,7 +199,7 @@ const Chauffeur = () => {
                 <h5>Liste des chauffeurs</h5>
                 <Toast ref={toast} />
                 <Toolbar className="mb-4" left={leftToolbarTemplate} right={rightToolbarTemplate}></Toolbar>
-                <DataTable value={chauffeurs} rows={4} paginator responsiveLayout="scroll"  
+                <DataTable value={chauffeurs} rows={itemPerPage} paginator responsiveLayout="scroll"  
                     loading={loading} globalFilter={globalFilter} emptyMessage="Aucun chauffeur disponible.">
                     <Column field="id" header="Matricule" sortable style={{width: '2%', textAlign: 'center'}} />
                     <Column field="nom" header="Nom" sortable style={{width: '20%', fontWeight: 'bold'}} />

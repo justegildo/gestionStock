@@ -1,13 +1,12 @@
-import axios from "axios";
 import apiUrl from '../baseUrls/functions';
 import AxiosService from '../axiosConfig/AxiosService';
 
 export default new class CvaService {
     
-    getCva = (callback) => AxiosService.get(apiUrl('/api/crud/cva/get'), callback);
+    get = (callback, queryParams) => AxiosService.get(apiUrl('/api/crud/cva/get'), callback, queryParams);
     getById = (id, callback) => AxiosService.get(apiUrl(`/api/crud/cva/get/${id}`), callback);
-    add = (callback) => AxiosService.post(apiUrl('/api/crud/cva/add'), callback);
-    update = (callback) => AxiosService.put(apiUrl('/api/crud/cva/update'), callback);
+    add = (data, callback) => AxiosService.post(apiUrl('/api/crud/cva/add'), data, callback);
+    update = (data, callback) => AxiosService.put(apiUrl('/api/crud/cva/update'), data, callback);
     delete = (id, callback) => AxiosService.delete(apiUrl(`/api/crud/cva/delete/${id}`), callback);
 
 }

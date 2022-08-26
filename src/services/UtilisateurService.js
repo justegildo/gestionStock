@@ -1,13 +1,12 @@
-import axios from "axios";
 import apiUrl from '../baseUrls/functions';
 import AxiosService from '../axiosConfig/AxiosService';
 
 export default new class UtilisateurService {
-    
-    getutilisateur = (callback) => AxiosService.get(apiUrl('/api/crud/utilisateur/get'), callback);
-    /*getById = (id, callback) => AxiosService.get(apiUrl(`/api/crud/utilisateur/get/${id}`), credentials, callback);
-    add = (credentials, callback) => AxiosService.post(apiUrl('/api/crud/utilisateur/add'), credentials, callback);
-    update = (credentials, callback) => AxiosService.put(apiUrl('/api/crud/utilisateur/update'), credentials, callback);
-    delete = (id, callback) => AxiosService.delete(apiUrl(`/api/crud/utilisateur/delete/${id}`), credentials, callback);*/
+
+    get = (callback, queryParams) => AxiosService.get(apiUrl('/api/crud/utilisateur/get'), callback, queryParams);
+    getById = (id, callback) => AxiosService.get(apiUrl(`/api/crud/utilisateur/get/${id}`), callback);
+    add = (data, callback) => AxiosService.post(apiUrl('/api/crud/utilisateur/add'), data, callback);
+    update = (data, callback) => AxiosService.put(apiUrl('/api/crud/utilisateur/update'), data, callback);
+    delete = (id, callback) => AxiosService.delete(apiUrl(`/api/crud/utilisateur/delete/${id}`), callback);
 
 }
