@@ -33,12 +33,12 @@ import TextTable from './components2/TextTable';
 import TestTableIns from './components2/TestTableIns';
 import Suppression from './components2/Suppression';
 import Niveau from './components/Niveau';
-import Structure from './components2/Structure';
-import Utilisateur from './components2/Utilisateur';
-import Vehicule from './components2/Vehicule';
-import Chauffeur from './components2/Chauffeur';
-import Compte from './components2/Compte';
-import DemandeVehicule from './components2/DemandeVehicule';
+import Structure from './components/Structure';
+import Utilisateur from './components/Utilisateur';
+import Vehicule from './components/Vehicule';
+import Chauffeur from './components/Chauffeur';
+import Compte from './components/Compte';
+import DemandeVehicule from './components/DemandeVehicule';
 import Form from './components2/Form';
 import './App.scss';
 

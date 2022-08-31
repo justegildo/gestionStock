@@ -7,6 +7,7 @@ import { InputText } from 'primereact/inputtext';
 import { Dialog } from 'primereact/dialog';
 import { Toast } from 'primereact/toast';
 import CompteService from '../services/CompteService';
+import { itemPerPage } from '../baseUrls/consts';
 
 const Compte = () => {
     let emptyCompte = {
@@ -36,10 +37,11 @@ const Compte = () => {
     const toast = useRef(null);
 
     useEffect(() => {
-            CompteService.getCompte( (data)=> {
+            CompteService.get( (data)=> {
             setComptes(data);
             setLoading(false);
-        });
+        }, 
+            {size: itemPerPage});
     }, []);
 
     const openNew = () => {
@@ -112,6 +114,7 @@ const Compte = () => {
             <Button label="Enregistrer" icon="pi pi-check" className="p-button-text"/>
         </>
     );
+    
 
     return (
         <div>
@@ -121,12 +124,13 @@ const Compte = () => {
             <Toolbar className="mb-4" left={leftToolbarTemplate} right={rightToolbarTemplate}></Toolbar>
             <DataTable value={comptes} rows={4} paginator responsiveLayout="scroll"  
                 loading={loading} globalFilter={globalFilter} emptyMessage="Aucun compte disponible.">
-                <Column field="id" header="Matricule" sortable style={{width: '5%', textAlign: 'center'}} />
+                <Column field="id" header="N°" sortable style={{width: '2%', textAlign: 'center'}} />
                 <Column field="nom" header="Nom" sortable style={{width: '30%', fontWeight: 'bold'}} />
                 <Column field="prenom" header="Prénom" sortable style={{width: '30%', fontWeight: 'bold'}} />
-                <Column field="sexe" header="Sexe" sortable style={{width: '5%', fontWeight: 'bold'}} />
                 <Column field="telephone" header="Téléphone" sortable style={{width: '5%', fontWeight: 'bold'}} />
-                <Column field="ville" header="Ville" sortable style={{width: '20%', fontWeight: 'bold'}} />
+                <Column field="typeUtilsateur" header="Type " sortable style={{width: '5%', fontWeight: 'bold'}} />
+                <Column field="structure.libelle" header="Structure" sortable style={{width: '5%', fontWeight: 'bold'}} />
+                <Column field="structure.institution.libelle" header="Institution " sortable style={{width: '20%', fontWeight: 'bold'}} />
                 <Column field="statutCompte" header="Statut compte" sortable style={{width: '20%', fontWeight: 'bold'}} />
                 <Column body={actionBodyTemplate} style={{width: '5%', fontWeight: 'bold'}}></Column>
             </DataTable>

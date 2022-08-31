@@ -7,6 +7,7 @@ import { InputText } from 'primereact/inputtext';
 import { Dialog } from 'primereact/dialog';
 import { Toast } from 'primereact/toast';
 import UtilisateurService from '../services/UtilisateurService';
+import { itemPerPage } from '../baseUrls/consts'; 
 
 const Utilisateur = () => {
     let emptyUtilisateur ={
@@ -36,10 +37,11 @@ const Utilisateur = () => {
     const toast = useRef(null);
 
     useEffect(() => {
-        UtilisateurService.getutilisateur( (data)=> {
+        UtilisateurService.get( (data)=> {
             setUtilisateurs(data);
             setLoading(false);
-        });
+        },
+        {size: itemPerPage});
     }, []);
 
     const openNew = () => {
@@ -124,9 +126,11 @@ const Utilisateur = () => {
                     <Column field="id" header="Matricule" sortable style={{width: '5%', textAlign: 'center'}} />
                     <Column field="nom" header="Nom" sortable style={{width: '30%', fontWeight: 'bold'}} />
                     <Column field="prenom" header="Prénom" sortable style={{width: '30%', fontWeight: 'bold'}} />
-                    <Column field="sexe" header="Sexe" sortable style={{width: '5%', fontWeight: 'bold'}} />
                     <Column field="telephone" header="Téléphone" sortable style={{width: '5%', fontWeight: 'bold'}} />
-                    <Column field="ville" header="Ville" sortable style={{width: '20%', fontWeight: 'bold'}} />
+                    <Column field="typeUtilisateur" header="Type utilisateur" sortable style={{width: '5%', fontWeight: 'bold'}} />
+                    <Column field="sexe" header="Sexe" sortable style={{width: '5%', fontWeight: 'bold'}} />
+                    <Column field="structure.libelle" header="Structure" sortable style={{width: '5%', fontWeight: 'bold'}} />
+                    <Column field="structure.institution.libelle" header="Institution" sortable style={{width: '20%', fontWeight: 'bold'}} />
                     <Column body={actionBodyTemplate} style={{width: '5%', fontWeight: 'bold'}}></Column>
                 </DataTable>
             </div>

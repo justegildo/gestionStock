@@ -46,7 +46,7 @@ const DemandeVehicule = () => {
     const toast = useRef(null);
 
     useEffect(() => {
-        DemandeService.getDemandeVehicule( (data)=> {
+        DemandeService.get( (data)=> {
             setDemandes(data);
             setLoading(false);
         });

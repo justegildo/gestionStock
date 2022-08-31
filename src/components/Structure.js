@@ -7,6 +7,7 @@ import { InputText } from 'primereact/inputtext';
 import { Dialog } from 'primereact/dialog';
 import { Toast } from 'primereact/toast';
 import StructureService from '../services/StructureService';
+import { itemPerPage } from '../baseUrls/consts';
 
 const Structure = () => {   
     let emptyStructure ={
@@ -27,10 +28,11 @@ const Structure = () => {
     const toast = useRef(null);
 
     useEffect(() => {
-        StructureService.getStructure( (data)=> {
+        StructureService.get((data)=> {
             setStructures(data);
             setLoading(false);
-        });
+        },
+        {size: itemPerPage});
     }, []);
 
     const openNew = () => {
@@ -112,8 +114,8 @@ const Structure = () => {
                     loading={loading} globalFilter={globalFilter} emptyMessage="Aucune structure disponible.">
                     <Column field="id" header="Matricule" sortable style={{width: '10%', textAlign: 'center'}} />
                     <Column field="libelle" header="Libellé" sortable style={{width: '40%', fontWeight: 'bold'}} />
-                    <Column field="responsable" header="Responsable" sortable style={{width: '30%', fontWeight: 'bold'}} />
                     <Column field="telephone" header="Téléphone" sortable style={{width: '10%', fontWeight: 'bold'}} />
+                    <Column field="responsable" header="Responsable" sortable style={{width: '30%', fontWeight: 'bold'}} />                 
                     <Column body={actionBodyTemplate} style={{width: '10%', fontWeight: 'bold'}}></Column>
                 </DataTable>
             </div>

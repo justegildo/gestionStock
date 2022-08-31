@@ -161,7 +161,7 @@ const TableDemo = () => {
     }
 
     const statusBodyTemplate = (rowData) => {
-        return <span className={`customer-badge status-${rowData.status}`}>{rowData.status}</span>;
+        return <span className={` status-${rowData.status}`}>{rowData.status}</span>;
     }
 
     const statusFilterTemplate = (options) => {
