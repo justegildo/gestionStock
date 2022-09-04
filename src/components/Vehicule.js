@@ -7,6 +7,7 @@ import { InputText } from 'primereact/inputtext';
 import { Dialog } from 'primereact/dialog';
 import { Toast } from 'primereact/toast';
 import VehiculeService from '../services/VehiculeService';
+import { itemPerPage } from '../baseUrls/consts';
 
 const Vehicule = () => {
     let emptyVehicule = {
@@ -34,10 +35,11 @@ const Vehicule = () => {
     const toast = useRef(null);
 
     useEffect(() => {
-        VehiculeService.getVehicule( (data)=> {
+        VehiculeService.get((data)=> {
             setVehicules(data);
             setLoading(false);
-        });
+        },
+        {size: itemPerPage});
     }, []);
 
     const openNew = () => {
@@ -108,6 +110,17 @@ const Vehicule = () => {
             <Button label="Enregistrer" icon="pi pi-check" className="p-button-text"/>
         </>
     );
+
+    const statusBodyTemplate = (rowData) => {
+        return (
+            <>
+                <span className="p-column-title">Status</span>
+                <span className={`product-badge status-${rowData.etatVehicule.toLowerCase()}`}>{rowData.etatVehicule}</span>
+            </>
+        )
+    }
+    
+
     return (
         <div>
             <div className="card">
@@ -116,13 +129,13 @@ const Vehicule = () => {
                 <Toolbar className="mb-4" left={leftToolbarTemplate} right={rightToolbarTemplate}></Toolbar>
                 <DataTable value={vehicules} rows={4} paginator responsiveLayout="scroll"  
                     loading={loading} globalFilter={globalFilter} emptyMessage="Aucun véhicule disponible.">
-                    <Column field="id" header="Matricule" sortable style={{width: '2%', textAlign: 'center'}} />
                     <Column field="immatriculation" header="Immatriculation" sortable style={{width: '20%', fontWeight: 'bold'}} />
                     <Column field="marque" header="Marque" sortable style={{width: '10%', fontWeight: 'bold'}} />
                     <Column field="model" header="Modèle" sortable style={{width: '10%', fontWeight: 'bold'}} />
+                    <Column field="institution.libelle" header="Institution" sortable style={{width: '2%', textAlign: 'center'}} />
                     <Column field="etatActuel" header="Etat actuel" sortable style={{width: '20%', fontWeight: 'bold'}} />
-                    <Column field="kilometrage" header="Kilométrage" sortable style={{width: '5%', fontWeight: 'bold'}} />
-                    <Column field="vitesse" header="Vitesse" sortable style={{width: '10%', fontWeight: 'bold'}} />
+                    <Column field="etatVehicule" header="Etat véhicule" style={{ flexGrow: 1, flexBasis: '200px' }} sortable />
+                    <Column field="etatVehicule" header="Status" body={statusBodyTemplate} sortable headerStyle={{ width: '14%', minWidth: '10rem' }}/>
                     <Column body={actionBodyTemplate} style={{width: '5%', fontWeight: 'bold'}}></Column>
                 </DataTable>
             </div>

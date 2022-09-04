@@ -121,9 +121,11 @@ const Institution = () => {
                 <Toolbar className="mb-4" left={leftToolbarTemplate} right={rightToolbarTemplate}></Toolbar>
                 <DataTable value={instituts} rows={itemPerPage} paginator responsiveLayout="scroll"
                     loading={loading} globalFilter={globalFilter} emptyMessage="Aucune institution disponible.">
-                    <Column field="id" header="Matricule" sortable style={{ width: '10%', textAlign: 'center' }} />
+                    <Column field="id" header="Identifiant" sortable style={{ width: '10%', textAlign: 'center' }} />
                     <Column field="libelle" header="Libellé" sortable style={{ width: '50%', fontWeight: 'bold' }} />
-                    <Column field="nomResponsable" header="Responsable" sortable style={{ width: '20%' }} />
+                    <Column field="contact" header="Contact" sortable style={{ width: '10%', fontWeight: 'bold' }} />
+                    <Column field="niveau.libelle" header="Niveu" sortable style={{ width: '50%', fontWeight: 'bold' }} />
+                    <Column field="nomChefParc" header="Nom chef parc" sortable style={{ width: '20%' }} />
                     <Column body={actionBodyTemplate}></Column>
                 </DataTable>
             </div>

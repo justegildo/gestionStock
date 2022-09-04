@@ -9,6 +9,7 @@ import { Dialog } from 'primereact/dialog';
 import CvaService from '../services/CvaService';
 import { Calendar } from 'primereact/calendar';
 import { itemPerPage } from '../baseUrls/consts';
+import { Dropdown } from 'primereact/dropdown';
 
 const Chauffeur = () => {
     let emptyChauffeur = {
@@ -45,7 +46,7 @@ const Chauffeur = () => {
     }
 
     useEffect(() => {
-        CvaService.getCva( (data)=> {
+        CvaService.get( (data)=> {
             setChauffeurs(data);
             setLoading(false);
         },
@@ -192,7 +193,11 @@ const Chauffeur = () => {
             <Button label="Yes" icon="pi pi-check" className="p-button-text" onClick={deleteChauffeur} />
         </>
     );
+    const statusBodyTemplate2 = (APIData) => {
+        return <span className={`enum-badge status-${APIData.etatChauffeur.toLowerCase()}`}>{APIData.etatChauffeur}</span>;
+    }
 
+   
     return (
         <div>
             <div className="card">
@@ -205,9 +210,9 @@ const Chauffeur = () => {
                     <Column field="nom" header="Nom" sortable style={{width: '20%', fontWeight: 'bold'}} />
                     <Column field="prenom" header="Prénom" sortable style={{width: '10%', fontWeight: 'bold'}} />
                     <Column field="telephone" header="Téléphone" sortable style={{width: '10%', fontWeight: 'bold'}} />
-                    <Column field="etatChauffeur" header="Etat chauffeur" sortable style={{width: '20%', fontWeight: 'bold'}} />
                     <Column field="institution.libelle" header="Institution" sortable style={{width: '5%', fontWeight: 'bold'}} />
-                    <Column field="sexe" header="Sexe" sortable style={{width: '10%', fontWeight: 'bold'}} />
+                    <Column field="etatChauffeur" header="Etat chauffeur" sortable body={statusBodyTemplate2} />
+                    
                     <Column body={actionBodyTemplate} style={{width: '5%', fontWeight: 'bold'}}></Column>
                 </DataTable>
             </div>
