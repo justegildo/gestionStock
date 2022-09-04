@@ -10,22 +10,22 @@ export class CommonService {
     log2(data) {
         console.table(JSON.stringify(data));
     }
-    
+
     show(data) {
         alert(data);
     }
 
     dateToString(value) {
-        if(typeof value == "string") {
+        if (typeof value == "string") {
             value = new Date(value);
         }
         return value.toLocaleDateString('en-US', {
             day: '2-digit',
             month: '2-digit',
             year: 'numeric',
-        })  
+        })
     }
-    
+
     currencyToStringUS(value) {
         return value.toLocaleString('en-US', { style: 'currency', currency: 'USD' });
     }
@@ -47,7 +47,7 @@ export class CommonService {
 
     objectProperties(obj) {
         var keys = [];
-        for(var key in obj){
+        for (var key in obj) {
             keys.push(key);
         }
         console.log(keys)
@@ -57,4 +57,21 @@ export class CommonService {
         var keys1 = Object.keys(obj);
         var keys2 = Object.getOwnPropertyNames(obj);
     }
+
+    showArguments(callback) {
+        var original = callback;
+        callback = function () {
+            // Do something with arguments:
+            console.log(arguments);
+            alert(JSON.stringify(arguments, null, 2));
+            return original.apply(this, arguments);
+        };
+        callback("pierre", "jean", "jacques")
+    }
+    /*
+    showArguments(callback) {
+        let argCount = callback;
+        alert(JSON.stringify(argCount, null, 2));
+    }
+    */
 }

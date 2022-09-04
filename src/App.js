@@ -41,8 +41,13 @@ import Compte from './components2/Compte';
 import DemandeVehicule from './components2/DemandeVehicule';
 import Form from './components2/Form';
 import './App.scss';
+import { CommonService } from './util/CommonService';
 
 const App = (props) => {
+
+    let serv = new CommonService();
+    serv.showArguments((ok, non)=>{ alert(ok + " - " +non);});
+
 
     const menu = [
         {
