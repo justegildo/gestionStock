@@ -48,7 +48,11 @@ const Table = (props) => {
             visible: true,
             hide: ()=> setForm((prev)=>({...prev, visible: false})),
             data: null,
-            setData: (data)=> setForm((prev)=>({...prev, data}))
+            setData: (data)=> setForm((prev)=>({...prev, data})),
+            callback: ()=> {
+                setLoading(true);
+                loadItems();
+            }
         });
     }
 
@@ -57,7 +61,11 @@ const Table = (props) => {
             visible: true,
             hide: ()=> setForm((prev)=>({...prev, visible: false})),
             data: item,
-            setData: (data)=> setForm((prev)=>({...prev, data}))
+            setData: (data)=> setForm((prev)=>({...prev, data})),
+            callback: ()=> {
+                setLoading(true);
+                loadItems();
+            }
         })
     }
 
@@ -70,6 +78,7 @@ const Table = (props) => {
                 setLoading(true);
                 NiveauService.delete(item.id, (data, status)=>{
                     setLoading(false);
+                    loadItems();
                 });
             },
         });
@@ -114,7 +123,7 @@ const Table = (props) => {
 } 
 
 const Form = (props) => {
-    const {visible, hide, data, setData } = props.form;
+    const {visible, hide, data, setData, callback } = props.form;
     const {setYesNo} = props;
     const[loading, setLoading] = useState(false);
     
@@ -132,12 +141,13 @@ const Form = (props) => {
                 hide: ()=> setYesNo((prev)=>({...prev, visible: false})),
                 callback : ()=> {
                     setLoading(true);
-                    let callback = (data, status)=> {
+                    let onResponse = (data, status)=> {
                             setLoading(false);
                             if(!status) return;
                             hide();
+                            callback();
                     }
-                    if(data.id) NiveauService.update(data, callback); else NiveauService.add(data, callback);
+                    if(data.id) NiveauService.update(data, onResponse); else NiveauService.add(data, onResponse);
                 },
             }
         )
