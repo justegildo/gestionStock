@@ -54,7 +54,7 @@ function Login(props) {
                             <label htmlFor="rememberMe">Se souvenir de moi</label>
                         </div>
                     </div>
-                    <Button label="Se connecter" icon="pi pi-user" className="w-full" loading={loading1} onClick={()=> {authenticate() ; onLoadingClick1()}}/>
+                    <Button autoFocus label="Se connecter" icon="pi pi-user" className="w-full" loading={loading1} onClick={()=> {authenticate() ; onLoadingClick1()}}/>
                     {/* <Link to="/dashboard"><Button label="Sign In" icon="pi pi-user" className="w-full" onClick={authenticate}/></Link> */}
                 </div>
             </div>

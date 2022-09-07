@@ -44,11 +44,7 @@ import './App.scss';
 import { CommonService } from './util/CommonService';
 
 const App = (props) => {
-
-    let serv = new CommonService();
-    serv.showArguments((ok, non)=>{ alert(ok + " - " +non);});
-
-
+    
     const menu = [
         {
             label: 'Accueil',
