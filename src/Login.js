@@ -12,7 +12,9 @@ function Login(props) {
     let params = useParams();
 
     function authenticate() {
-        AuthenticationService.authenticate(credentials, (data)=> {
+        AuthenticationService.authenticate(credentials, (data, status)=> {
+            setLoading1(false);
+            if(!status) return;
             localStorage.setItem('token', data.token)
             localStorage.setItem("user", JSON.stringify(data, null, 2))
             if(params.state) history.goBack(); else history.replace("/dashboard");

@@ -1,193 +1,234 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Button } from 'primereact/button';
 import { DataTable } from 'primereact/datatable';
 import { Column } from 'primereact/column';
 import { Toolbar } from 'primereact/toolbar';
 import { InputText } from 'primereact/inputtext';
 import { Dialog } from 'primereact/dialog';
-import { Toast } from 'primereact/toast';
 import VehiculeService from '../services/VehiculeService';
 import { itemPerPage } from '../baseUrls/consts';
 
 const Vehicule = () => {
-    let emptyVehicule = {
-        id: 0,
-        categorie: "",
-        etatActuel: "",
-        immatriculation: "",
-        institution: {
-            id: 0
-        },
-        kilometrage: 0,
-        marque: "",
-        modele: "",
-        typeEnergie: "",
-        typeTransmission: "",
-        vitesse: 0
-    }
-
-    const [vehicules, setVehicules] = useState(null);
-    const [vehiculeDialog, setVehiculeDialog] = useState(false);
-    const [vehicule, setVehicule] = useState(emptyVehicule);
-    const [submitted, setSubmitted] = useState(false);
-    const [globalFilter, setGlobalFilter] = useState(null);
-    const [loading, setLoading] = useState(true);
-    const toast = useRef(null);
-
-    useEffect(() => {
-        VehiculeService.get((data)=> {
-            setVehicules(data);
-            setLoading(false);
-        },
-        {size: itemPerPage});
-    }, []);
-
-    const openNew = () => {
-        setVehicule(emptyVehicule);
-        setSubmitted(false);
-        setVehiculeDialog(true);
-    }
-
-    const hideDialog = () => {
-        setSubmitted(false);
-        setVehiculeDialog(false);
-    }
-
-    const editVehicule = (utilisateur) => {
-        setVehicule({ ...utilisateur });
-        setVehiculeDialog(true);
-    }
-
-    const onInputChange = (e, name) => {
-        const val = (e.target && e.target.value) || '';
-        let _vehicule = { ...vehicule };
-        _vehicule[`${name}`] = val;
-
-        setVehicule(_vehicule);
-    }
-
-    const onInputNumberChange = (e, name) => {
-        const val = e.value || 0;
-        let _vehicule = { ...vehicule };
-        _vehicule[`${name}`] = val;
-
-        setVehicule(_vehicule);
-    }
-
-    const leftToolbarTemplate = () => {
-        return (
-            <React.Fragment>
-                <div className="my-2">
-                    <Button label="Nouveau" icon="pi pi-plus" className="p-button-success mr-2" onClick={openNew}/>
-                </div>
-            </React.Fragment>
-        )
-    }
+    const [yesNo, setYesNo] = useState({});
+    const [form, setForm] = useState({});
     
-    const rightToolbarTemplate = () => {
-        return (
-            <React.Fragment>
-                <span className="block mt-2 md:mt-0 p-input-icon-left">
-                    <i className="pi pi-search" />
-                    <InputText type="search" placeholder="Recherche..." onInput={(e) => setGlobalFilter(e.target.value)}/>
-                </span>
-            </React.Fragment>
-        )
-    }
-
-    const actionBodyTemplate = (APIData) => {
-        return (
-            <div className="actions">
-                <Button icon="pi pi-pencil" className="p-button-rounded p-button-success mr-2" onClick={() => editVehicule(APIData)}/>
-                <Button icon="pi pi-trash" className="p-button-rounded p-button-warning mt-2"/>
-            </div>
-        );
-    }
-
-    const vehiculeDialogFooter = (
-        <>
-            <Button label="Retour" icon="pi pi-times" className="p-button-text"  />
-            <Button label="Enregistrer" icon="pi pi-check" className="p-button-text"/>
-        </>
-    );
-
-    const statusBodyTemplate = (rowData) => {
-        return (
-            <>
-                <span className="p-column-title">Status</span>
-                <span className={`product-badge status-${rowData.etatVehicule.toLowerCase()}`}>{rowData.etatVehicule}</span>
-            </>
-        )
-    }
-    
-
     return (
         <div>
             <div className="card">
-                <h5>Liste des véhicules</h5>
-                <Toast ref={toast} />
-                <Toolbar className="mb-4" left={leftToolbarTemplate} right={rightToolbarTemplate}></Toolbar>
-                <DataTable value={vehicules} rows={4} paginator responsiveLayout="scroll"  
-                    loading={loading} globalFilter={globalFilter} emptyMessage="Aucun véhicule disponible.">
-                    <Column field="immatriculation" header="Immatriculation" sortable style={{width: '20%', fontWeight: 'bold'}} />
-                    <Column field="marque" header="Marque" sortable style={{width: '10%', fontWeight: 'bold'}} />
-                    <Column field="model" header="Modèle" sortable style={{width: '10%', fontWeight: 'bold'}} />
-                    <Column field="institution.libelle" header="Institution" sortable style={{width: '2%', textAlign: 'center'}} />
-                    <Column field="etatActuel" header="Etat actuel" sortable style={{width: '20%', fontWeight: 'bold'}} />
-                    <Column field="etatVehicule" header="Etat véhicule" style={{ flexGrow: 1, flexBasis: '200px' }} sortable />
-                    <Column field="etatVehicule" header="Status" body={statusBodyTemplate} sortable headerStyle={{ width: '14%', minWidth: '10rem' }}/>
-                    <Column body={actionBodyTemplate} style={{width: '5%', fontWeight: 'bold'}}></Column>
-                </DataTable>
+                <Table {...{setForm, setYesNo}} />
+                <Form {...{form, setYesNo}} />
+                <Confirmation {...yesNo} />
             </div>
-            <div>
-            <Dialog visible={vehiculeDialog} style={{ width: '450px' }} header="Détails d'un véhicule" modal className="p-fluid" 
-                    footer={vehiculeDialogFooter} onHide={hideDialog}>
-                        
-                        <div className="field">
-                            <label htmlFor="immatriculation">Immatriculation</label>
-                            <InputText id="immatriculation" value={vehicule.immatriculation} onChange={(e) => onInputNumberChange(e, 'immatriculation')} required rows={3} cols={10} />
-                        </div>
-                        <div className="field">
-                            <label htmlFor="institution">institution id</label>
-                            <InputText id="institution" value={vehicule.institution.id} onChange={(e) => onInputChange(e, 'institution.id')} required rows={3} cols={20} />
-                        </div>
-                        <div className="field">
-                            <label htmlFor="categorie">Catégorie</label>
-                            <InputText id="categorie" value={vehicule.catgorie} onChange={(e) => onInputChange(e, 'categorie')} required autoFocus  />
-                        </div>
-                        <div className="field">
-                            <label htmlFor="etatActuel">Etat Actuel</label>
-                            <InputText id="etatActuel" value={vehicule.etatActuel} onChange={(e) => onInputChange(e, 'etatActuel')} required rows={3} cols={20} />
-                        </div>
-                        <div className="field">
-                            <label htmlFor="kilometrage">Kilométrage</label>
-                            <InputText id="kilometrage" value={vehicule.kilometrage} onChange={(e) => onInputChange(e, 'kilometrage')} required rows={3} cols={20} />
-                        </div>
-                        <div className="field">
-                            <label htmlFor="marque">Marque</label>
-                            <InputText id="marque" value={vehicule.marque} onChange={(e) => onInputChange(e, 'marque')} required rows={3} cols={20} />
-                        </div>
-                        <div className="field">
-                            <label htmlFor="vitesse">Vitesse</label>
-                            <InputText id="vitesse" value={vehicule.vitesse} onChange={(e) => onInputChange(e, 'vitesse')} required rows={3} cols={20} />
-                        </div>
-                        <div className="field">
-                            <label htmlFor="typeEnergie">Type énergie</label>
-                            <InputText id="typeEnergie" value={vehicule.typeEnergie} onChange={(e) => onInputNumberChange(e, 'typeEnergie')} required rows={3} cols={20} />
-                        </div>
-                        <div className="field">
-                            <label htmlFor="modele">Modele</label>
-                            <InputText id="modele" value={vehicule.modele} onChange={(e) => onInputChange(e, 'modele')} required rows={3} cols={20} />
-                        </div>
-                        <div className="field">
-                            <label htmlFor="typeTransmission">Type transmission</label>
-                            <InputText id="typeTransmission" value={vehicule.typeTransmission} onChange={(e) => onInputChange(e, 'typeTransmission')} required rows={3} cols={20} />
-                        </div>
-                       
-                </Dialog>
-            </div>
+            
         </div>
     );
+}
+
+const Table = (props) => {
+    const [items, setItems] = useState([]);
+    const [globalFilter, setGlobalFilter] = useState(null);
+    const [loading, setLoading] = useState(true);
+    const {setForm, setYesNo} = props;
+
+    useEffect(() => {
+        loadItems();
+    }, []);
+
+    const loadItems = () => {
+        VehiculeService.get((data, status) => {
+                setLoading(false);
+                if(status) setItems(data);   
+            },
+            {size: itemPerPage}
+        );
+    }
+
+    const openNew = () => {
+        setForm({
+            visible: true,
+            hide: ()=> setForm((prev)=>({...prev, visible: false})),
+            data: null,
+            setData: (data)=> setForm((prev)=>({...prev, data})),
+            callback: ()=> {
+                setLoading(true);
+                loadItems();
+            }
+        });
+    }
+
+    const editItem = (item) => {
+        setForm({
+            visible: true,
+            hide: ()=> setForm((prev)=>({...prev, visible: false})),
+            data: item,
+            setData: (data)=> setForm((prev)=>({...prev, data})),
+            callback: ()=> {
+                setLoading(true);
+                loadItems();
+            }
+        })
+    }
+
+    const deleteItem = (item) => {
+        setYesNo({   
+            visible: true,
+            message : "Confirmez-vous la suppression ?",
+            hide: ()=> setYesNo((prev)=>({...prev, visible: false})),
+            callback : ()=> {
+                setLoading(true);
+                VehiculeService.delete(item.id, (data, status)=>{
+                    setLoading(false);
+                    loadItems();
+                });
+            },
+        });
+    }
+    
+    return (
+        <>
+            <h5>Liste des véhicules</h5>
+            <Toolbar className="mb-4" 
+                left={
+                    <React.Fragment>
+                        <div className="my-2">
+                            <Button label="Nouveau" icon="pi pi-plus" className="p-button-success mr-2" 
+                                onClick={openNew}/>
+                        </div>
+                    </React.Fragment>
+                } 
+                right={
+                    <React.Fragment>
+                        <span className="block mt-2 md:mt-0 p-input-icon-left">
+                            <i className="pi pi-search" />
+                            <InputText type="search" placeholder="Recherche..." onInput={(e) => setGlobalFilter(e.target.value)} />
+                        </span>
+                    </React.Fragment>
+                } />
+            <DataTable dataKey="id" value={items} 
+                paginator rows={itemPerPage}  
+                loading={loading} globalFilter={globalFilter} 
+                responsiveLayout="scroll" emptyMessage="Aucune donnée disponible.">
+
+                <Column field="id" header="Identifiant" sortable  hidden />
+                <Column field="immatriculation" header="Immatriculation" sortable />
+                {/*<Column field="libelle" header="Libellé" sortable />*/}
+                <Column field="marque" header="Marque" sortable />
+                <Column field="modele" header="Modèle" sortable />
+                <Column field="etatVehicule" header="Etat" sortable body={ (item)=> 
+                    <span className={`customer-badge status-${item.etatVehicule == 'DISPONIBLE'? 'qualified' : 'unqualified'}`}>
+                        {item.etatVehicule}
+                    </span>
+                } />
+                <Column field="institution.libelle" header="Institution" sortable />
+
+                <Column body={ (selectedItem)=>
+                    <div style={{display: 'flex', flexDirection: 'row-reverse'}}>
+                        <Button icon="pi pi-pencil" className="p-button-rounded p-button-success" onClick={() => editItem(selectedItem)}/>
+                        <span style={{padding: '.3rem'}}/>
+                        <Button icon="pi pi-trash" className="p-button-rounded p-button-warning" onClick={()=> deleteItem(selectedItem)}/>
+                    </div>
+                } />
+            </DataTable>
+        </>
+    );
+}
+
+const Form = (props) => {
+    const {visible, hide, data, setData, callback } = props.form;
+    const {setYesNo} = props;
+    const[loading, setLoading] = useState(false);
+    
+    const bind = (e) => {
+        let type = e.target.type;
+        if(type === 'text' || 'password')  setData({...data, [e.target.id]: e.target.value});
+        if(type === 'checkbox') setData({...data, [e.target.id]: e.target.checked});
+    }
+    
+    const submit = () => {
+        setYesNo(
+            {   
+                visible: true,
+                message : data.id ? "Confirmez-vous la modification ?" : "Confirmez-vous l'ajout ?",
+                hide: ()=> setYesNo((prev)=>({...prev, visible: false})),
+                callback : ()=> {
+                    setLoading(true);
+                    let onResponse = (data, status)=> {
+                            setLoading(false);
+                            if(!status) return;
+                            hide();
+                            callback();
+                    }
+                    if(data.id) VehiculeService.update(data, onResponse); else VehiculeService.add(data, onResponse);
+                },
+            }
+        )
+    
+    }
+
+    return(
+        <Dialog visible={visible} style={{ width: '800px' }} header="Détails du véhicule" modal className="p-fluid" 
+            footer={
+                <>
+                    <Button label="Annuler" icon="pi pi-times" className="p-button-text" onClick={hide}  />
+                    <Button label="Valider" icon="pi pi-check" className="p-button-text" onClick={submit} loading={loading} />
+                </>
+            } 
+            onHide={hide}
+            >  
+                <div className="field" hidden>
+                    <label htmlFor="id">Identifiant</label>
+                    <InputText id="id" value={data && data.id} onChange={bind} />
+                </div>
+                <div className="field">
+                    <label htmlFor="immatriculation">Immatriculation</label>
+                    <InputText id="immatriculation" value={data && data.immatriculation} onChange={bind} required  />
+                </div>
+                <div className="field">
+                    <label htmlFor="marque">Marque</label>
+                    <InputText id="marque" value={data && data.marque} onChange={bind} required  />
+                </div>
+                <div className="field">
+                    <label htmlFor="modele">Modèle</label>
+                    <InputText id="modele" value={data && data.modele} onChange={bind} required  />
+                </div>
+                {/*
+                <div className="field">
+                    <label htmlFor="institution">Institution</label>
+                    <InputText id="niveau" value={institut.niveau.id} onChange={(e) => onInputChange(e, 'niveau.id')} required autoFocus />
+                </div>
+                 */}
+                 {/*
+                <div className="field">
+                    <label htmlFor="etatVehicule">Niveau</label>
+                    <InputText id="etatVehicule" value={institut.niveau.id} onChange={(e) => onInputChange(e, 'niveau.id')} required autoFocus />
+                </div>
+                */}
+            </Dialog>
+    )
+}
+
+const Confirmation = (props) => {
+    const {visible, hide, message, callback } = props;
+    
+    return (
+        <Dialog modal visible={visible} onHide={hide} 
+            header="Confirmation" style={{ width: '350px' }}
+            footer={
+                <>
+                    <Button type="button" label="Non" icon="pi pi-times" 
+                        onClick={hide} 
+                        className="p-button-text" />
+                    <Button type="button" label="Oui" icon="pi pi-check" 
+                        onClick={() => { hide(); callback() }} 
+                        className="p-button-text" autoFocus />
+                </>
+            }>
+            <div className="flex align-items-center justify-content-center">
+                <i className="pi pi-exclamation-triangle mr-3" style={{ fontSize: '2rem' }} />
+                <span>{message != null ? message : "Voulez-vous continuer ?"}</span>
+            </div>
+        </Dialog>
+    )
 }
 
 export default Vehicule;

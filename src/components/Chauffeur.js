@@ -1,274 +1,237 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Button } from 'primereact/button';
 import { DataTable } from 'primereact/datatable';
 import { Column } from 'primereact/column';
 import { Toolbar } from 'primereact/toolbar';
-import { Toast } from 'primereact/toast';
 import { InputText } from 'primereact/inputtext';
 import { Dialog } from 'primereact/dialog';
 import CvaService from '../services/CvaService';
-import { Calendar } from 'primereact/calendar';
 import { itemPerPage } from '../baseUrls/consts';
-import { Dropdown } from 'primereact/dropdown';
 
 const Chauffeur = () => {
-    let emptyChauffeur = {
-        dateNais: "",
-        etatChauffeur: "",
-        id: 0,
-        institution: {
-            id: 0
-        },
-        nationalite: "",
-        nom: "",
-        prenom: "",
-        sexe: "",
-        telephone: "",
-        ville: ""
-    }
-
-    const [chauffeurs, setChauffeurs] = useState(null);
-    const [chauffeurDialog, setChauffeurDialog] = useState(false);
-    const [deleteChauffeurDialog, setDeleteChauffeurDialog] = useState(false);
-    const [chauffeur, setChauffeur] = useState(emptyChauffeur);
-    const [submitted, setSubmitted] = useState(false);
-    const [globalFilter, setGlobalFilter] = useState(null);
-    const [loading, setLoading] = useState(true);
-    const toast = useRef(null);
-    const [loading1, setLoading1] = useState(false);
+    const [yesNo, setYesNo] = useState({});
+    const [form, setForm] = useState({});
     
-    const onLoadingClick1 = () => {
-        setLoading1(true);
-
-        setTimeout(() => {
-            setLoading1(false);
-        }, 230);
-    }
-
-    useEffect(() => {
-        CvaService.get( (data)=> {
-            setChauffeurs(data);
-            setLoading(false);
-        },
-        {size: itemPerPage});
-    }, []);
-
-    const openNew = () => {
-        setChauffeur(emptyChauffeur);
-        setSubmitted(false);
-        setChauffeurDialog(true);
-    }
-
-    const hideDialog = () => {
-        setSubmitted(false);
-        setChauffeurDialog(false);
-    }
-
-    const hideDeleteChauffeurDialog = () => {
-        setDeleteChauffeurDialog(false);
-    }
-
-    const saveChauffeur = () => {
-        setSubmitted(true);
-        if (chauffeur.name.trim()) {
-            let _chauffeurs = [...chauffeurs];
-            let _chauffeur = { ...chauffeur };
-            if (chauffeur.id) {
-                const index = findIndexById(chauffeur.id);
-
-                _chauffeurs[index] = _chauffeur;
-                toast.current.show({ severity: 'success', summary: 'Successful', detail: 'Chauffeur modifié', life: 3000 });
-            } 
-            else {
-                _chauffeur.id = createId();
-                _chauffeurs.push(_chauffeur);
-                toast.current.show({ severity: 'success', summary: 'Successful', detail: 'Chauffeur crée', life: 3000 });
-            }
-
-            setChauffeurs(_chauffeurs);
-            setChauffeurDialog(false);
-            setChauffeur(emptyChauffeur);
-        }
-    }
-
-    const editChauffeur = (chauffeur) => {
-        setChauffeur({ ...chauffeur });
-        setChauffeurDialog(true);
-    }
-
-    const confirmDeleteChauffeur = (chauffeur) => {
-        setChauffeur(chauffeur);
-        setDeleteChauffeurDialog(true);
-    }
-
-    const deleteChauffeur = () => {
-        CvaService.delete( ()=> {
-            let _chauffeurs = chauffeurs.filter(val => val.id !== chauffeur.id);
-            setChauffeurs(_chauffeurs);
-            setDeleteChauffeurDialog(false);
-            setChauffeur(emptyChauffeur);
-            toast.current.show({ severity: 'success', summary: 'Successful', detail: 'Chauffeur supprimé', life: 3000 });
-        });
-       
-    }
-    
-    const findIndexById = (id) => {
-        let index = -1;
-        for (let i = 0; i < chauffeurs.length; i++) {
-            if (chauffeurs[i].id === id) {
-                index = i;
-                break;
-            }
-        }
-
-        return index;
-    }
-
-    const createId = () => {
-        let id = '';
-        let chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-        for (let i = 0; i < 5; i++) {
-            id += chars.charAt(Math.floor(Math.random() * chars.length));
-        }
-        return id;
-    }
-
-    const onInputChange = (e, name) => {
-        const val = (e.target && e.target.value) || '';
-        let _chauffeur = { ...chauffeur };
-        _chauffeur[`${name}`] = val;
-
-        setChauffeur(_chauffeur);
-    }
-
-    const onInputNumberChange = (e, name) => {
-        const val = e.value || 0;
-        let _chauffeur = { ...chauffeur };
-        _chauffeur[`${name}`] = val;
-
-        setChauffeur(_chauffeur);
-    }
-
-
-    const leftToolbarTemplate = () => {
-        return (
-            <React.Fragment>
-                <div className="my-2">
-                    <Button label="Nouveau" icon="pi pi-plus" className="p-button-success mr-2" loading={loading1} onClick={() => {onLoadingClick1(); openNew()} }/>
-                </div>
-            </React.Fragment>
-        )
-    }
-
-    const rightToolbarTemplate = () => {
-        return (
-            <React.Fragment>
-                <span className="block mt-2 md:mt-0 p-input-icon-left">
-                    <i className="pi pi-search" />
-                    <InputText type="search" placeholder="Recherche..." onInput={(e) => setGlobalFilter(e.target.value)}/>
-                </span>
-            </React.Fragment>
-        )
-    }
-
-    const actionBodyTemplate = (APIData) => {
-        return (
-            <div className="actions">
-                <Button icon="pi pi-pencil" className="p-button-rounded p-button-success mr-2" onClick={() => editChauffeur(APIData)}/>
-                <Button icon="pi pi-trash" className="p-button-rounded p-button-warning mt-2" onClick={() => confirmDeleteChauffeur(APIData)}/>
-            </div>
-        );
-    }
-
-    const chauffeurDialogFooter = (
-        <>
-            <Button label="Retour" icon="pi pi-times" className="p-button-text" onClick={hideDialog} />
-            <Button label="Enregistrer" icon="pi pi-check" className="p-button-text" onClick={saveChauffeur}/>
-        </>
-    );
-
-    const deleteChauffeurDialogFooter = (
-        <>
-            <Button label="No" icon="pi pi-times" className="p-button-text" onClick={hideDeleteChauffeurDialog} />
-            <Button label="Yes" icon="pi pi-check" className="p-button-text" onClick={deleteChauffeur} />
-        </>
-    );
-    const statusBodyTemplate2 = (APIData) => {
-        return <span className={`enum-badge status-${APIData.etatChauffeur.toLowerCase()}`}>{APIData.etatChauffeur}</span>;
-    }
-
-   
     return (
         <div>
             <div className="card">
-                <h5>Liste des chauffeurs</h5>
-                <Toast ref={toast} />
-                <Toolbar className="mb-4" left={leftToolbarTemplate} right={rightToolbarTemplate}></Toolbar>
-                <DataTable value={chauffeurs} rows={itemPerPage} paginator responsiveLayout="scroll"  
-                    loading={loading} globalFilter={globalFilter} emptyMessage="Aucun chauffeur disponible.">
-                    <Column field="id" header="Matricule" sortable style={{width: '2%', textAlign: 'center'}} />
-                    <Column field="nom" header="Nom" sortable style={{width: '20%', fontWeight: 'bold'}} />
-                    <Column field="prenom" header="Prénom" sortable style={{width: '10%', fontWeight: 'bold'}} />
-                    <Column field="telephone" header="Téléphone" sortable style={{width: '10%', fontWeight: 'bold'}} />
-                    <Column field="institution.libelle" header="Institution" sortable style={{width: '5%', fontWeight: 'bold'}} />
-                    <Column field="etatChauffeur" header="Etat chauffeur" sortable body={statusBodyTemplate2} />
-                    
-                    <Column body={actionBodyTemplate} style={{width: '5%', fontWeight: 'bold'}}></Column>
-                </DataTable>
+                <Table {...{setForm, setYesNo}} />
+                <Form {...{form, setYesNo}} />
+                <Confirmation {...yesNo} />
             </div>
-            <div>
-            <Dialog visible={chauffeurDialog} style={{ width: '450px' }} header="Détails d'un chauffeur" modal className="p-fluid" 
-                    footer={chauffeurDialogFooter} onHide={hideDialog}>
-                        
-                        <div className="field">
-                            <label htmlFor="institution">Institution matricule</label>
-                            <InputText id="institution" value={chauffeur.institution.id} onChange={(e) => onInputNumberChange(e, 'institution.id')} required rows={3} cols={20} />
-                        </div>
-                        <div className="field">
-                            <label htmlFor="nom">Nom</label>
-                            <InputText id="nom" value={chauffeur.nom} onChange={(e) => onInputChange(e, 'nom')} required rows={3} cols={10} />
-                        </div>
-                        <div className="field">
-                            <label htmlFor="prenom">Prénom</label>
-                            <InputText id="prenom" value={chauffeur.prenom} onChange={(e) => onInputChange(e, 'prenom')} required autoFocus  />
-                        </div>
-                        <div className="field">
-                            <label htmlFor="sexe">Sexe</label>
-                            <InputText id="sexe" value={chauffeur.sexe} onChange={(e) => onInputChange(e, 'sexe')} required rows={3} cols={20} />
-                        </div>
-                        <div className="field">
-                            <label htmlFor="nationalite">Nationalite</label>
-                            <InputText id="nationalite" value={chauffeur.nationalite} onChange={(e) => onInputChange(e, 'nationalite')} required rows={3} cols={20} />
-                        </div>
-                        <div className="field">
-                            <label htmlFor="etatChauffeur">Etat chauffeur</label>
-                            <InputText id="etatChauffeur" value={chauffeur.etatChauffeur} onChange={(e) => onInputChange(e, 'etatChauffeur')} required rows={3} cols={20} />
-                        </div>
-                        <div className="field">
-                            <label htmlFor="dateNais">Date de naissance</label>
-                            <Calendar id="dateNais" showIcon showButtonBar value={chauffeur.dateNais} onChange={(e) => onInputChange(e, 'dateNais')} required rows={3} cols={20} ></Calendar>
-                        </div>
-                        <div className="field">
-                            <label htmlFor="telephone">Téléphone</label>
-                            <InputText id="telephone" value={chauffeur.telephone} onChange={(e) => onInputNumberChange(e, 'telephone')} required rows={3} cols={20} />
-                        </div>
-                        <div className="field">
-                            <label htmlFor="ville">Ville</label>
-                            <InputText id="ville" value={chauffeur.ville} onChange={(e) => onInputNumberChange(e, 'ville')} required rows={3} cols={20} />
-                        </div>
-                       
-                </Dialog>
-            </div>
-            <div>
-                <Dialog visible={deleteChauffeurDialog} style={{ width: '450px' }} header="Confirm" modal footer={deleteChauffeurDialogFooter} onHide={hideDeleteChauffeurDialog}>
-                    <div className="flex align-items-center justify-content-center">
-                        <i className="pi pi-exclamation-triangle mr-3" style={{ fontSize: '2rem' }} />
-                        {chauffeur && <span>Voulez-vous vraiment supprimer ce chauffeur <b>{chauffeur.nom}</b>?</span>}
-                </div>
-                </Dialog>
-            </div>
+            
         </div>
     );
+}
+
+const Table = (props) => {
+    const [items, setItems] = useState([]);
+    const [globalFilter, setGlobalFilter] = useState(null);
+    const [loading, setLoading] = useState(true);
+    const {setForm, setYesNo} = props;
+
+    useEffect(() => {
+        loadItems();
+    }, []);
+
+    const loadItems = () => {
+        CvaService.get((data, status) => {
+                setLoading(false);
+                if(status) setItems(data);   
+            },
+            {size: itemPerPage}
+        );
+    }
+
+    const openNew = () => {
+        setForm({
+            visible: true,
+            hide: ()=> setForm((prev)=>({...prev, visible: false})),
+            data: null,
+            setData: (data)=> setForm((prev)=>({...prev, data})),
+            callback: ()=> {
+                setLoading(true);
+                loadItems();
+            }
+        });
+    }
+
+    const editItem = (item) => {
+        setForm({
+            visible: true,
+            hide: ()=> setForm((prev)=>({...prev, visible: false})),
+            data: item,
+            setData: (data)=> setForm((prev)=>({...prev, data})),
+            callback: ()=> {
+                setLoading(true);
+                loadItems();
+            }
+        })
+    }
+
+    const deleteItem = (item) => {
+        setYesNo({   
+            visible: true,
+            message : "Confirmez-vous la suppression ?",
+            hide: ()=> setYesNo((prev)=>({...prev, visible: false})),
+            callback : ()=> {
+                setLoading(true);
+                CvaService.delete(item.id, (data, status)=>{
+                    setLoading(false);
+                    loadItems();
+                });
+            },
+        });
+    }
+    
+    return (
+        <>
+            <h5>Liste des chauffeurs</h5>
+            <Toolbar className="mb-4" 
+                left={
+                    <React.Fragment>
+                        <div className="my-2">
+                            <Button label="Nouveau" icon="pi pi-plus" className="p-button-success mr-2" 
+                                onClick={openNew}/>
+                        </div>
+                    </React.Fragment>
+                } 
+                right={
+                    <React.Fragment>
+                        <span className="block mt-2 md:mt-0 p-input-icon-left">
+                            <i className="pi pi-search" />
+                            <InputText type="search" placeholder="Recherche..." onInput={(e) => setGlobalFilter(e.target.value)} />
+                        </span>
+                    </React.Fragment>
+                } />
+            <DataTable dataKey="id" value={items} 
+                paginator rows={itemPerPage}  
+                loading={loading} globalFilter={globalFilter} 
+                responsiveLayout="scroll" emptyMessage="Aucune donnée disponible.">
+                 
+                <Column field="id" header="Identifiant" hidden sortable  />
+                <Column field="matricule" header="Matricule" sortable  />
+                <Column header="Nom" sortable style={{fontWeight: 'bold'}} body={(item)=> item.nom + " " + item.prenom}/>
+                <Column field="telephone" header="Téléphone" sortable />
+                <Column field="institution.libelle" header="Institution" sortable />
+                <Column field="etatChauffeur" header="Etat chauffeur" sortable body={ (item)=> 
+                    <span className={`customer-badge status-${item.etatChauffeur == 'DISPONIBLE'? 'qualified' : 'unqualified'}`}>
+                        {item.etatChauffeur}
+                    </span>
+                } />
+                
+                <Column body={ (selectedItem)=>
+                    <div style={{display: 'flex', flexDirection: 'row-reverse'}}>
+                        <Button icon="pi pi-pencil" className="p-button-rounded p-button-success" onClick={() => editItem(selectedItem)}/>
+                        <span style={{padding: '.3rem'}}/>
+                        <Button icon="pi pi-trash" className="p-button-rounded p-button-warning" onClick={()=> deleteItem(selectedItem)}/>
+                    </div>
+                } />
+            </DataTable>
+        </>
+    );
+}
+
+const Form = (props) => {
+    const {visible, hide, data, setData, callback } = props.form;
+    const {setYesNo} = props;
+    const[loading, setLoading] = useState(false);
+    
+    const bind = (e) => {
+        let type = e.target.type;
+        if(type === 'text' || 'password')  setData({...data, [e.target.id]: e.target.value});
+        if(type === 'checkbox') setData({...data, [e.target.id]: e.target.checked});
+    }
+    
+    const submit = () => {
+        setYesNo(
+            {   
+                visible: true,
+                message : data.id ? "Confirmez-vous la modification ?" : "Confirmez-vous l'ajout ?",
+                hide: ()=> setYesNo((prev)=>({...prev, visible: false})),
+                callback : ()=> {
+                    setLoading(true);
+                    let onResponse = (data, status)=> {
+                            setLoading(false);
+                            if(!status) return;
+                            hide();
+                            callback();
+                    }
+                    if(data.id) CvaService.update(data, onResponse); else CvaService.add(data, onResponse);
+                },
+            }
+        )
+    
+    }
+
+    return(
+        <Dialog visible={visible} style={{ width: '800px' }} header="Détails du chauffeur" modal className="p-fluid" 
+            footer={
+                <>
+                    <Button label="Annuler" icon="pi pi-times" className="p-button-text" onClick={hide}  />
+                    <Button label="Valider" icon="pi pi-check" className="p-button-text" onClick={submit} loading={loading} />
+                </>
+            } 
+            onHide={hide}
+            >  
+                <div className="field" hidden>
+                    <label htmlFor="id">Identifiant</label>
+                    <InputText id="id" value={data && data.id} onChange={bind} />
+                </div>
+                <div className="field">
+                    <label htmlFor="matricule">Matricule</label>
+                    <InputText id="matricule" value={data && data.matricule} onChange={bind} required  />
+                </div>
+                <div className="field">
+                    <label htmlFor="nom">Nom</label>
+                    <InputText id="nom" value={data && data.nom} onChange={bind} required  />
+                </div>
+                <div className="field">
+                    <label htmlFor="prenom">Pénoms</label>
+                    <InputText id="prenom" value={data && data.prenom} onChange={bind} required  />
+                </div>
+                <div className="field">
+                    <label htmlFor="telephone">Téléphone</label>
+                    <InputText id="telephone" value={data && data.telephone} onChange={bind} />
+                </div>
+                {/*
+                <div className="field">
+                    <label htmlFor="institution">Niveau</label>
+                    <InputText id="institution" value={institut.niveau.id} onChange={(e) => onInputChange(e, 'niveau.id')} required autoFocus />
+                </div>
+                 */}
+                {/*
+                <div className="field">
+                    <label htmlFor="etatChauffeur">Niveau</label>
+                    <InputText id="etatChauffeur" value={institut.niveau.id} onChange={(e) => onInputChange(e, 'niveau.id')} required autoFocus />
+                </div>
+                */}
+            </Dialog>
+    )
+}
+
+const Confirmation = (props) => {
+    const {visible, hide, message, callback } = props;
+    
+    return (
+        <Dialog modal visible={visible} onHide={hide} 
+            header="Confirmation" style={{ width: '350px' }}
+            footer={
+                <>
+                    <Button type="button" label="Non" icon="pi pi-times" 
+                        onClick={hide} 
+                        className="p-button-text" />
+                    <Button type="button" label="Oui" icon="pi pi-check" 
+                        onClick={() => { hide(); callback() }} 
+                        className="p-button-text" autoFocus />
+                </>
+            }>
+            <div className="flex align-items-center justify-content-center">
+                <i className="pi pi-exclamation-triangle mr-3" style={{ fontSize: '2rem' }} />
+                <span>{message != null ? message : "Voulez-vous continuer ?"}</span>
+            </div>
+        </Dialog>
+    )
 }
 
 export default Chauffeur;

@@ -107,9 +107,11 @@ const Table = (props) => {
             <DataTable dataKey="id" value={items} 
                 paginator rows={itemPerPage}  
                 loading={loading} globalFilter={globalFilter} 
-                responsiveLayout="scroll" emptyMessage="Aucun niveau disponible.">
-                <Column field="id" header="Matricule" sortable  />
+                responsiveLayout="scroll" emptyMessage="Aucun donnée disponible.">
+
+                <Column field="id" header="Identifiant" hidden sortable  />
                 <Column field="libelle" header="Libellé" sortable style={{fontWeight: 'bold'}} />
+                
                 <Column body={ (selectedItem)=>
                     <div style={{display: 'flex', flexDirection: 'row-reverse'}}>
                         <Button icon="pi pi-pencil" className="p-button-rounded p-button-success" onClick={() => editItem(selectedItem)}/>
@@ -137,7 +139,7 @@ const Form = (props) => {
         setYesNo(
             {   
                 visible: true,
-                message : "Confirmez-vous la modification ?",
+                message : data.id ? "Confirmez-vous la modification ?" : "Confirmez-vous l'ajout ?",
                 hide: ()=> setYesNo((prev)=>({...prev, visible: false})),
                 callback : ()=> {
                     setLoading(true);
@@ -155,7 +157,7 @@ const Form = (props) => {
     }
 
     return(
-        <Dialog visible={visible} style={{ width: '800px' }} header="Détails d'un niveau" modal className="p-fluid" 
+        <Dialog visible={visible} style={{ width: '800px' }} header="Détails du niveau" modal className="p-fluid" 
             footer={
                 <>
                     <Button label="Annuler" icon="pi pi-times" className="p-button-text" onClick={hide}  />
@@ -164,13 +166,13 @@ const Form = (props) => {
             } 
             onHide={hide}
             >  
-                <div className="field">
-                    <label htmlFor="id">Matricule</label>
-                    <InputText id="id" value={data && data.id} onChange={bind} readOnly rows={3} cols={10} />
+                <div className="field" hidden>
+                    <label htmlFor="id">Identifiant</label>
+                    <InputText id="id" value={data && data.id} onChange={bind} /*readOnly*/ />
                 </div>
                 <div className="field">
                     <label htmlFor="libelle">Libellé</label>
-                    <InputText id="libelle" value={data && data.libelle} onChange={bind} required autoFocus  />
+                    <InputText id="libelle" value={data && data.libelle} onChange={bind} required />
                 </div>
         </Dialog>
     )
