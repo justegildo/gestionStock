@@ -74,4 +74,27 @@ export class CommonService {
         alert(JSON.stringify(argCount, null, 2));
     }
     */
+
+    dynamicExport1() {
+        let fs = require('fs');
+        fs.readdir('./someDir', (err, files) => {
+            files.forEach(file => {
+             const module = import('./' + file).then(m => {
+                //m.callSomeMethod();
+             });
+             // or const module = await import('file')
+             });
+           });
+
+    }
+
+    dynamicExport2() {
+        // require all modules on the path and with the pattern defined
+        const req = require.context('./', true, /.js$/);
+
+        const modules = req.keys().map(req);
+
+        // export all modules
+        module.exports = modules;
+    }
 }

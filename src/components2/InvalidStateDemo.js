@@ -10,6 +10,7 @@ import { Dropdown } from 'primereact/dropdown';
 import { MultiSelect } from 'primereact/multiselect';
 import { Password } from 'primereact/password';
 import { CountryService } from '../service2/CountryService';
+import { Message } from 'primereact/message';
 
 const InvalidStateDemo = () => {
     const [countries, setCountries] = useState([]);
@@ -53,7 +54,7 @@ const InvalidStateDemo = () => {
         }
         setFilteredCountries(filtered);
     };
-
+    
     return (
         <div className="grid p-fluid">
             <div className="col">
@@ -63,7 +64,8 @@ const InvalidStateDemo = () => {
                         <div className="col-12 md:col-6">
                             <div className="field">
                                 <label htmlFor="inputtext">InputText</label>
-                                <InputText type="text" id="inputtext" value={value1} onChange={(e) => setValue1(e.target.value)} className="p-invalid" />
+                                <InputText disabled type="text" id="inputtext" value={value1} onChange={(e) => setValue1(e.target.value)} className="p-invalid" />
+                                <small className='p-error'>Username is required</small>
                             </div>
                             <div className="field">
                                 <label htmlFor="autocomplete">AutoComplete</label>

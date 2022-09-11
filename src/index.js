@@ -6,10 +6,12 @@ import { HashRouter } from 'react-router-dom'
 import ScrollToTop from './ScrollToTop';
 import Main from './Main';
 import { AxiosComponent } from './axiosConfig/AxiosComponent';
+import { LocaleComponent } from './localeConfig/LocaleComponent';
 
 ReactDOM.render(
     <HashRouter>
         <AxiosComponent />
+        <LocaleComponent />
         <ScrollToTop>
             <Main></Main>
         </ScrollToTop>
