@@ -6,7 +6,9 @@ import { Toolbar } from 'primereact/toolbar';
 import { InputText } from 'primereact/inputtext';
 import { Dialog } from 'primereact/dialog';
 import InstitutionService from '../services/InstitutionService';
-import { itemPerPage } from '../baseUrls/consts';
+import NiveauService from '../services/NiveauService';
+import { itemPerPage, pageMaxSize } from '../baseUrls/consts';
+import { Dropdown } from 'primereact/dropdown';
 
 const Institution = () => {
     const [yesNo, setYesNo] = useState({});
@@ -116,7 +118,7 @@ const Table = (props) => {
                 <Column field="nomChefParc" header="Chef parc" sortable />
                 
                 <Column body={ (selectedItem)=>
-                    <div className="actions flex flex-row-reverse">
+                    <div className="flex justify-content-end">
                         <Button icon="pi pi-pencil" className="p-button-rounded p-button-success mr-2" onClick={() => editItem(selectedItem)}/>
                         <Button icon="pi pi-trash" className="p-button-rounded p-button-warning mr-2" onClick={()=> deleteItem(selectedItem)}/>
                     </div>
@@ -130,14 +132,37 @@ const Form = (props) => {
     const {visible, hide, data, setData, callback } = props.form;
     const {setYesNo} = props;
     const[loading, setLoading] = useState(false);
+
+    const[niveaux, setNiveaux] = useState([]);
+    const [niveau, setNiveau] = useState(null);
+
+    useEffect(()=> {
+        if(!visible) return;
+        NiveauService.get((data)=> data && setNiveaux(data), {size: pageMaxSize})
+    }, [visible])
     
-    const bind = (e) => {
+    const bind_bak = (e) => {
         let type = e.target.type;
         if(type === 'text' || 'password')  setData({...data, [e.target.id]: e.target.value});
         if(type === 'checkbox') setData({...data, [e.target.id]: e.target.checked});
     }
+
+    const bind = (e) => {
+        if(e.target.value !== undefined) {
+            let value = e.target.value;
+            //value = value.id ? {id: value.id} : value;
+            setData({...data, [e.target.id]: value});
+        }
+        else if(e.checked !== undefined) {
+            setData({...data, [e.target.id]: e.target.checked});
+        }else{
+            alert("Binding fails.")
+        }
+        //alert(JSON.stringify(data))
+    }
     
     const submit = () => {
+        if(!data) return;
         setYesNo(
             {   
                 visible: true,
@@ -170,18 +195,18 @@ const Form = (props) => {
             >  
                 <div className="field" hidden>
                     <label htmlFor="id">Identifiant</label>
-                    <InputText id="id" value={data && data.id} onChange={bind} />
+                    <InputText id="id" value={data?.id} onChange={bind} />
                 </div>
                 <div className="field">
                     <label htmlFor="libelle">Libellé</label>
-                    <InputText id="libelle" value={data && data.libelle} onChange={bind} required  />
+                    <InputText id="libelle" value={data?.libelle} onChange={bind} required  />
                 </div>
-                {/*
                 <div className="field">
                     <label htmlFor="niveau">Niveau</label>
-                    <InputText id="niveau" value={institut.niveau.id} onChange={(e) => onInputChange(e, 'niveau.id')} required autoFocus />
-                </div>
-                 */}
+                    <Dropdown id="niveau" options={niveaux} value={data?.niveau} onChange={bind}
+                        optionLabel="libelle" /*optionValue="id"*/  
+                        placeholder="Aucune sélection"/>
+                 </div>
                 <div className="field">
                     <label htmlFor="contact">Téléphone</label>
                     <InputText id="contact" value={data && data.contact} onChange={bind} />

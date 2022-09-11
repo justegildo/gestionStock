@@ -124,7 +124,7 @@ const Table = (props) => {
                 <Column field="structure.institution.libelle" header="Institution" sortable />
 
                 <Column body={ (selectedItem)=>
-                    <div className="actions flex flex-row-reverse">
+                    <div className="flex justify-content-end">
                         <Button icon="pi pi-pencil" className="p-button-rounded p-button-success mr-2" onClick={() => editItem(selectedItem)}/>
                         <Button icon="pi pi-trash" className="p-button-rounded p-button-warning mr-2" onClick={()=> deleteItem(selectedItem)}/>
                     </div>

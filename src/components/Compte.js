@@ -127,15 +127,15 @@ const Table = (props) => {
 
                 <Column body={ (selectedItem)=>
                     <div style={{display: 'flex', flexDirection: 'row-reverse'}}>
+                        <Button icon="pi pi-trash" className="p-button-rounded p-button-warning" onClick={()=> deleteItem(selectedItem)}/>
+                        <span style={{padding: '.3rem'}}/>
                         <Button icon="pi pi-pencil" className="p-button-rounded p-button-success" onClick={() => editItem(selectedItem)}/>
                         <span style={{padding: '.3rem'}}/>
                         <Button 
                             icon={`pi pi-${selectedItem.inactif ? 'lock-open' : 'lock'}`} 
                             className={`p-button-rounded p-button-${selectedItem.inactif ? 'danger' : 'normal'}`} 
                             tooltip={selectedItem.inactif ? 'Déverouiller' : 'Verrouiller'}
-                            onClick={()=> deleteItem(selectedItem)}/>
-                        <span style={{padding: '.3rem'}}/>
-                        <Button icon="pi pi-trash" className="p-button-rounded p-button-warning" onClick={()=> deleteItem(selectedItem)}/>
+                            onClick={()=> deleteItem(selectedItem)}/>    
                     </div>
                 } />
             </DataTable>
