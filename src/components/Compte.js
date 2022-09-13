@@ -158,19 +158,19 @@ const Table = (props) => {
                         <span style={{padding: '.3rem'}}/>
                         <Button icon="pi pi-pencil" className="p-button-rounded p-button-success" onClick={() => editItem(selectedItem)}/>
                         <span style={{padding: '.3rem'}}/>
-                        {
-                        //<Button icon="pi pi-trash" className="p-button-rounded p-button-warning" onClick={()=> deleteItem(selectedItem)}/>
-                        //<span style={{padding: '.3rem'}}/>
-                        //<Button icon="pi pi-pencil" className="p-button-rounded p-button-success" onClick={() => editItem(selectedItem)}/>
-                        //<span style={{padding: '.3rem'}}/>
-                        //<Button icon="pi pi-pencil" className="p-button-rounded p-button-success" onClick={() => editItem(selectedItem)}/>
-                        //<span style={{padding: '.3rem'}}/> 
-                        //<Button 
-                        //    icon={`pi pi-${selectedItem.inactif ? 'lock-open' : 'lock'}`} 
-                        //    className={`p-button-rounded p-button-${selectedItem.inactif ? 'danger' : 'normal'}`} 
-                        //    tooltip={selectedItem.inactif ? 'Déverouiller' : 'Verrouiller'}
-                        //    onClick={()=> deleteItem(selectedItem)}/> 
-                        }   
+                        {/*
+                        <Button icon="pi pi-trash" className="p-button-rounded p-button-warning" onClick={()=> deleteItem(selectedItem)}/>
+                        <span style={{padding: '.3rem'}}/>
+                        <Button icon="pi pi-pencil" className="p-button-rounded p-button-success" onClick={() => editItem(selectedItem)}/>
+                        <span style={{padding: '.3rem'}}/>
+                        <Button icon="pi pi-pencil" className="p-button-rounded p-button-success" onClick={() => editItem(selectedItem)}/>
+                        <span style={{padding: '.3rem'}}/> 
+                        <Button 
+                            icon={`pi pi-${selectedItem.inactif ? 'lock-open' : 'lock'}`} 
+                            className={`p-button-rounded p-button-${selectedItem.inactif ? 'danger' : 'normal'}`} 
+                            tooltip={selectedItem.inactif ? 'Déverouiller' : 'Verrouiller'}
+                            onClick={()=> deleteItem(selectedItem)}/> 
+                        */}   
                     </div>
                 } />
             </DataTable>
@@ -184,9 +184,16 @@ const Form = (props) => {
     const[loading, setLoading] = useState(false);
     
     const bind = (e) => {
-        let type = e.target.type;
-        if(type === 'text' || 'password')  setData({...data, [e.target.id]: e.target.value});
-        if(type === 'checkbox') setData({...data, [e.target.id]: e.target.checked});
+        if(e.target.value !== undefined) {
+            let value = e.target.value;
+            //value = value.id ? {id: value.id} : value;
+            setData({...data, [e.target.id]: value});
+        }
+        else if(e.checked !== undefined) {
+            setData({...data, [e.target.id]: e.target.checked});
+        }else{
+            alert("Binding fails.")
+        }
     }
     
     const submit = () => {
@@ -273,9 +280,16 @@ const ResetPasswordForm = (props) => {
     }, [visible]);
 
     const bind = (e) => {
-        let type = e.target.type;
-        if(type === 'text' || 'password')  setResetData({...resetData, [e.target.id]: e.target.value});
-        if(type === 'checkbox') setResetData({...resetData, [e.target.id]: e.target.checked});
+        if(e.target.value !== undefined) {
+            let value = e.target.value;
+            //value = value.id ? {id: value.id} : value;
+            setData({...data, [e.target.id]: value});
+        }
+        else if(e.checked !== undefined) {
+            setData({...data, [e.target.id]: e.target.checked});
+        }else{
+            alert("Binding fails.")
+        }
     }
     
     const submit = () => {

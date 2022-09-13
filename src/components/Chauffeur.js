@@ -146,9 +146,16 @@ const Form = (props) => {
     }, [visible])
     
     const bind = (e) => {
-        let type = e.target.type;
-        if(type === 'text' || 'password')  setData({...data, [e.target.id]: e.target.value});
-        if(type === 'checkbox') setData({...data, [e.target.id]: e.target.checked});
+        if(e.target.value !== undefined) {
+            let value = e.target.value;
+            //value = value.id ? {id: value.id} : value;
+            setData({...data, [e.target.id]: value});
+        }
+        else if(e.checked !== undefined) {
+            setData({...data, [e.target.id]: e.target.checked});
+        }else{
+            alert("Binding fails.")
+        }
     }
     
     const submit = () => {

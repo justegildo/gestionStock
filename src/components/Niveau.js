@@ -134,13 +134,27 @@ const Form = (props) => {
     const {visible, hide, data, setData, callback } = props.form;
     const {setYesNo} = props;
     const[loading, setLoading] = useState(false);
-    
-    const bind = (e) => {
+        
+    const bind_bak = (e) => {
         let type = e.target.type;
         if(type === 'text' || 'password')  setData({...data, [e.target.id]: e.target.value});
         if(type === 'checkbox') setData({...data, [e.target.id]: e.target.checked});
     }
-    
+
+    const bind = (e) => {
+        if(e.target.value !== undefined) {
+            let value = e.target.value;
+            //value = value.id ? {id: value.id} : value;
+            setData({...data, [e.target.id]: value});
+        }
+        else if(e.checked !== undefined) {
+            setData({...data, [e.target.id]: e.target.checked});
+        }else{
+            alert("Binding fails.")
+        }
+        //alert(JSON.stringify(data))
+    }
+
     const submit = () => {
         if(!data) return;
 

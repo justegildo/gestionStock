@@ -8,5 +8,5 @@ export default new class StructureService {
     add = (data, callback) => AxiosService.post(apiUrl('/api/crud/structure/add'), data, callback);
     update = (data, callback) => AxiosService.put(apiUrl('/api/crud/structure/update'), data, callback);
     delete = (id, callback) => AxiosService.delete(apiUrl(`/api/crud/structure/delete/${id}`), callback);
-    getByInstitutionId = (id, callback) => AxiosService.get(apiUrl(`/api/crud/structure/institution/${id}`), callback);
+    getByInstitutionId = (id, callback) => AxiosService.get(apiUrl(`/api/crud/structure/institution/${id}`), callback, queryParams);
 }
