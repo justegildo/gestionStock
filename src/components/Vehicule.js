@@ -6,7 +6,10 @@ import { Toolbar } from 'primereact/toolbar';
 import { InputText } from 'primereact/inputtext';
 import { Dialog } from 'primereact/dialog';
 import VehiculeService from '../services/VehiculeService';
-import { itemPerPage } from '../baseUrls/consts';
+import { itemPerPage, pageMaxSize } from '../baseUrls/consts';
+import Institution from './Institution';
+import { Dropdown } from 'primereact/dropdown';
+import InstitutionService from '../services/InstitutionService';
 
 const Vehicule = () => {
     const [yesNo, setYesNo] = useState({});
@@ -136,12 +139,32 @@ const Form = (props) => {
     const {visible, hide, data, setData, callback } = props.form;
     const {setYesNo} = props;
     const[loading, setLoading] = useState(false);
+
+    const [institutions, setInstitutions] = useState([]);
+
+    useEffect(()=> {
+        if(!visible) return;
+        InstitutionService.get((data)=> data && setInstitutions(data), {size: pageMaxSize})
+    }, [visible])
     
     const bind = (e) => {
         let type = e.target.type;
         if(type === 'text' || 'password')  setData({...data, [e.target.id]: e.target.value});
         if(type === 'checkbox') setData({...data, [e.target.id]: e.target.checked});
+
+        if(e.target.value !== undefined) {
+            let value = e.target.value;
+            //value = value.id ? {id: value.id} : value;
+            setData({...data, [e.target.id]: value});
+        }
+        else if(e.checked !== undefined) {
+            setData({...data, [e.target.id]: e.target.checked});
+        }else{
+            alert("Binding fails.")
+        }
+        //alert(JSON.stringify(data))
     }
+    
     
     const submit = () => {
         setYesNo(
@@ -189,6 +212,12 @@ const Form = (props) => {
                 <div className="field">
                     <label htmlFor="modele">Modèle</label>
                     <InputText id="modele" value={data && data.modele} onChange={bind} required  />
+                </div>
+                <div className="field">
+                    <label htmlFor="institution">Institution</label>
+                    <Dropdown id="institution" options={institutions} value={data?.institution} onChange={bind}
+                        optionLabel="libelle" /*optionValue="id"*/  
+                        placeholder="Aucune sélection"/>
                 </div>
                 {/*
                 <div className="field">

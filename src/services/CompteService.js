@@ -8,4 +8,5 @@ export default new class CompteService {
     add = (data, callback) => AxiosService.post(apiUrl('/api/crud/compte/add'), data, callback);
     update = (data, callback) => AxiosService.put(apiUrl('/api/crud/compte/update'), data, callback);
     delete = (id, callback) => AxiosService.delete(apiUrl(`/api/crud/compte/delete/${id}`), callback);
+    resetPassword = (data, callback) => AxiosService.put(apiUrl('/api/crud/compte/reset-password'), data, callback);
 }

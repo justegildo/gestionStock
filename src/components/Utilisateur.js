@@ -6,7 +6,11 @@ import { Toolbar } from 'primereact/toolbar';
 import { InputText } from 'primereact/inputtext';
 import { Dialog } from 'primereact/dialog';
 import UtilisateurService from '../services/UtilisateurService';
-import { itemPerPage } from '../baseUrls/consts';
+import { itemPerPage, pageMaxSize } from '../baseUrls/consts';
+import { Dropdown } from 'primereact/dropdown';
+import StructureService from '../services/StructureService';
+import InstitutionService from '../services/InstitutionService';
+
 
 const Utilisateur = () => {
     const [yesNo, setYesNo] = useState({});
@@ -138,11 +142,24 @@ const Form = (props) => {
     const {visible, hide, data, setData, callback } = props.form;
     const {setYesNo} = props;
     const[loading, setLoading] = useState(false);
+
+    const [structures, setStructures] = useState([]);
+    const [institutions, setInstitutions] = useState([]);
+
+    useEffect(()=> {
+        if(!visible) return;
+        InstitutionService.get((data)=> data && setInstitutions(data), {size: pageMaxSize})
+    }, [visible]);
+        
+    const loadStructures = (institutionId) => {
+        StructureService.getByInstitutionId(institutionId, (data)=> data && setStructures(data));
+    }
     
     const bind = (e) => {
         let type = e.target.type;
         if(type === 'text' || 'password')  setData({...data, [e.target.id]: e.target.value});
         if(type === 'checkbox') setData({...data, [e.target.id]: e.target.checked});
+        
     }
     
     const submit = () => {
@@ -196,24 +213,35 @@ const Form = (props) => {
                     <label htmlFor="telephone">Téléphone</label>
                     <InputText id="telephone" value={data && data.telephone} onChange={bind} required  />
                 </div>
-                {/*
                 <div className="field">
-                    <label htmlFor="typeUtlisateur">Institution</label>
-                    <InputText id="typeUtilisateur" value={institut.niveau.id} onChange={(e) => onInputChange(e, 'niveau.id')} required autoFocus />
+                    <label htmlFor="typeUtilisateur">Type utilisateur</label>
+                    <Dropdown id="typeUtilisateur" 
+                        options={[
+                            {label: 'ADMINISTRATEUR'},
+                            {label: 'RESPONSABLE_STRUCTURE'},
+                            {label: 'SIMPLE_UTILISATEUR '}
+                        ]} 
+                        value={data?.typeUtilisateur} 
+                        onChange={bind}
+                        optionLabel="label"  
+                        placeholder="Aucune sélection"/>
                 </div>
-                 */}
-                 {/*
                 <div className="field">
                     <label htmlFor="institution">Institution</label>
-                    <InputText id="institution" value={institut.niveau.id} onChange={(e) => onInputChange(e, 'niveau.id')} required autoFocus />
+                    <Dropdown id="institution" options={institutions} value={data?.institution} 
+                        onChange={ (e)=> {bind(e); loadStructures(e.value.id)} }
+                        optionLabel="libelle" 
+                        placeholder="Aucune sélection"/>
                 </div>
-                */}
-                {/*
                 <div className="field">
                     <label htmlFor="structure">Structure</label>
-                    <InputText id="structure" value={institut.niveau.id} onChange={(e) => onInputChange(e, 'niveau.id')} required autoFocus />
+                    <Dropdown id="structure" options={structures} value={data?.structure} onChange={bind}
+                        optionLabel="libelle" 
+                        placeholder="Aucune sélection"
+                        //filter endsWith 
+                    />
                 </div>
-                */}
+            
             </Dialog>
     )
 }

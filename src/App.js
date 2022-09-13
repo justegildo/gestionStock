@@ -42,6 +42,9 @@ import DemandeVehicule from './components/DemandeVehicule';
 import Form from './components2/Form';
 import './App.scss';
 import { CommonService } from './util/CommonService';
+import UpdatePassword from './components/UpdatePassword';
+import Traitement from './components/Traitement';
+
 
 const App = (props) => {
     
@@ -56,7 +59,7 @@ const App = (props) => {
             label: 'Operation',
             items: [
                 { label: 'Demande de véhicule', icon: 'pi pi-fw pi-list', to: '/demande' },
-                { label: 'Traitement des demandes', icon: 'pi pi-fw pi-list' },
+                { label: 'Traitement des demandes', icon: 'pi pi-fw pi-list', to: '/traitement' },
                 { label: 'Point du parking', icon: 'pi pi-fw pi-list' },
             ]
         },
@@ -75,7 +78,7 @@ const App = (props) => {
         {
             label: 'Administration',
             items: [
-                { label: 'Modifier mot de passe', icon: 'pi pi-fw pi-cog', to: '/demande' },
+                { label: 'Modifier mot de passe', icon: 'pi pi-fw pi-cog', to: '/update' },
                 { label: 'Réinitialiser mot de passe', icon: 'pi pi-fw pi-list', },
             ] 
         },
@@ -215,6 +218,8 @@ const App = (props) => {
                     <Route path="/chauffeur" component={Chauffeur} />
                     <Route path="/compte" component={Compte} />
                     <Route path="/demande" component={DemandeVehicule} />
+                    <Route path="/update" component={UpdatePassword} />
+                    <Route path="/traitement" component={Traitement} />
                 
                     <Route path="/formlayout" component={FormLayoutDemo} />
                     <Route path="/input" component={InputDemo} />

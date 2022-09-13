@@ -6,7 +6,9 @@ import { Toolbar } from 'primereact/toolbar';
 import { InputText } from 'primereact/inputtext';
 import { Dialog } from 'primereact/dialog';
 import CvaService from '../services/CvaService';
-import { itemPerPage } from '../baseUrls/consts';
+import { itemPerPage, pageMaxSize } from '../baseUrls/consts';
+import { Dropdown } from 'primereact/dropdown';
+import InstitutionService from '../services/InstitutionService';
 
 const Chauffeur = () => {
     const [yesNo, setYesNo] = useState({});
@@ -135,6 +137,13 @@ const Form = (props) => {
     const {visible, hide, data, setData, callback } = props.form;
     const {setYesNo} = props;
     const[loading, setLoading] = useState(false);
+
+    const [institutions, setInstitutions] = useState([]);
+
+    useEffect(()=> {
+        if(!visible) return;
+        InstitutionService.get((data)=> data && setInstitutions(data), {size: pageMaxSize})
+    }, [visible])
     
     const bind = (e) => {
         let type = e.target.type;
@@ -192,6 +201,12 @@ const Form = (props) => {
                 <div className="field">
                     <label htmlFor="telephone">Téléphone</label>
                     <InputText id="telephone" value={data && data.telephone} onChange={bind} />
+                </div>
+                <div className="field">
+                    <label htmlFor="institution">Institution</label>
+                    <Dropdown id="institution" options={institutions} value={data?.institution} onChange={bind}
+                        optionLabel="libelle" /*optionValue="id"*/  
+                        placeholder="Aucune sélection"/>
                 </div>
                 {/*
                 <div className="field">
