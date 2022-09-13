@@ -150,7 +150,7 @@ const Form = (props) => {
         if(!visible) return;
         InstitutionService.get((data)=> data && setInstitutions(data), {size: pageMaxSize})
     }, [visible]);
-        
+
     const loadStructures = (institutionId) => {
         StructureService.getByInstitutionId(institutionId, (data)=> data && setStructures(data));
     }
@@ -176,6 +176,7 @@ const Form = (props) => {
                             hide();
                             callback();
                     }
+                    console.log(JSON.stringify(data, null, 2))
                     if(data.id) UtilisateurService.update(data, onResponse); else UtilisateurService.add(data, onResponse);
                 },
             }
@@ -216,20 +217,15 @@ const Form = (props) => {
                 <div className="field">
                     <label htmlFor="typeUtilisateur">Type utilisateur</label>
                     <Dropdown id="typeUtilisateur" 
-                        options={[
-                            {label: 'ADMINISTRATEUR'},
-                            {label: 'RESPONSABLE_STRUCTURE'},
-                            {label: 'SIMPLE_UTILISATEUR '}
-                        ]} 
+                        options={["ADMINISTRATEUR", "RESPONSABLE_STRUCTURE", "SIMPLE_UTILISATEUR"]} 
                         value={data?.typeUtilisateur} 
                         onChange={bind}
-                        optionLabel="label"  
                         placeholder="Aucune sélection"/>
                 </div>
                 <div className="field">
                     <label htmlFor="institution">Institution</label>
                     <Dropdown id="institution" options={institutions} value={data?.institution} 
-                        onChange={ (e)=> {bind(e); loadStructures(e.value.id)} }
+                        onChange={ (e)=> {loadStructures(e.value.id)} }
                         optionLabel="libelle" 
                         placeholder="Aucune sélection"/>
                 </div>
