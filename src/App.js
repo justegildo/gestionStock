@@ -32,6 +32,7 @@ import Institution2 from './components2/Institution2';
 import TextTable from './components2/TextTable';
 import TestTableIns from './components2/TestTableIns';
 import Suppression from './components2/Suppression';
+import Lieu from './components/Lieu';
 import Niveau from './components/Niveau';
 import Structure from './components/Structure';
 import Utilisateur from './components/Utilisateur';
@@ -69,6 +70,7 @@ const App = (props) => {
                 { label: 'Chauffeur', icon: ' pi pi-fw pi-list', to: '/chauffeur' },
                 { label: 'Compte', icon: ' pi pi-fw pi-list', to: '/compte' },
                 { label: 'Institution', icon: 'pi pi-fw pi-list', to: '/institution' },
+                { label: 'Lieu', icon: ' pi pi-fw pi-list', to: '/lieu' },
                 { label: 'Niveau', icon: 'pi pi-fw pi-list', to: '/niveau' },
                 { label: 'Structure', icon: 'pi pi-fw pi-list', to: '/structure' },
                 { label: 'Utilisateur', icon: 'pi pi-fw pi-list', to: '/utilisateur' },
@@ -211,6 +213,7 @@ const App = (props) => {
             <div className="layout-main-container">
                 <div className="layout-main">
                     <Route path="/dashboard" exact render={() => <Dashboard colorMode={props.layoutColorMode} location={props.location} />} />
+                    <Route path="/lieu" component={Lieu} />
                     <Route path="/niveau" component={Niveau} />
                     <Route path="/structure" component={Structure} />
                     <Route path="/utilisateur" component={Utilisateur} />
