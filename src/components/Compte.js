@@ -6,8 +6,11 @@ import { Toolbar } from 'primereact/toolbar';
 import { InputText } from 'primereact/inputtext';
 import { Dialog } from 'primereact/dialog';
 import CompteService from '../services/CompteService';
-import { itemPerPage } from '../baseUrls/consts';
+import { itemPerPage, pageMaxSize } from '../baseUrls/consts';
 import { Menu } from 'primereact/menu';
+import { Dropdown } from 'primereact/dropdown';
+import InstitutionService from '../services/InstitutionService';
+import StructureService from '../services/StructureService';
 
 const Compte = () => {
     const [yesNo, setYesNo] = useState({});
@@ -61,6 +64,7 @@ const Table = (props) => {
         });
     }
 
+    /*
     const editItem = (item) => {
         setForm({
             visible: true,
@@ -73,6 +77,7 @@ const Table = (props) => {
             }
         })
     }
+    */
 
     const deleteItem = (item) => {
         setYesNo({   
@@ -82,15 +87,39 @@ const Table = (props) => {
             callback : ()=> {
                 setLoading(true);
                 CompteService.delete(item.id, (_data, _status)=>{
-                    setLoading(false);
+                    //setLoading(false);
                     loadItems();
                 });
             },
         });
     }
 
-    const enableOrDisableAccount = (_item, _status) => {
+    const disableAccount = (account) => {
+        setYesNo({   
+            visible: true,
+            message : "Voulez-vous vraiment bloquer ce compte ?",
+            hide: ()=> setYesNo((prev)=>({...prev, visible: false})),
+            callback : ()=> {
+                setLoading(true)
+                CompteService.disableAccount({utilisateurId: account.id}, (response, status)=> {
+                    loadItems();
+                });
+            },
+        });
+    }
 
+    const enableAccount = (account) => {
+        setYesNo({   
+            visible: true,
+            message : "Voulez-vous vraiment débloquer ce compte ?",
+            hide: ()=> setYesNo((prev)=>({...prev, visible: false})),
+            callback : ()=> {
+                setLoading(true)
+                CompteService.enableAccount({utilisateurId: account.id}, (response, status)=> {
+                    loadItems();
+                });
+            },
+        });
     }
 
     const resetPassword = (item) => {
@@ -141,7 +170,7 @@ const Table = (props) => {
                 responsiveLayout="scroll" emptyMessage="Aucune donnée disponible.">
 
                 <Column field="id" header="Identifiant" sortable  hidden />
-                <Column field="matricule" header="Matricule" sortable />
+                {/*<Column field="matricule" header="Matricule" sortable />*/}
                 <Column field="login" header="Nom de compte" sortable style={{fontWeight: 'bold'}} />
                 <Column header="Nom et prénoms" sortable body={(item)=> item.nom + " " + item.prenom}/>
                 <Column field="structure.libelle" header="Structure" sortable />
@@ -152,27 +181,31 @@ const Table = (props) => {
                     </span>
                 } />
                 <Column body={ (selectedItem)=>
-                    <div style={{display: 'flex', flexDirection: 'row-reverse'}}>
-                        <Button icon="pi pi-ellipsis-v" className="p-button-rounded p-button-warning" 
-                            onClick={(e)=> {setSelectedMenuItem(selectedItem); menu.current.toggle(e)} }/>
-                        <span style={{padding: '.3rem'}}/>
-                        <Button icon="pi pi-pencil" className="p-button-rounded p-button-success" onClick={() => editItem(selectedItem)}/>
-                        <span style={{padding: '.3rem'}}/>
-                        {/*
-                        <Button icon="pi pi-trash" className="p-button-rounded p-button-warning" onClick={()=> deleteItem(selectedItem)}/>
-                        <span style={{padding: '.3rem'}}/>
-                        <Button icon="pi pi-pencil" className="p-button-rounded p-button-success" onClick={() => editItem(selectedItem)}/>
-                        <span style={{padding: '.3rem'}}/>
-                        <Button icon="pi pi-pencil" className="p-button-rounded p-button-success" onClick={() => editItem(selectedItem)}/>
-                        <span style={{padding: '.3rem'}}/> 
+                    <div className='flex justify-content-end'>
                         <Button 
                             icon={`pi pi-${selectedItem.inactif ? 'lock-open' : 'lock'}`} 
-                            className={`p-button-rounded p-button-${selectedItem.inactif ? 'danger' : 'normal'}`} 
+                            className={`p-button-rounded p-button-${selectedItem.inactif ? 'danger' : 'normal'} mr-2`} 
                             tooltip={selectedItem.inactif ? 'Déverouiller' : 'Verrouiller'}
-                            onClick={()=> deleteItem(selectedItem)}/> 
-                        */}   
+                            onClick={()=> selectedItem.inactif ? enableAccount(selectedItem) : disableAccount(selectedItem)}/>
+                        <Button icon="pi pi-ellipsis-v" className="p-button-rounded p-button-warning mr-2" 
+                            onClick={(e)=> {setSelectedMenuItem(selectedItem); menu.current.toggle(e)} }/>
                     </div>
                 } />
+                {/*
+                        <div style={{display: 'flex flex-', flexDirection: 'row-reverse'}}>    
+                            <Button icon="pi pi-trash" className="p-button-rounded p-button-warning" onClick={()=> deleteItem(selectedItem)}/>
+                            <span style={{padding: '.3rem'}}/>
+                            <Button icon="pi pi-pencil" className="p-button-rounded p-button-success" onClick={() => editItem(selectedItem)}/>
+                            <span style={{padding: '.3rem'}}/>
+                            <Button icon="pi pi-pencil" className="p-button-rounded p-button-success" onClick={() => editItem(selectedItem)}/>
+                            <span style={{padding: '.3rem'}}/> 
+                            <Button 
+                                icon={`pi pi-${selectedItem.inactif ? 'lock-open' : 'lock'}`} 
+                                className={`p-button-rounded p-button-${selectedItem.inactif ? 'danger' : 'normal'}`} 
+                                tooltip={selectedItem.inactif ? 'Déverouiller' : 'Verrouiller'}
+                                onClick={()=> deleteItem(selectedItem)}/> 
+                        </div>
+                    */} 
             </DataTable>
         </>
     );
@@ -182,11 +215,26 @@ const Form = (props) => {
     const {visible, hide, data, setData, callback } = props.form;
     const {setYesNo} = props;
     const[loading, setLoading] = useState(false);
+
+    const [structures, setStructures] = useState([]);
+    const [institutions, setInstitutions] = useState([]);
+
+    useEffect(()=> {
+        if(!visible) return;
+        loadInstitutions();
+    }, [visible]);
+
+    const loadInstitutions = () => {
+        InstitutionService.get((data)=> data && setInstitutions(data), {size: pageMaxSize})
+    }
+
+    const loadStructures = (institutionId) => {
+        StructureService.getByInstitutionId(institutionId, (data)=> data && setStructures(data), {size: pageMaxSize});
+    }
     
     const bind = (e) => {
         if(e.target.value !== undefined) {
             let value = e.target.value;
-            //value = value.id ? {id: value.id} : value;
             setData({...data, [e.target.id]: value});
         }
         else if(e.checked !== undefined) {
@@ -227,42 +275,44 @@ const Form = (props) => {
             } 
             onHide={hide}
             >  
-                {data 
-                    ?
-                    <>
-                        <div className="field" hidden>
-                            <label htmlFor="id">Etat du compte</label>
-                            <InputText id="id" value={data.id} onChange={bind} />
-                        </div>
-                        <div className="field">
-                            <label htmlFor="password">Mot de passe</label>
-                            <InputText id="password" type="password" onChange={bind} required />
-                        </div>
-                    </>
-                    :
-                    <>
-                        <div className="field">
-                            <label htmlFor="institution">Institution</label>
-                            <InputText id="institution" value={1} onChange={bind} />
-                        </div>
-                        <div className="field">
-                            <label htmlFor="structure">Structure</label>
-                            <InputText id="structure" value={1} onChange={bind} />
-                        </div>
-                        <div className="field">
-                            <label htmlFor="utilisateur">Utilisateur</label>
-                            <InputText id="utilisateur" value={1} onChange={bind} />
-                        </div>
-                        <div className="field">
-                            <label htmlFor="login">Nom de compte</label>
-                            <InputText id="login" value={data && data.login} onChange={bind} required />
-                        </div>
-                        <div className="field" hidden>
-                            <label htmlFor="password">Mot de passe</label>
-                            <InputText id="password" type="password" onChange={bind}  required />
-                        </div>       
-                    </>
-                }   
+                <>
+                    <div className="field">
+                        <label htmlFor="institution">Institution</label>
+                        <Dropdown id="institution" options={institutions} /*value={data?.institution}*/ 
+                            onChange={ (e)=> {loadStructures(e.value.id)} }
+                            optionLabel="libelle" 
+                            placeholder="Aucune sélection"/>
+                    </div>
+                    <div className="field">
+                        <label htmlFor="structure">Structure</label>
+                        <Dropdown id="structure" options={structures} /*value={data?.structure}*/ onChange={bind}
+                            optionLabel="libelle" 
+                            placeholder="Aucune sélection"
+                            //filter endsWith 
+                        />
+                    </div>
+
+                    <div className="field">
+                        <label htmlFor="institution">Institution</label>
+                        <InputText id="institution" value={1} onChange={bind} />
+                    </div>
+                    <div className="field">
+                        <label htmlFor="structure">Structure</label>
+                        <InputText id="structure" value={1} onChange={bind} />
+                    </div>
+                    <div className="field">
+                        <label htmlFor="utilisateur">Utilisateur</label>
+                        <InputText id="utilisateur" value={1} onChange={bind} />
+                    </div>
+                    <div className="field">
+                        <label htmlFor="login">Nom de compte</label>
+                        <InputText id="login" value={data && data.login} onChange={bind} required />
+                    </div>
+                    <div className="field" hidden>
+                        <label htmlFor="password">Mot de passe</label>
+                        <InputText id="password" type="password" onChange={bind}  required />
+                    </div>       
+                </>
             </Dialog>
     )
 }
@@ -282,7 +332,6 @@ const ResetPasswordForm = (props) => {
     const bind = (e) => {
         if(e.target.value !== undefined) {
             let value = e.target.value;
-            //value = value.id ? {id: value.id} : value;
             setData({...data, [e.target.id]: value});
         }
         else if(e.checked !== undefined) {

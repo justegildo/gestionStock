@@ -162,7 +162,6 @@ const Form = (props) => {
     const bind = (e) => {
         if(e.target.value !== undefined) {
             let value = e.target.value;
-            //value = value.id ? {id: value.id} : value;
             setData({...data, [e.target.id]: value});
         }
         else if(e.checked !== undefined) {
