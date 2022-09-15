@@ -210,7 +210,7 @@ const Form = (props) => {
                 </div>
                 <div className="field">
                     <label htmlFor="matricule">Matricule</label>
-                    <InputText id="matricule" value={data && data.id} onChange={bind} required  />
+                    <InputText id="matricule" value={data && data.matricule} onChange={bind} required  />
                 </div>
                 <div className="field">
                     <label htmlFor="nom">Nom</label>

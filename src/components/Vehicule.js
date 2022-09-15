@@ -207,6 +207,10 @@ const Form = (props) => {
                     <InputText id="modele" value={data && data.modele} onChange={bind} required  />
                 </div>
                 <div className="field">
+                    <label htmlFor="nbrePlace">Nombre de places</label>
+                    <InputText id="nbrePlace" value={data && data.nbrePlace} onChange={bind} required  />
+                </div>
+                <div className="field">
                     <label htmlFor="institution">Institution</label>
                     <Dropdown id="institution" options={institutions} value={data?.institution} onChange={bind}
                         optionLabel="libelle" /*optionValue="id"*/  

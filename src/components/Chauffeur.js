@@ -189,8 +189,8 @@ const Form = (props) => {
             onHide={hide}
             >  
                 <div className="field" hidden>
-                    <label htmlFor="id">Identifiant</label>
-                    <InputText id="id" value={data && data.id} onChange={bind} />
+                    <label htmlFor="matricule">Matricule</label>
+                    <InputText id="matricule" value={data && data.matricule} onChange={bind} />
                 </div>
                 <div className="field">
                     <label htmlFor="matricule">Matricule</label>
