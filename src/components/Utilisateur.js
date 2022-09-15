@@ -118,9 +118,10 @@ const Table = (props) => {
                 <Column header="Nom" sortable style={{fontWeight: 'bold'}} body={(item)=> item.nom + " " + item.prenom}/>
                 <Column field="telephone" header="Téléphone" sortable />
                 <Column field="typeUtilisateur" header="Type utilisateur" sortable body={ (item)=> 
-                    <span className={`customer-badge status-${item.typeUtilisateur == 'ADMINISTRATEUR'
+                    <span className={`customer-badge status-${item.typeUtilisateur === 'ADMINISTRATEUR'
                             ? 'new' 
-                            : (item.typeUtilisateur =='RESPONSABLE_STRUCTURE' ? 'renewal' : 'qualified')}`}>
+                            : (item.typeUtilisateur ==='RESPONSABLE_STRUCTURE' ? 'renewal' 
+                            : item.typeUtilisateur === 'ROLE_CHEF_PARC' ? 'proposal' : 'qualified' )}`}>
                         {item.typeUtilisateur}
                     </span>
                 } />
@@ -226,7 +227,7 @@ const Form = (props) => {
                 <div className="field">
                     <label htmlFor="typeUtilisateur">Type utilisateur</label>
                     <Dropdown id="typeUtilisateur" 
-                        options={["ADMINISTRATEUR", "RESPONSABLE_STRUCTURE", "SIMPLE_UTILISATEUR"]} 
+                        options={["ADMINISTRATEUR", "RESPONSABLE_STRUCTURE", "SIMPLE_UTILISATEUR", "ROLE_CHEF_PARC"]} 
                         value={data?.typeUtilisateur} 
                         onChange={bind}
                         placeholder="Aucune sélection"/>

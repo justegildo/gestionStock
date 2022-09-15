@@ -129,7 +129,15 @@ const Table = (props) => {
                     body={(item)=> new Date(item.dateDebutActivite).toLocaleDateString()} />
                 <Column field="dateFinActivite" header="Date fin de l'activité" sortable 
                     body={(item)=> new Date(item.dateFinActivite).toLocaleDateString()}/>
-                
+
+                <Column field="etat" header="Etat de la demande" sortable body={ (item)=> 
+                    <span className={`customer-badge status-${item.etat === 'ACCEPTEE'
+                            ? 'qualified' 
+                            : (item.etat === 'APPROUVEE' ? 'new' 
+                            : item.etat === 'REJETEE' ? 'unqualified' :  'proposal')}`}>
+                        {item.etat}
+                    </span>
+                } />
                 <Column body={ (selectedItem)=>
                     <div className="flex justify-content-end">
                         <Button icon="pi pi-pencil" className="p-button-rounded p-button-success mr-2" onClick={() => editItem(selectedItem)}/>

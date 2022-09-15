@@ -8,5 +8,6 @@ export default new class UtilisateurService {
     add = (data, callback) => AxiosService.post(apiUrl('/api/crud/utilisateur/add'), data, callback);
     update = (data, callback) => AxiosService.put(apiUrl('/api/crud/utilisateur/update'), data, callback);
     delete = (id, callback) => AxiosService.delete(apiUrl(`/api/crud/utilisateur/delete/${id}`), callback);
+    getByStructureId = (id, callback) => AxiosService.get(apiUrl(`/api/crud/utilisateur/structure/${id}`), callback);
 
 }
