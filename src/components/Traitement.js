@@ -167,6 +167,14 @@ const ChefParcForm = (props) => {
         }
     }
 
+    const addChoice = (e)=>{
+        const data2 = data;
+       console.log(JSON.stringify(data2, null, 2));
+       //alert(data.lieu.libelle)
+
+        
+    }
+
     const goNext = (e) => {
         if (activeIndex !== 1) {
             setActiveIndex(1);
@@ -265,7 +273,6 @@ const ChefParcForm = (props) => {
         CvaService.get((data)=> data && setChauffeurs(data), {size: pageMaxSize})
     }
 
-    const [selectVehi, setSelectVehi] = useState(null);
     const step2Form = (
         <div className='p-fluid'>
            <div className="field">
@@ -273,7 +280,7 @@ const ChefParcForm = (props) => {
                 <MultiSelect id="immatriculation" options={vehicules} value={data?.immatriculation} 
                     onChange={bind}
                     optionLabel="immatriculation" 
-                    placeholder="Aucune option selectionéé" display="chip"
+                    placeholder="Aucune option selectionéé" 
                     />
             </div>
             <div className="field">
@@ -281,18 +288,19 @@ const ChefParcForm = (props) => {
                 <MultiSelect id="nom" options={chauffeurs} value={data?.nom} 
                     onChange={bind}
                     optionLabel={(data)=> data.nom + " " + data.prenom}
-                    placeholder="Aucune option selectionéé" display="chip"
+                    placeholder="Aucune option selectionéé" 
                     />
             </div>
-            {/*<DataTable dataKey="id" value={vehicules} responsiveLayout="scroll" 
-                selection={selectVehi} onSelectionChange={bind}
-                selectionPageOnly paginator rows={5}>
-                <Column selectionMode="multiple" headerStyle={{ width: '3em' }}></Column>
+            <div className="field">
+                <Button label="Ajouter" className="mr-2 mb-2" onClick={addChoice}/>
+            </div>
+            <DataTable dataKey="id" value={vehicules} responsiveLayout="scroll" 
+                paginator rows={5}>
                 <Column field="immatriculation" header="Immatriculation"></Column>
                 <Column field="marque" header="Marque"></Column>
                 <Column field="nbrePlace" header="Nombre de places"></Column>   
-    </DataTable>*/}
-            <Button label="Ajouter" className="mr-2 mb-2" />
+            </DataTable>
+            
         </div>
     )
 
