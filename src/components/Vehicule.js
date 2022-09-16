@@ -117,6 +117,7 @@ const Table = (props) => {
                 {/*<Column field="libelle" header="Libellé" sortable />*/}
                 <Column field="marque" header="Marque" sortable />
                 <Column field="modele" header="Modèle" sortable />
+                <Column field="nbrePlace" header="Nombre de places" sortable />
                 <Column field="etatVehicule" header="Etat" sortable body={ (item)=> 
                     <span className={`customer-badge status-${item.etatVehicule == 'DISPONIBLE'? 'qualified' : 'unqualified'}`}>
                         {item.etatVehicule}

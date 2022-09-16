@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Button } from 'primereact/button';
 import { DataTable } from 'primereact/datatable';
 import { Column } from 'primereact/column';
@@ -15,10 +15,6 @@ import { TabView, TabPanel } from 'primereact/tabview';
 import { Steps } from 'primereact/steps';
 import { Toast } from 'primereact/toast'
 import { Route, Switch, useHistory } from 'react-router-dom';
-import { InputTextarea } from 'primereact/inputtextarea';
-import { MultiSelect } from 'primereact/multiselect';
-import VehiculeService from '../services/VehiculeService';
-import CvaService from '../services/CvaService';
 
 
 const Traitement = () => {
@@ -174,12 +170,6 @@ const ChefParcForm = (props) => {
         }
     }
 
-    const goNext2 = (e)=>{
-        if (activeIndex !== 1) {
-            setActiveIndex(1);
-            history.replace("/traitement/step3")
-        }
-    }
     const submit = (e) => {
         goNext();
 
@@ -215,92 +205,39 @@ const ChefParcForm = (props) => {
                 <InputText id="id" value={data && data.id} onChange={bind} />
             </div>
             <div className="field" >
-                <label htmlFor="dateDemande">Date de demande</label>
-                <InputText id="dateDemande" value={data && data.dateDemande} 
-                    onChange={bind} mask="99/99/9999"  required readOnly/>
-            </div>
-            <div className="field" >
                 <label htmlFor="lieu">Lieu</label>
-                <InputText id="lieu" value={data?.lieu.libelle} 
-                    onChange={bind}
-                    readOnly 
-                    />
+                <Dropdown id="lieu" options={lieux} value={data?.lieu} onChange={bind}
+                    optionLabel="libelle" /*optionValue="id"*/
+                    placeholder="Aucune sélection" />
+            </div>
+            <div className="field" hidden>
+                <label htmlFor="dateDemande">Date de demande</label>
+                <Calendar id="dateDemande" value={data && data.dateDemande} onChange={bind} mask="99/99/9999" required />
             </div>
             <div className="field">
                 <label htmlFor="nbreParticipant">Nombre de participants</label>
-                <InputNumber id="nbreParticipant" value={data && data.nbreParticipant} 
-                    onValueChange={bind} required readOnly />
+                <InputNumber id="nbreParticipant" value={data && data.nbreParticipant} onValueChange={bind} required />
             </div>
             <div className="field">
                 <label htmlFor="nbreVehicule">Nombre de véhicules</label>
-                <InputNumber id="nbreVehicule" value={data && data.nbreVehicule} 
-                    onValueChange={bind} required readOnly/>
+                <InputNumber id="nbreVehicule" value={data && data.nbreVehicule} onValueChange={bind} required />
             </div>
             <div className="field">
                 <label htmlFor="dateDebutActivite">Date début de l'activité</label>
-                <InputText id="dateDebutActivite" value={data && data.dateDebutActivite} 
-                    onChange={bind} mask="99/99/9999" required readOnly/>
+                <Calendar id="dateDebutActivite" value={data && data.dateDebutActivite} onChange={bind} mask="99/99/9999" required />
             </div>
             <div className="field">
                 <label htmlFor="dateFinActivite">Date fin de l'activité</label>
-                <InputText id="dateFinActivite" value={data && data.dateFinActivite} 
-                    onChange={bind} mask="99/99/9999" required readOnly/>
+                <Calendar id="dateFinActivite" value={data && data.dateFinActivite} onChange={bind} mask="99/99/9999" required />
             </div>
         </div>
     )
 
-    const [vehicules, setVehicules] = useState([]);
-    const [chauffeurs, setChauffeurs] = useState([]);
-
-    useEffect(()=> {
-        if(!visible) return;
-        loadVehicules();
-        loadChauffeurs()
-    }, [visible]);
-
-    const loadVehicules = () => {
-        VehiculeService.get((data)=> data && setVehicules(data), {size: pageMaxSize})
-    }
-    const loadChauffeurs = ()=>{
-        CvaService.get((data)=> data && setChauffeurs(data), {size: pageMaxSize})
-    }
-
-    const [selectVehi, setSelectVehi] = useState(null);
     const step2Form = (
         <div className='p-fluid'>
            <div className="field">
-                <label htmlFor="immatriculation">Véhicules</label>
-                <MultiSelect id="immatriculation" options={vehicules} value={data?.immatriculation} 
-                    onChange={bind}
-                    optionLabel="immatriculation" 
-                    placeholder="Aucune option selectionéé" display="chip"
-                    />
-            </div>
-            <div className="field">
-                <label htmlFor="chauffeur">Chauffeurs</label>
-                <MultiSelect id="nom" options={chauffeurs} value={data?.nom} 
-                    onChange={bind}
-                    optionLabel={(data)=> data.nom + " " + data.prenom}
-                    placeholder="Aucune option selectionéé" display="chip"
-                    />
-            </div>
-            {/*<DataTable dataKey="id" value={vehicules} responsiveLayout="scroll" 
-                selection={selectVehi} onSelectionChange={bind}
-                selectionPageOnly paginator rows={5}>
-                <Column selectionMode="multiple" headerStyle={{ width: '3em' }}></Column>
-                <Column field="immatriculation" header="Immatriculation"></Column>
-                <Column field="marque" header="Marque"></Column>
-                <Column field="nbrePlace" header="Nombre de places"></Column>   
-    </DataTable>*/}
-            <Button label="Ajouter" className="mr-2 mb-2" />
-        </div>
-    )
-
-    const step3Form = (
-        <div className='p-fluid'>
-            <div className="field" >
-                <label htmlFor="observation">Observation</label>
-                <InputTextarea id="observation" onValueChange={bind} autoResize required />
+                <label htmlFor="dateFinActivite">Date fin de l'activité</label>
+                <Calendar id="dateFinActivite" value={data && data.dateFinActivite} onChange={bind} mask="99/99/9999" required />
             </div>
         </div>
     )
@@ -317,9 +254,6 @@ const ChefParcForm = (props) => {
             footer={
                 <>
                     <Button label="Annuler" icon="pi pi-times" className="p-button-text" onClick={hide} />
-                    <Button label="Rejeter" icon="pi pi-ban" className="p-button-danger p-button-text" 
-                        onClick={goNext2}
-                        />
                     <Button className="p-button-text" loading={loading}
                         label={activeIndex === 1 ? "Terminer" : "Continuer"}
                         icon={`pi pi-${activeIndex === 1 ? "check" : "angle-right"}`}
@@ -341,8 +275,7 @@ const ChefParcForm = (props) => {
                     component={() => <div className='mt-5'>{step1Form}</div>} />
                 <Route path={'/traitement/step2'}
                     component={() => <div className='mt-5'>{step2Form}</div>} />
-                <Route path={'/traitement/step3'}
-                    component={() => <div className='mt-5'>{step3Form}</div>} />
+                
         </Dialog>
     )
 }
