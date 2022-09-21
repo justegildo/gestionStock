@@ -11,7 +11,6 @@ import { Menu } from 'primereact/menu';
 import { Dropdown } from 'primereact/dropdown';
 import InstitutionService from '../services/InstitutionService';
 import StructureService from '../services/StructureService';
-import UtilisateurService from '../services/UtilisateurService'
 
 const Compte = () => {
     const [yesNo, setYesNo] = useState({});
@@ -219,7 +218,6 @@ const Form = (props) => {
 
     const [structures, setStructures] = useState([]);
     const [institutions, setInstitutions] = useState([]);
-    const [utilisateurs, setUtilisateurs] = useState([]);
 
     useEffect(()=> {
         if(!visible) return;
@@ -233,11 +231,7 @@ const Form = (props) => {
     const loadStructures = (institutionId) => {
         StructureService.getByInstitutionId(institutionId, (data)=> data && setStructures(data), {size: pageMaxSize});
     }
-
-    const loadUtilisateurs =(structureId) =>{
-        UtilisateurService.getByStructureId(structureId, (data)=> data && setUtilisateurs(data), {size: pageMaxSize})
-    }
-
+    
     const bind = (e) => {
         if(e.target.value !== undefined) {
             let value = e.target.value;
@@ -265,7 +259,6 @@ const Form = (props) => {
                             callback();
                     }
                     if(data.id) CompteService.update(data, onResponse); else CompteService.add(data, onResponse);
-                    console.log(data.utilisateur.id)
                 },
             }
         )
@@ -285,38 +278,40 @@ const Form = (props) => {
                 <>
                     <div className="field">
                         <label htmlFor="institution">Institution</label>
-                        <Dropdown id="institution" options={institutions} 
-                            value={data?.institution}
+                        <Dropdown id="institution" options={institutions} /*value={data?.institution}*/ 
                             onChange={ (e)=> {loadStructures(e.value.id)} }
                             optionLabel="libelle" 
                             placeholder="Aucune sélection"/>
                     </div>
                     <div className="field">
                         <label htmlFor="structure">Structure</label>
-                        <Dropdown id="structure" options={structures} 
-                            value={data?.structure} 
-                            onChange={(e)=> {loadUtilisateurs(e.value.id)}}
+                        <Dropdown id="structure" options={structures} /*value={data?.structure}*/ onChange={bind}
                             optionLabel="libelle" 
                             placeholder="Aucune sélection"
                             //filter endsWith 
                         />
                     </div>
+
+                    <div className="field">
+                        <label htmlFor="institution">Institution</label>
+                        <InputText id="institution" value={1} onChange={bind} />
+                    </div>
+                    <div className="field">
+                        <label htmlFor="structure">Structure</label>
+                        <InputText id="structure" value={1} onChange={bind} />
+                    </div>
                     <div className="field">
                         <label htmlFor="utilisateur">Utilisateur</label>
-                        <Dropdown id="utilisateur" options={utilisateurs}
-                            value={data?.utilisateur}
-                            onChange={bind} 
-                            optionLabel={"prenom"} 
-                            placeholder="Aucune sélection" />
+                        <InputText id="utilisateur" value={1} onChange={bind} />
                     </div>
                     <div className="field">
                         <label htmlFor="login">Nom de compte</label>
-                        <InputText id="login" value={data && data.username} onChange={bind} required />
+                        <InputText id="login" value={data && data.login} onChange={bind} required />
                     </div>
-                    <div className="field" >
+                    <div className="field" hidden>
                         <label htmlFor="password">Mot de passe</label>
                         <InputText id="password" type="password" onChange={bind}  required />
-                    </div>      
+                    </div>       
                 </>
             </Dialog>
     )

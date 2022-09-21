@@ -171,8 +171,6 @@ const ChefParcForm = (props) => {
         const data2 = data;
        console.log(JSON.stringify(data2, null, 2));
        //alert(data.lieu.libelle)
-
-        
     }
 
     const goNext = (e) => {
@@ -295,10 +293,11 @@ const ChefParcForm = (props) => {
                 <Button label="Ajouter" className="mr-2 mb-2" onClick={addChoice}/>
             </div>
             <DataTable dataKey="id" value={vehicules} responsiveLayout="scroll" 
-                paginator rows={5}>
+                paginator rows={10}>
                 <Column field="immatriculation" header="Immatriculation"></Column>
                 <Column field="marque" header="Marque"></Column>
-                <Column field="nbrePlace" header="Nombre de places"></Column>   
+                <Column field="nbrePlace" header="Nombre de places"></Column>
+                <Column field="" header="Chauffeurs" ></Column>   
             </DataTable>
             
         </div>
@@ -325,8 +324,9 @@ const ChefParcForm = (props) => {
             footer={
                 <>
                     <Button label="Annuler" icon="pi pi-times" className="p-button-text" onClick={hide} />
-                    <Button label="Rejeter" icon="pi pi-ban" className="p-button-danger p-button-text" 
-                        onClick={goNext2}
+                    <Button icon="pi pi-ban" className="p-button-danger p-button-text" 
+                        label={ "Rejeter" }
+                        onClick={goNext2}  
                         />
                     <Button className="p-button-text" loading={loading}
                         label={activeIndex === 1 ? "Terminer" : "Continuer"}

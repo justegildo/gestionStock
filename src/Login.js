@@ -76,7 +76,7 @@ function Login(props) {
                         </div>
                     </div>
                     
-                    <Button autoFocus label="Se connecter" icon="pi pi-user" className="w-full" loading={loading} onClick={authenticate}/>
+                    <Button autoFocus label="Se connecter" icon="pi pi-user" iconPos="right" className="w-full" loading={loading} onClick={authenticate}/>
                     {/* <Link to="/dashboard"><Button label="Sign In" icon="pi pi-user" className="w-full" onClick={authenticate}/></Link> */}
                 </div>
 
