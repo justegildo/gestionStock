@@ -220,6 +220,7 @@ const Form = (props) => {
     const [structures, setStructures] = useState([]);
     const [institutions, setInstitutions] = useState([]);
     const [utilisateurs, setUtilisateurs] = useState([]);
+    const [selectedUtilisateurId, setSelectedUtilisateurId] = useState();
 
     useEffect(()=> {
         if(!visible) return;
@@ -249,6 +250,11 @@ const Form = (props) => {
             alert("Binding fails.")
         }
     }
+
+    const bindUtilisateurDropDown = (e) => {
+        setSelectedUtilisateurId(e.value);
+        setData({...data, utilisateurId : e.value});
+    }
     
     const submit = () => {
         setYesNo(
@@ -265,11 +271,10 @@ const Form = (props) => {
                             callback();
                     }
                     if(data.id) CompteService.update(data, onResponse); else CompteService.add(data, onResponse);
-                    console.log(data.utilisateur.id)
+                    //console.log(JSON.stringify(data, null,2))
                 },
             }
         )
-    
     }
 
     return(
@@ -304,9 +309,10 @@ const Form = (props) => {
                     <div className="field">
                         <label htmlFor="utilisateur">Utilisateur</label>
                         <Dropdown id="utilisateur" options={utilisateurs}
-                            value={data?.utilisateur}
-                            onChange={bind} 
-                            optionLabel={"prenom"} 
+                            value={selectedUtilisateurId} //{data?.utilisateur}
+                            onChange={bindUtilisateurDropDown} 
+                            optionLabel={"prenom"}
+                            optionValue="id"
                             placeholder="Aucune sélection" />
                     </div>
                     <div className="field">

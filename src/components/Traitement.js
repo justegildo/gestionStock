@@ -139,20 +139,48 @@ const ChefParcForm = (props) => {
     const [activeIndex, setActiveIndex] = useState(0);
     const history = useHistory();
 
+    const [vehicules, setVehicules] = useState([]);
+    const [chauffeurs, setChauffeurs] = useState([]);
+
+    const [reponse, setReponse] = useState({
+        coupleVehiculeCva : [], 
+        demandeVehiculeId: 0, 
+        observation: null
+    });
+
     useEffect(() => {
         setActiveIndex(0);
         history.replace("/traitement/step1")
         if (!visible) return;
-
     }, [visible])
 
+    useEffect(()=> {
+        if(!visible) return;
+        loadVehicules();
+        loadChauffeurs()
+    }, [visible]);
+
+    const loadVehicules = () => {
+        VehiculeService.get((data)=> data && setVehicules(data), {size: pageMaxSize})
+    }
+    const loadChauffeurs = ()=>{
+        CvaService.get((data)=> data && setChauffeurs(data), {size: pageMaxSize})
+    }
+
+    const addChoice = (e)=>{
+        const data2 = data;
+       console.log(JSON.stringify(data2, null, 2));
+       //alert(data.lieu.libelle)
+    }
+
     const bind = (e) => {
+        //console.log(JSON.stringify(reponse, null, 2))
         if (e.target.value !== undefined) {
             let value = e.target.value;
-            setData({ ...data, [e.target.id]: value });
+            setReponse({ ...reponse, [e.target.id]: value });
         }
         else if (e.checked !== undefined) {
-            setData({ ...data, [e.target.id]: e.target.checked });
+            setReponse({ ...reponse, [e.target.id]: e.target.checked });
         } else {
             alert("Binding fails.")
         }
@@ -167,17 +195,13 @@ const ChefParcForm = (props) => {
         }
     }
 
-    const addChoice = (e)=>{
-        const data2 = data;
-       console.log(JSON.stringify(data2, null, 2));
-       //alert(data.lieu.libelle)
-    }
-
     const goNext = (e) => {
         if (activeIndex !== 1) {
             setActiveIndex(1);
             history.replace("/traitement/step2")
+            return true;
         }
+        return false;
     }
 
     const goNext2 = (e)=>{
@@ -187,7 +211,8 @@ const ChefParcForm = (props) => {
         }
     }
     const submit = (e) => {
-        goNext();
+        if(goNext()) return;
+        console.log(JSON.stringify(data, null, 2))
 
         /*
         let currentUser = JSON.parse(localStorage.getItem('user'));
@@ -218,58 +243,40 @@ const ChefParcForm = (props) => {
         <div className='p-fluid'>
             <div className="field" hidden>
                 <label htmlFor="id">Identifiant</label>
-                <InputText id="id" value={data && data.id} onChange={bind} />
+                <InputText id="id" value={data && data.id} />
             </div>
             <div className="field" >
                 <label htmlFor="dateDemande">Date de demande</label>
                 <InputText id="dateDemande" value={data && data.dateDemande} 
-                    onChange={bind} mask="99/99/9999"  required readOnly/>
+                    mask="99/99/9999"  required readOnly/>
             </div>
             <div className="field" >
                 <label htmlFor="lieu">Lieu</label>
-                <InputText id="lieu" value={data?.lieu.libelle} 
-                    onChange={bind}
-                    readOnly 
-                    />
+                <InputText id="lieu" value={data?.lieu.libelle} readOnly />
             </div>
             <div className="field">
                 <label htmlFor="nbreParticipant">Nombre de participants</label>
                 <InputNumber id="nbreParticipant" value={data && data.nbreParticipant} 
-                    onValueChange={bind} required readOnly />
+                    required readOnly />
             </div>
             <div className="field">
                 <label htmlFor="nbreVehicule">Nombre de véhicules</label>
                 <InputNumber id="nbreVehicule" value={data && data.nbreVehicule} 
-                    onValueChange={bind} required readOnly/>
+                    required readOnly/>
             </div>
             <div className="field">
                 <label htmlFor="dateDebutActivite">Date début de l'activité</label>
                 <InputText id="dateDebutActivite" value={data && data.dateDebutActivite} 
-                    onChange={bind} mask="99/99/9999" required readOnly/>
+                    mask="99/99/9999" required readOnly />
+                    
             </div>
             <div className="field">
                 <label htmlFor="dateFinActivite">Date fin de l'activité</label>
                 <InputText id="dateFinActivite" value={data && data.dateFinActivite} 
-                    onChange={bind} mask="99/99/9999" required readOnly/>
+                    mask="99/99/9999" required readOnly/>
             </div>
         </div>
     )
-
-    const [vehicules, setVehicules] = useState([]);
-    const [chauffeurs, setChauffeurs] = useState([]);
-
-    useEffect(()=> {
-        if(!visible) return;
-        loadVehicules();
-        loadChauffeurs()
-    }, [visible]);
-
-    const loadVehicules = () => {
-        VehiculeService.get((data)=> data && setVehicules(data), {size: pageMaxSize})
-    }
-    const loadChauffeurs = ()=>{
-        CvaService.get((data)=> data && setChauffeurs(data), {size: pageMaxSize})
-    }
 
     const step2Form = (
         <div className='p-fluid'>
@@ -303,13 +310,17 @@ const ChefParcForm = (props) => {
         </div>
     )
 
+    const[val, setVal] = useState();
     const step3Form = (
         <div className='p-fluid'>
             <div className="field" >
                 <label htmlFor="observation">Observation</label>
-                <InputTextarea id="observation" onValueChange={bind} autoResize required />
+                <InputText id="observation" value={val} onChange={(e)=> setVal(e.target.value)}
+                    required  />
+                {/* <InputTextarea id="observation" value={reponse?.observation} onChange={bind} autoResize required /> */}
             </div>
         </div>
+        
     )
 
     return (
@@ -324,10 +335,12 @@ const ChefParcForm = (props) => {
             footer={
                 <>
                     <Button label="Annuler" icon="pi pi-times" className="p-button-text" onClick={hide} />
-                    <Button icon="pi pi-ban" className="p-button-danger p-button-text" 
-                        label={ "Rejeter" }
-                        onClick={goNext2}  
-                        />
+                    {activeIndex === 0 &&
+                        <Button icon="pi pi-ban" className="p-button-danger p-button-text" 
+                            label={ "Rejeter" }
+                            onClick={goNext2}  
+                            />
+                    }
                     <Button className="p-button-text" loading={loading}
                         label={activeIndex === 1 ? "Terminer" : "Continuer"}
                         icon={`pi pi-${activeIndex === 1 ? "check" : "angle-right"}`}
