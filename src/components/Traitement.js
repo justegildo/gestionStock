@@ -212,7 +212,7 @@ const ChefParcForm = (props) => {
     }
     const submit = (e) => {
         if(goNext()) return;
-        console.log(JSON.stringify(data, null, 2))
+        console.log(JSON.stringify(reponse, null, 2))
 
         /*
         let currentUser = JSON.parse(localStorage.getItem('user'));
@@ -247,8 +247,8 @@ const ChefParcForm = (props) => {
             </div>
             <div className="field" >
                 <label htmlFor="dateDemande">Date de demande</label>
-                <InputText id="dateDemande" value={data && data.dateDemande} 
-                    mask="99/99/9999"  required readOnly/>
+                <Calendar id="dateDemande" value={data && new Date(data.dateDemande)} 
+                    mask="99/99/9999" readOnlyInput showOnFocus={false} />
             </div>
             <div className="field" >
                 <label htmlFor="lieu">Lieu</label>
@@ -266,14 +266,14 @@ const ChefParcForm = (props) => {
             </div>
             <div className="field">
                 <label htmlFor="dateDebutActivite">Date début de l'activité</label>
-                <InputText id="dateDebutActivite" value={data && data.dateDebutActivite} 
-                    mask="99/99/9999" required readOnly />
+                <Calendar id="dateDebutActivite" value={data && new Date(data.dateDebutActivite)} 
+                    mask="99/99/9999" readOnlyInput showOnFocus={false} />
                     
             </div>
             <div className="field">
                 <label htmlFor="dateFinActivite">Date fin de l'activité</label>
-                <InputText id="dateFinActivite" value={data && data.dateFinActivite} 
-                    mask="99/99/9999" required readOnly/>
+                <Calendar id="dateFinActivite" value={data && new Date(data.dateFinActivite)} 
+                    mask="99/99/9999" readOnlyInput showOnFocus={false} />
             </div>
         </div>
     )
@@ -310,14 +310,11 @@ const ChefParcForm = (props) => {
         </div>
     )
 
-    const[val, setVal] = useState();
     const step3Form = (
         <div className='p-fluid'>
             <div className="field" >
                 <label htmlFor="observation">Observation</label>
-                <InputText id="observation" value={val} onChange={(e)=> setVal(e.target.value)}
-                    required  />
-                {/* <InputTextarea id="observation" value={reponse?.observation} onChange={bind} autoResize required /> */}
+                <InputTextarea id="observation" value={reponse?.observation} onChange={bind} autoResize required />
             </div>
         </div>
         
@@ -359,11 +356,11 @@ const ChefParcForm = (props) => {
             />
             
                 <Route path={'/traitement/step1'} exact
-                    component={() => <div className='mt-5'>{step1Form}</div>} />
+                    render={() => <div className='mt-5'>{step1Form}</div>} />
                 <Route path={'/traitement/step2'}
-                    component={() => <div className='mt-5'>{step2Form}</div>} />
+                    render={() => <div className='mt-5'>{step2Form}</div>} />
                 <Route path={'/traitement/step3'}
-                    component={() => <div className='mt-5'>{step3Form}</div>} />
+                    render={() => <div className='mt-5'>{step3Form}</div>} />
         </Dialog>
     )
 }
