@@ -311,7 +311,6 @@ const Form = (props) => {
                         <Dropdown id="utilisateur" options={utilisateurs}
                             value={selectedUtilisateurId} //{data?.utilisateur}
                             onChange={bindUtilisateurDropDown} 
-                            //optionLabel="prenom"
                             optionLabel={(data)=> data.nom + " " + data.prenom}
                             optionValue="id"
                             placeholder="Aucune sélection" />

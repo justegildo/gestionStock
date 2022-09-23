@@ -167,10 +167,11 @@ const ChefParcForm = (props) => {
         CvaService.get((data)=> data && setChauffeurs(data), {size: pageMaxSize})
     }
 
-    const addChoice = (e)=>{
-        const data2 = data;
-       console.log(JSON.stringify(data2, null, 2));
-       //alert(data.lieu.libelle)
+    const addChoice = ()=>{
+        const recupChoice = reponse;
+        console.log(JSON.stringify(recupChoice, null, 2));
+        console.log(recupChoice.nom.prenom)
+       
     }
 
     const bind = (e) => {
@@ -261,8 +262,7 @@ const ChefParcForm = (props) => {
             </div>
             <div className="field">
                 <label htmlFor="nbreVehicule">Nombre de véhicules</label>
-                <InputNumber id="nbreVehicule" value={data && data.nbreVehicule} 
-                    required readOnly/>
+                <InputNumber id="nbreVehicule" value={data && data.nbreVehicule} readOnly/>
             </div>
             <div className="field">
                 <label htmlFor="dateDebutActivite">Date début de l'activité</label>
@@ -282,7 +282,7 @@ const ChefParcForm = (props) => {
         <div className='p-fluid'>
            <div className="field">
                 <label htmlFor="immatriculation">Véhicules</label>
-                <MultiSelect id="immatriculation" options={vehicules} value={data?.immatriculation} 
+                <Dropdown id="immatriculation" options={vehicules} value={reponse?.immatriculation} 
                     onChange={bind}
                     optionLabel="immatriculation" 
                     placeholder="Aucune option selectionéé" 
@@ -290,9 +290,9 @@ const ChefParcForm = (props) => {
             </div>
             <div className="field">
                 <label htmlFor="chauffeur">Chauffeurs</label>
-                <MultiSelect id="nom" options={chauffeurs} value={data?.nom} 
+                <Dropdown id="nom" options={chauffeurs} value={reponse.nom}  
                     onChange={bind}
-                    optionLabel={(data)=> data.nom + " " + data.prenom}
+                    optionLabel={(reponse)=> reponse.nom + " " + reponse.prenom}
                     placeholder="Aucune option selectionéé" 
                     />
             </div>
