@@ -221,23 +221,28 @@ const Form = (props) => {
                 </div>
                 <div className="field" hidden>
                     <label htmlFor="dateDemande">Date de demande</label>
-                    <Calendar id="dateDemande" value={data && data.dateDemande} onChange={bind}  mask="99/99/9999" required  />
+                    <Calendar id="dateDemande" value={data && new Date(data.dateDemande)} 
+                        onChange={bind}  mask="99/99/9999" required  />
                 </div>
                 <div className="field">
                     <label htmlFor="nbreParticipant">Nombre de participants</label>
-                    <InputNumber id="nbreParticipant" value={data && data.nbreParticipant} onValueChange={bind} required  />
+                    <InputText id="nbreParticipant" value={data && data.nbreParticipant} 
+                        onChange={bind} required  />
                 </div>
                 <div className="field">
                     <label htmlFor="nbreVehicule">Nombre de véhicules</label>
-                    <InputNumber id="nbreVehicule" value={data && data.nbreVehicule} onValueChange={bind} required  />
+                    <InputText id="nbreVehicule" value={data && data.nbreVehicule} 
+                        onChange={bind} required  />
                 </div>
                 <div className="field">
                     <label htmlFor="dateDebutActivite">Date début de l'activité</label>
-                    <Calendar id="dateDebutActivite" value={data && data.dateDebutActivite} onChange={bind} mask="99/99/9999" required  />
+                    <Calendar id="dateDebutActivite" value={data && new Date(data.dateDebutActivite)} 
+                        onChange={bind} mask="99/99/9999" required />
                 </div>
                 <div className="field">
                     <label htmlFor="dateFinActivite">Date fin de l'activité</label>
-                    <Calendar id="dateFinActivite" value={data && data.dateFinActivite} onChange={bind} mask="99/99/9999" required  />
+                    <Calendar id="dateFinActivite" value={data && new Date(data.dateFinActivite)} 
+                        onChange={bind} mask="99/99/9999" required  />
                 </div>
             </Dialog>
     )
