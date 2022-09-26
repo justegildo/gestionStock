@@ -130,12 +130,12 @@ const Table = (props) => {
                 <Column field="dateFinActivite" header="Date fin de l'activité" sortable 
                     body={(item)=> new Date(item.dateFinActivite).toLocaleDateString()}/>
 
-                <Column field="etat" header="Etat de la demande" sortable body={ (item)=> 
-                    <span className={`customer-badge status-${item.etat === 'ACCEPTEE'
+                <Column field="etatDemande" header="Etat de la demande" sortable body={ (item)=> 
+                    <span className={`customer-badge status-${item.etatDemande === 'ACCEPTEE'
                             ? 'qualified' 
-                            : (item.etat === 'APPROUVEE' ? 'new' 
-                            : item.etat === 'REJETEE' ? 'unqualified' :  'proposal')}`}>
-                        {item.etat}
+                            : (item.etatDemande === 'APPROUVEE' ? 'new' 
+                            : item.etatDemande === 'REJETEE' ? 'unqualified' :  'proposal')}`}>
+                        {item.etatDemande}
                     </span>
                 } />
                 <Column body={ (selectedItem)=>

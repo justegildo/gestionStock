@@ -8,7 +8,6 @@ import { Dialog } from 'primereact/dialog';
 import { itemPerPage, pageMaxSize } from '../baseUrls/consts';
 import { InputNumber } from 'primereact/inputnumber';
 import DemandeService from '../services/DemandeService';
-import LieuService from '../services/LieuService';
 import { Calendar } from 'primereact/calendar'
 import { Dropdown } from 'primereact/dropdown';
 import { TabView, TabPanel } from 'primereact/tabview';
@@ -16,20 +15,18 @@ import { Steps } from 'primereact/steps';
 import { Toast } from 'primereact/toast'
 import { Route, Switch, useHistory } from 'react-router-dom';
 import { InputTextarea } from 'primereact/inputtextarea';
-import { MultiSelect } from 'primereact/multiselect';
-import VehiculeService from '../services/VehiculeService';
-import CvaService from '../services/CvaService';
 
 
-const Traitement = () => {
+
+const ResponTraitement = () => {
     const [yesNo, setYesNo] = useState({});
-    const [chefParcform, setChefParcForm] = useState({});
+    const [responsableStructure, setResponsableStructure] = useState({});
 
     return (
         <div>
             <div className="card">
-                <Table {...{ setChefParcForm, setYesNo }} />
-                <ChefParcForm {...{ chefParcform, setYesNo }} />
+                <Table {...{ setResponsableStructure, setYesNo }} />
+                <ResponsableStructure {...{ responsableStructure, setYesNo }} />
                 <Confirmation {...yesNo} />
             </div>
 
@@ -41,7 +38,7 @@ const Table = (props) => {
     const [items, setItems] = useState([]);
     const [globalFilter, setGlobalFilter] = useState(null);
     const [loading, setLoading] = useState(true);
-    const {setChefParcForm, setYesNo} = props;
+    const { setResponsableStructure, setYesNo } = props;
     const [activeIndex, setActiveIndex] = useState(0);
 
     useEffect(() => {
@@ -53,15 +50,16 @@ const Table = (props) => {
             setLoading(false);
             if (status) setItems(data);
         },
-        { size: itemPerPage });
+            { size: itemPerPage }
+        );
     }
-    
+
     const showDemandeDetails = (item) => {
-        setChefParcForm({
+        setResponsableStructure({
             visible: true,
-            hide: () => setChefParcForm((prev) => ({ ...prev, visible: false })),
+            hide: () => setResponsableStructure((prev) => ({ ...prev, visible: false })),
             data: item,
-            setData: (data) => setChefParcForm((prev) => ({ ...prev, data })),
+            setData: (data) => setResponsableStructure((prev) => ({ ...prev, data })),
             callback: () => {
                 setLoading(true);
                 loadItems();
@@ -123,98 +121,66 @@ const Table = (props) => {
 
             <TabView activeIndex={activeIndex} onTabChange={(e) => { setActiveIndex(e.index);/* alert(e.index)*/ }} >
                 <TabPanel header="Demandes en traitement">{table}</TabPanel>
-                <TabPanel header="Demandes traitées">{table}</TabPanel>
+                <TabPanel header="Demandes traitées">{table}</TabPanel> 
             </TabView>
         </>
     );
 }
 
-const ChefParcForm = (props) => {
-    const { visible, hide, data, setData, callback } = props.chefParcform;
+const ResponsableStructure = (props) => {
+    const { visible, hide, data, setData, callback } = props.responsableStructure;
     const { setYesNo } = props;
-    const history = useHistory();
-
     const [loading, setLoading] = useState(false);
+    const [items, setItems] = useState([]);
+    const [lieux, setLieux] = useState([]);
     const [activeIndex, setActiveIndex] = useState(0);
-    
-    const [vehicules, setVehicules] = useState([]);
-    const [chauffeurs, setChauffeurs] = useState([]);
-
-    const [reponse, setReponse] = useState({
-        coupleVehiculeCva : [], 
-        demandeVehiculeId: 0, 
-        observation: null
-    });
+    const history = useHistory();
 
     useEffect(() => {
         setActiveIndex(0);
+        history.replace("/responsable/step1")
         if (!visible) return;
-        loadVehicules();
-        loadChauffeurs()
     }, [visible])
 
-    const loadVehicules = () => {
-        VehiculeService.get((data)=> data && setVehicules(data), {size: pageMaxSize})
-    }
-    const loadChauffeurs = ()=>{
-        CvaService.get((data)=> data && setChauffeurs(data), {size: pageMaxSize})
-    }
-
-    const addChoice = ()=>{
-        const recupChoice = reponse;
-        console.log(JSON.stringify(recupChoice, null, 2));
-        console.log(recupChoice.nom.prenom)
-       
-    }
-
+   
     const bind = (e) => {
         //console.log(JSON.stringify(reponse, null, 2))
         if (e.target.value !== undefined) {
             let value = e.target.value;
-            setReponse({ ...reponse, [e.target.id]: value });
+            setData({ ...data, [e.target.id]: value });
         }
         else if (e.checked !== undefined) {
-            setReponse({ ...reponse, [e.target.id]: e.target.checked });
+            setData({ ...data, [e.target.id]: e.target.checked });
         } else {
             alert("Binding fails.")
         }
-    }
-
-    const goBack = (e) => {
-        if (activeIndex === 1) {
-            setActiveIndex(0);
-            history.replace("/traitement")
-        } else {
-            hide(e);
-        }
-    }
+    } 
 
     const goNext = (e) => {
         if (activeIndex !== 1) {
             setActiveIndex(1);
-            history.replace("/traitement/step2")
+            history.replace("/responsable/step2")
             return true;
         }
         return false;
     }
-
-    const goNext2 = (e)=>{
-        if (activeIndex !== 1) {
-            setActiveIndex(1);
-            history.replace("/traitement/step3")
+    
+    const goBack = (e) => {
+        if (activeIndex === 1) {
+            setActiveIndex(0);
+            history.replace("/traitement/step1")
+        } else {
+            hide(e);
         }
-    }
-    const submit = (e) => {
-        if(goNext()) return;
-        console.log(JSON.stringify(reponse, null, 2))
+    } 
 
-        /*
+    const submit = (e) => {
         let currentUser = JSON.parse(localStorage.getItem('user'));
         let request = {...data, utilisateur : {id: currentUser.utilisateur.id }}
         setYesNo(
             {   
                 visible: true,
-                message : data.id ? "Confirmez-vous la modification ?" : "Confirmez-vous l'ajout ?",
+                message : data.id ? "Confirmez-vous la demande ?" : "Confirmez-vous l'ajout ?",
                 hide: ()=> setYesNo((prev)=>({...prev, visible: false})),
                 callback : ()=> {
                     setLoading(true);
@@ -230,14 +196,14 @@ const ChefParcForm = (props) => {
                 },
             }
         )
-            */
+            
     }
 
     const step1Form = (
         <div className='p-fluid'>
             <div className="field" hidden>
                 <label htmlFor="id">Identifiant</label>
-                <InputText id="id" value={data?.id} />
+                <InputText id="id" value={data && data.id} />
             </div>
             <div className="field" >
                 <label htmlFor="dateDemande">Date de demande</label>
@@ -246,16 +212,16 @@ const ChefParcForm = (props) => {
             </div>
             <div className="field" >
                 <label htmlFor="lieu">Lieu</label>
-                <InputText id="lieu" value={data?.lieu?.libelle} readOnly />
+                <InputText id="lieu" value={data?.lieu.libelle} readOnly />
             </div>
             <div className="field">
                 <label htmlFor="nbreParticipant">Nombre de participants</label>
-                <InputNumber id="nbreParticipant" value={data?.nbreParticipant} 
+                <InputNumber id="nbreParticipant" value={data && data.nbreParticipant} 
                     required readOnly />
             </div>
             <div className="field">
                 <label htmlFor="nbreVehicule">Nombre de véhicules</label>
-                <InputNumber id="nbreVehicule" value={data?.nbreVehicule} readOnly/>
+                <InputNumber id="nbreVehicule" value={data && data.nbreVehicule} readOnly/>
             </div>
             <div className="field">
                 <label htmlFor="dateDebutActivite">Date début de l'activité</label>
@@ -273,41 +239,9 @@ const ChefParcForm = (props) => {
 
     const step2Form = (
         <div className='p-fluid'>
-           <div className="field">
-                <label htmlFor="immatriculation">Véhicules</label>
-                <Dropdown id="immatriculation" options={vehicules} value={reponse?.immatriculation} 
-                    onChange={bind}
-                    optionLabel="immatriculation" 
-                    placeholder="Aucune option selectionéé" 
-                    />
-            </div>
-            <div className="field">
-                <label htmlFor="chauffeur">Chauffeurs</label>
-                <Dropdown id="nom" options={chauffeurs} value={reponse.nom}  
-                    onChange={bind}
-                    optionLabel={(reponse)=> reponse.nom + " " + reponse.prenom}
-                    placeholder="Aucune option selectionéé" 
-                    />
-            </div>
-            <div className="field">
-                <Button label="Ajouter" className="mr-2 mb-2" onClick={addChoice}/>
-            </div>
-            <DataTable dataKey="id" value={vehicules} responsiveLayout="scroll" 
-                paginator rows={10}>
-                <Column field="immatriculation" header="Immatriculation"></Column>
-                <Column field="marque" header="Marque"></Column>
-                <Column field="nbrePlace" header="Nombre de places"></Column>
-                <Column field="" header="Chauffeurs" ></Column>   
-            </DataTable>
-            
-        </div>
-    )
-
-    const step3Form = (
-        <div className='p-fluid'>
             <div className="field" >
                 <label htmlFor="observation">Observation</label>
-                <InputTextarea id="observation" value={reponse?.observation} onChange={bind} autoResize autoFocus required />
+                <InputTextarea id="observation" value={data?.observation} onChange={bind} autoResize required />
             </div>
         </div>
         
@@ -318,40 +252,42 @@ const ChefParcForm = (props) => {
             header={
                 <div className='flex flex-row align-items-center'>
                     <Button icon="pi pi-arrow-left" className="p-button-rounded p-button-text mr-2"
-                        onClick={goBack} />
+                        onClick={goBack} 
+                        /> 
                     <h5 className='m-0'>Traitement demande</h5>
                 </div>
-            }
+            } 
             footer={
                 <>
                     <Button label="Annuler" icon="pi pi-times" className="p-button-text" onClick={hide} />
+                    
                     {activeIndex === 0 &&
                         <Button icon="pi pi-ban" className="p-button-danger p-button-text" 
                             label={ "Rejeter" }
-                            onClick={goNext2}  
+                            onClick={goNext}  
                             />
                     }
-                    <Button className="p-button-text" loading={loading}
-                        label={activeIndex === 1 ? "Terminer" : "Continuer"}
-                        icon={`pi pi-${activeIndex === 1 ? "check" : "angle-right"}`}
-                        iconPos={`${activeIndex === 1 ? "left" : "right"}`}
+                    <Button className="p-button-text" loading={loading} 
+                        label={activeIndex === 1 ? "Terminer" : "Accepter"}
+                        icon="check"
+                        iconPos="left" 
                         onClick={submit} />
                 </>
             }
-            onHide={hide} >
-
+            onHide={hide}
+        >
             <Steps className='mt-1'
                 model={[
-                    { label: 'Détails demande', command: () => history.push('/traitement') },
-                    { label: 'Ajout véhicules', command: () => history.push('/traitement/step2') }
+                    { label: 'Détails demande', command: () => history.push('/responsable/step1') },
+                    { label: 'Observation', command: () => history.push('/responsable/step2') },
                 ]}
-                activeIndex={activeIndex} onSelect={(e) => setActiveIndex(e.index)} readOnly={true} 
-                />
+                activeIndex={activeIndex} onSelect={(e) => setActiveIndex(e.index)} readOnly={true}
+            />
             
-            <Route path={'/traitement'} exact render={() => <div className='mt-5'>{step1Form}</div>} />
-            <Route path={'/traitement/step2'} render={() => <div className='mt-5'>{step2Form}</div>} />
-            <Route path={'/traitement/step3'} render={() => <div className='mt-5'>{step3Form}</div>} />
-
+                <Route path={'/responsable/step1'} exact
+                    render={() => <div className='mt-5'>{step1Form}</div>} />
+                <Route path={'/responsable/step2'} exact
+                    render={() => <div className='mt-5'>{step2Form}</div>} />
         </Dialog>
     )
 }
@@ -380,41 +316,4 @@ const Confirmation = (props) => {
     )
 }
 
-{/*
-return(
-        <Dialog visible={visible} style={{ width: '800px' }} header="Détails de la demande" modal className="p-fluid" 
-            footer={
-                <>
-                    <Button label="Annuler" icon="pi pi-times" className="p-button-text" onClick={hide}  />
-                    <Button label="Continuer" icon="pi pi-check" className="p-button-text"  loading={loading} />
-                    </>
-                } 
-                onHide={hide}
-                >  
-    
-                <TabView visible={visible} onHide={hide} >
-                    <TabPanel header="Demandes initiées" >
-                        <DataTable dataKey="id" value={items}>
-                            <Column field="utilisateur.nom" header="Demandeur" sortable body= { (selectedItem)=>
-                            selectedItem.utilisateur && (selectedItem.utilisateur.nom + " " 
-                            + selectedItem.utilisateur.prenom)
-                            } />
-                            <Column field="etat" sortable body={ (item)=> 
-                                <span className={`customer-badge status-${item.etat === 'ACCEPTEE'
-                                        ? 'qualified' 
-                                        : (item.etat === 'APPROUVEE' ? 'new' 
-                                        : item.etat === 'REJETEE' ? 'unqualified' :  'proposal')}`}>
-                                    {item.etat}
-                                </span>
-                            } />
-                        </DataTable>
-                    </TabPanel>
-                    <TabPanel header="Demandes approuvées">
-                    </TabPanel>
-                </TabView>
-            </Dialog>    
-        )
-*/}
-
-
-export default Traitement;
+export default ResponTraitement;

@@ -45,6 +45,7 @@ import './App.scss';
 import { CommonService } from './util/CommonService';
 import UpdatePassword from './components/UpdatePassword';
 import Traitement from './components/Traitement';
+import ResponTraitement from './components/ResponTraitement';
 
 
 const App = (props) => {
@@ -61,6 +62,7 @@ const App = (props) => {
             items: [
                 { label: 'Demande de véhicule', icon: 'pi pi-fw pi-list', to: '/demande' },
                 { label: 'Traitement des demandes', icon: 'pi pi-fw pi-list', to: '/traitement' },
+                { label: 'Responsable Structure', icon: 'pi pi-fw pi-list', to: '/responsable' },
                 { label: 'Point du parking', icon: 'pi pi-fw pi-list' },
             ]
         },
@@ -223,6 +225,7 @@ const App = (props) => {
                     <Route path="/demande" component={DemandeVehicule} />
                     <Route path="/update" component={UpdatePassword} />
                     <Route path="/traitement" component={Traitement} />
+                    <Route path="/responsable" component={ResponTraitement} />
                 
                     <Route path="/formlayout" component={FormLayoutDemo} />
                     <Route path="/input" component={InputDemo} />
