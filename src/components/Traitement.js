@@ -41,7 +41,7 @@ const Table = (props) => {
     const [items, setItems] = useState([]);
     const [globalFilter, setGlobalFilter] = useState(null);
     const [loading, setLoading] = useState(true);
-    const { setChefParcForm, setYesNo } = props;
+    const {setChefParcForm, setYesNo} = props;
     const [activeIndex, setActiveIndex] = useState(0);
 
     useEffect(() => {
@@ -53,10 +53,9 @@ const Table = (props) => {
             setLoading(false);
             if (status) setItems(data);
         },
-            { size: itemPerPage }
-        );
+        { size: itemPerPage });
     }
-
+    
     const showDemandeDetails = (item) => {
         setChefParcForm({
             visible: true,
@@ -133,12 +132,11 @@ const Table = (props) => {
 const ChefParcForm = (props) => {
     const { visible, hide, data, setData, callback } = props.chefParcform;
     const { setYesNo } = props;
-    const [loading, setLoading] = useState(false);
-    const [items, setItems] = useState([]);
-    const [lieux, setLieux] = useState([]);
-    const [activeIndex, setActiveIndex] = useState(0);
     const history = useHistory();
 
+    const [loading, setLoading] = useState(false);
+    const [activeIndex, setActiveIndex] = useState(0);
+    
     const [vehicules, setVehicules] = useState([]);
     const [chauffeurs, setChauffeurs] = useState([]);
 
@@ -150,15 +148,10 @@ const ChefParcForm = (props) => {
 
     useEffect(() => {
         setActiveIndex(0);
-        history.replace("/traitement/step1")
         if (!visible) return;
-    }, [visible])
-
-    useEffect(()=> {
-        if(!visible) return;
         loadVehicules();
         loadChauffeurs()
-    }, [visible]);
+    }, [visible])
 
     const loadVehicules = () => {
         VehiculeService.get((data)=> data && setVehicules(data), {size: pageMaxSize})
@@ -190,7 +183,7 @@ const ChefParcForm = (props) => {
     const goBack = (e) => {
         if (activeIndex === 1) {
             setActiveIndex(0);
-            history.replace("/traitement/step1")
+            history.replace("/traitement")
         } else {
             hide(e);
         }
@@ -244,7 +237,7 @@ const ChefParcForm = (props) => {
         <div className='p-fluid'>
             <div className="field" hidden>
                 <label htmlFor="id">Identifiant</label>
-                <InputText id="id" value={data && data.id} />
+                <InputText id="id" value={data?.id} />
             </div>
             <div className="field" >
                 <label htmlFor="dateDemande">Date de demande</label>
@@ -253,16 +246,16 @@ const ChefParcForm = (props) => {
             </div>
             <div className="field" >
                 <label htmlFor="lieu">Lieu</label>
-                <InputText id="lieu" value={data?.lieu.libelle} readOnly />
+                <InputText id="lieu" value={data?.lieu?.libelle} readOnly />
             </div>
             <div className="field">
                 <label htmlFor="nbreParticipant">Nombre de participants</label>
-                <InputNumber id="nbreParticipant" value={data && data.nbreParticipant} 
+                <InputNumber id="nbreParticipant" value={data?.nbreParticipant} 
                     required readOnly />
             </div>
             <div className="field">
                 <label htmlFor="nbreVehicule">Nombre de véhicules</label>
-                <InputNumber id="nbreVehicule" value={data && data.nbreVehicule} readOnly/>
+                <InputNumber id="nbreVehicule" value={data?.nbreVehicule} readOnly/>
             </div>
             <div className="field">
                 <label htmlFor="dateDebutActivite">Date début de l'activité</label>
@@ -314,7 +307,7 @@ const ChefParcForm = (props) => {
         <div className='p-fluid'>
             <div className="field" >
                 <label htmlFor="observation">Observation</label>
-                <InputTextarea id="observation" value={reponse?.observation} onChange={bind} autoResize required />
+                <InputTextarea id="observation" value={reponse?.observation} onChange={bind} autoResize autoFocus required />
             </div>
         </div>
         
@@ -345,22 +338,20 @@ const ChefParcForm = (props) => {
                         onClick={submit} />
                 </>
             }
-            onHide={hide}
-        >
+            onHide={hide} >
+
             <Steps className='mt-1'
                 model={[
-                    { label: 'Détails demande', command: () => history.push('/traitement/step1') },
+                    { label: 'Détails demande', command: () => history.push('/traitement') },
                     { label: 'Ajout véhicules', command: () => history.push('/traitement/step2') }
                 ]}
-                activeIndex={activeIndex} onSelect={(e) => setActiveIndex(e.index)} readOnly={true}
-            />
+                activeIndex={activeIndex} onSelect={(e) => setActiveIndex(e.index)} readOnly={true} 
+                />
             
-                <Route path={'/traitement/step1'} exact
-                    render={() => <div className='mt-5'>{step1Form}</div>} />
-                <Route path={'/traitement/step2'}
-                    render={() => <div className='mt-5'>{step2Form}</div>} />
-                <Route path={'/traitement/step3'}
-                    render={() => <div className='mt-5'>{step3Form}</div>} />
+            <Route path={'/traitement'} exact render={() => <div className='mt-5'>{step1Form}</div>} />
+            <Route path={'/traitement/step2'} render={() => <div className='mt-5'>{step2Form}</div>} />
+            <Route path={'/traitement/step3'} render={() => <div className='mt-5'>{step3Form}</div>} />
+
         </Dialog>
     )
 }

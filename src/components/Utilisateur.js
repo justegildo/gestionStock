@@ -121,7 +121,7 @@ const Table = (props) => {
                     <span className={`customer-badge status-${item.typeUtilisateur === 'ADMINISTRATEUR'
                             ? 'new' 
                             : (item.typeUtilisateur ==='RESPONSABLE_STRUCTURE' ? 'renewal' 
-                            : item.typeUtilisateur === 'ROLE_CHEF_PARC' ? 'proposal' : 'qualified' )}`}>
+                            : item.typeUtilisateur === 'CHEF_PARC' ? 'proposal' : 'qualified' )}`}>
                         {item.typeUtilisateur}
                     </span>
                 } />
@@ -147,9 +147,13 @@ const Form = (props) => {
     const [structures, setStructures] = useState([]);
     const [institutions, setInstitutions] = useState([]);
 
+    const[selectedInstitution, setSelectedInstitution] = useState();
+
     useEffect(()=> {
         if(!visible) return;
         loadInstitutions();
+        data && loadStructures(data.structure.institution.id);
+        data && setSelectedInstitution(data?.structure?.institution);
     }, [visible]);
 
     const loadInstitutions = () => {
@@ -206,48 +210,44 @@ const Form = (props) => {
             >  
                 <div className="field" hidden>
                     <label htmlFor="id">Identifiant</label>
-                    <InputText id="id" value={data && data.id} onChange={bind} />
+                    <InputText id="id" value={data?.id} onChange={bind} />
                 </div>
                 <div className="field">
                     <label htmlFor="matricule">Matricule</label>
-                    <InputText id="matricule" value={data && data.matricule} onChange={bind} required  />
+                    <InputText id="matricule" value={data?.matricule} onChange={bind} required  />
                 </div>
                 <div className="field">
                     <label htmlFor="nom">Nom</label>
-                    <InputText id="nom" value={data && data.nom} onChange={bind} required  />
+                    <InputText id="nom" value={data?.nom} onChange={bind} required  />
                 </div>
                 <div className="field">
                     <label htmlFor="prenom">Prénoms</label>
-                    <InputText id="prenom" value={data && data.prenom} onChange={bind} required  />
+                    <InputText id="prenom" value={data?.prenom} onChange={bind} required  />
                 </div>
                 <div className="field">
                     <label htmlFor="telephone">Téléphone</label>
-                    <InputText id="telephone" value={data && data.telephone} onChange={bind} required  />
+                    <InputText id="telephone" value={data?.telephone} onChange={bind} required  />
                 </div>
                 <div className="field">
                     <label htmlFor="typeUtilisateur">Type utilisateur</label>
-                    <Dropdown id="typeUtilisateur" 
-                        options={["ADMINISTRATEUR", "RESPONSABLE_STRUCTURE", "SIMPLE_UTILISATEUR", "ROLE_CHEF_PARC"]} 
-                        value={data?.typeUtilisateur} 
-                        onChange={bind}
-                        placeholder="Aucune sélection"/>
+                    <Dropdown id="typeUtilisateur" onChange={bind} placeholder="Aucune sélection"
+                        options={["ADMINISTRATEUR", "RESPONSABLE_STRUCTURE", "SIMPLE_UTILISATEUR", "CHEF_PARC"]} 
+                        value={data?.typeUtilisateur} />
                 </div>
                 <div className="field">
                     <label htmlFor="institution">Institution</label>
-                    <Dropdown id="institution" options={institutions} 
-                        value={data?.institution} 
-                        onChange={ (e)=> {loadStructures(e.value.id)} }
-                        optionLabel="libelle" 
-                        placeholder="Aucune sélection"/>
+                    <Dropdown id="institution" onChange={(e)=>{setSelectedInstitution(e.value); loadStructures(e.value.id);} } 
+                        placeholder="Aucune sélection"
+                        options={institutions} 
+                        value={selectedInstitution} 
+                        optionLabel="libelle" />
                 </div>
                 <div className="field">
                     <label htmlFor="structure">Structure</label>
-                    <Dropdown id="structure" options={structures} 
-                        value={data?.structure} onChange={bind}
-                        optionLabel="libelle"
-                        placeholder="Aucune sélection"
-                        //filter endsWith 
-                    />
+                    <Dropdown id="structure" onChange={bind} placeholder="Aucune sélection"
+                        options={structures}
+                        value={data?.structure}
+                        optionLabel="libelle" />
                 </div>
             
             </Dialog>

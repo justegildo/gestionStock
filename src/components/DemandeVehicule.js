@@ -211,7 +211,7 @@ const Form = (props) => {
             >  
                 <div className="field" hidden>
                     <label htmlFor="id">Identifiant</label>
-                    <InputText id="id" value={data && data.id} onChange={bind} />
+                    <InputText id="id" value={data?.id} onChange={bind} />
                 </div>
                 <div className="field" >
                     <label htmlFor="lieu">Lieu</label>
@@ -226,12 +226,12 @@ const Form = (props) => {
                 </div>
                 <div className="field">
                     <label htmlFor="nbreParticipant">Nombre de participants</label>
-                    <InputText id="nbreParticipant" value={data && data.nbreParticipant} 
+                    <InputNumber id="nbreParticipant" value={data?.nbreParticipant} 
                         onChange={bind} required  />
                 </div>
                 <div className="field">
                     <label htmlFor="nbreVehicule">Nombre de véhicules</label>
-                    <InputText id="nbreVehicule" value={data && data.nbreVehicule} 
+                    <InputNumber id="nbreVehicule" value={data?.nbreVehicule} 
                         onChange={bind} required  />
                 </div>
                 <div className="field">

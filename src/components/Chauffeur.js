@@ -214,18 +214,12 @@ const Form = (props) => {
                         optionLabel="libelle" /*optionValue="id"*/  
                         placeholder="Aucune sélection"/>
                 </div>
-                {/*
                 <div className="field">
-                    <label htmlFor="institution">Niveau</label>
-                    <InputText id="institution" value={institut.niveau.id} onChange={(e) => onInputChange(e, 'niveau.id')} required autoFocus />
+                    <label htmlFor="etatChauffeur">Etat Chauffeur</label>
+                    <Dropdown id="etatChauffeur" onChange={bind} placeholder="Aucune sélection"
+                        options={["DISPONIBLE", "EN_CONGE"]} 
+                        value={data?.etatChauffeur} />
                 </div>
-                 */}
-                {/*
-                <div className="field">
-                    <label htmlFor="etatChauffeur">Niveau</label>
-                    <InputText id="etatChauffeur" value={institut.niveau.id} onChange={(e) => onInputChange(e, 'niveau.id')} required autoFocus />
-                </div>
-                */}
             </Dialog>
     )
 }

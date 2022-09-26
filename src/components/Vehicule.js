@@ -131,6 +131,21 @@ const Table = (props) => {
                         <Button icon="pi pi-trash" className="p-button-rounded p-button-warning mr-2" onClick={()=> deleteItem(selectedItem)}/>
                     </div>
                 } />
+                {/*
+                    <div style={{display: 'flex flex-', flexDirection: 'row-reverse'}}>    
+                        <Button icon="pi pi-trash" className="p-button-rounded p-button-warning" onClick={()=> deleteItem(selectedItem)}/>
+                        <span style={{padding: '.3rem'}}/>
+                        <Button icon="pi pi-pencil" className="p-button-rounded p-button-success" onClick={() => editItem(selectedItem)}/>
+                        <span style={{padding: '.3rem'}}/>
+                        <Button icon="pi pi-pencil" className="p-button-rounded p-button-success" onClick={() => editItem(selectedItem)}/>
+                        <span style={{padding: '.3rem'}}/> 
+                        <Button 
+                            icon={`pi pi-${selectedItem.inactif ? 'lock-open' : 'lock'}`} 
+                            className={`p-button-rounded p-button-${selectedItem.inactif ? 'danger' : 'normal'}`} 
+                            tooltip={selectedItem.inactif ? 'Déverouiller' : 'Verrouiller'}
+                            onClick={()=> deleteItem(selectedItem)}/> 
+                    </div>
+                */} 
             </DataTable>
         </>
     );
@@ -193,7 +208,7 @@ const Form = (props) => {
             >  
                 <div className="field" hidden>
                     <label htmlFor="id">Identifiant</label>
-                    <InputText id="id" value={data && data.id} onChange={bind} />
+                    <InputText id="id" value={data?.id} onChange={bind} />
                 </div>
                 <div className="field">
                     <label htmlFor="immatriculation">Immatriculation</label>
@@ -214,21 +229,18 @@ const Form = (props) => {
                 <div className="field">
                     <label htmlFor="institution">Institution</label>
                     <Dropdown id="institution" options={institutions} value={data?.institution} onChange={bind}
-                        optionLabel="libelle" /*optionValue="id"*/  
-                        placeholder="Aucune sélection"/>
+                        optionLabel="libelle" /*optionLabel={(data)=> data.nom + " " + data.prenom}*/
+                        /*optionValue="id"*/
+                        placeholder="Aucune sélection"
+                        //filter endsWith
+                        />
                 </div>
-                {/*
                 <div className="field">
-                    <label htmlFor="institution">Institution</label>
-                    <InputText id="niveau" value={institut.niveau.id} onChange={(e) => onInputChange(e, 'niveau.id')} required autoFocus />
+                    <label htmlFor="etatVehicule">Etat véhicule</label>
+                    <Dropdown id="etatVehicule" onChange={bind} placeholder="Aucune sélection"
+                        options={["DISPONIBLE", "EN_PANNE"]} 
+                        value={data?.etatVehicule} />
                 </div>
-                 */}
-                 {/*
-                <div className="field">
-                    <label htmlFor="etatVehicule">Niveau</label>
-                    <InputText id="etatVehicule" value={institut.niveau.id} onChange={(e) => onInputChange(e, 'niveau.id')} required autoFocus />
-                </div>
-                */}
             </Dialog>
     )
 }

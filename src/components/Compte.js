@@ -192,21 +192,6 @@ const Table = (props) => {
                             onClick={(e)=> {setSelectedMenuItem(selectedItem); menu.current.toggle(e)} }/>
                     </div>
                 } />
-                {/*
-                        <div style={{display: 'flex flex-', flexDirection: 'row-reverse'}}>    
-                            <Button icon="pi pi-trash" className="p-button-rounded p-button-warning" onClick={()=> deleteItem(selectedItem)}/>
-                            <span style={{padding: '.3rem'}}/>
-                            <Button icon="pi pi-pencil" className="p-button-rounded p-button-success" onClick={() => editItem(selectedItem)}/>
-                            <span style={{padding: '.3rem'}}/>
-                            <Button icon="pi pi-pencil" className="p-button-rounded p-button-success" onClick={() => editItem(selectedItem)}/>
-                            <span style={{padding: '.3rem'}}/> 
-                            <Button 
-                                icon={`pi pi-${selectedItem.inactif ? 'lock-open' : 'lock'}`} 
-                                className={`p-button-rounded p-button-${selectedItem.inactif ? 'danger' : 'normal'}`} 
-                                tooltip={selectedItem.inactif ? 'Déverouiller' : 'Verrouiller'}
-                                onClick={()=> deleteItem(selectedItem)}/> 
-                        </div>
-                    */} 
             </DataTable>
         </>
     );
@@ -217,11 +202,14 @@ const Form = (props) => {
     const {setYesNo} = props;
     const[loading, setLoading] = useState(false);
 
-    const [structures, setStructures] = useState([]);
     const [institutions, setInstitutions] = useState([]);
+    const [structures, setStructures] = useState([]);
     const [utilisateurs, setUtilisateurs] = useState([]);
-    const [selectedUtilisateurId, setSelectedUtilisateurId] = useState();
-
+    
+    const [selectedInstitution, setSelectedInstitution] = useState();
+    const [selectedStructure, setSelectedStructure] = useState();
+    const [selectedUtilisateur, setSelectedUtilisateur] = useState();
+    
     useEffect(()=> {
         if(!visible) return;
         loadInstitutions();
@@ -250,12 +238,7 @@ const Form = (props) => {
             alert("Binding fails.")
         }
     }
-
-    const bindUtilisateurDropDown = (e) => {
-        setSelectedUtilisateurId(e.value);
-        setData({...data, utilisateurId : e.value});
-    }
-    
+ 
     const submit = () => {
         setYesNo(
             {   
@@ -270,8 +253,9 @@ const Form = (props) => {
                             hide();
                             callback();
                     }
-                    if(data.id) CompteService.update(data, onResponse); else CompteService.add(data, onResponse);
-                    //console.log(JSON.stringify(data, null,2))
+                    let payload = {...data, utilisateurId : selectedUtilisateur.id};
+                    if(data.id) CompteService.update(payload, onResponse); else CompteService.add(payload, onResponse);
+                    //console.log(JSON.stringify(payload, null, 2))
                 },
             }
         )
@@ -290,34 +274,35 @@ const Form = (props) => {
                 <>
                     <div className="field">
                         <label htmlFor="institution">Institution</label>
-                        <Dropdown id="institution" options={institutions} 
-                            value={data?.institution}
-                            onChange={ (e)=> {loadStructures(e.value.id)} }
-                            optionLabel="libelle" 
-                            placeholder="Aucune sélection"/>
+                        <Dropdown id="institution" onChange={(e)=>{setSelectedInstitution(e.value); loadStructures(e.value.id)}} 
+                            placeholder="Aucune sélection"
+                            options={institutions} 
+                            value={selectedInstitution}
+                            optionLabel="libelle" />
                     </div>
                     <div className="field">
                         <label htmlFor="structure">Structure</label>
-                        <Dropdown id="structure" options={structures} 
-                            value={data?.structure} 
-                            onChange={(e)=> {loadUtilisateurs(e.value.id)}}
-                            optionLabel="libelle" 
+                        <Dropdown id="structure" onChange={(e)=> {setSelectedStructure(e.value); loadUtilisateurs(e.value.id)}}
                             placeholder="Aucune sélection"
-                            //filter endsWith 
-                        />
+                            options={structures} 
+                            value={selectedStructure} 
+                            optionLabel="libelle" />
                     </div>
                     <div className="field">
                         <label htmlFor="utilisateur">Utilisateur</label>
-                        <Dropdown id="utilisateur" options={utilisateurs}
-                            value={selectedUtilisateurId} //{data?.utilisateur}
-                            onChange={bindUtilisateurDropDown} 
+                        <Dropdown id="utilisateur" onChange={(e)=> {setSelectedUtilisateur(e.value);} }
+                            placeholder="Aucune sélection"
+                            options={utilisateurs}
+                            value={selectedUtilisateur}
                             optionLabel={(data)=> data.nom + " " + data.prenom}
-                            optionValue="id"
-                            placeholder="Aucune sélection" />
+                            //value={selectedUtilisateurId}
+                            //onChange={bindUtilisateurDropDown} 
+                            //optionValue="id"
+                            />
                     </div>
                     <div className="field">
-                        <label htmlFor="login">Nom de compte</label>
-                        <InputText id="login" value={data && data.username} onChange={bind} required />
+                        <label htmlFor="username">Nom de compte</label>
+                        <InputText id="username" value={data?.username} onChange={bind} required />
                     </div>
                     <div className="field" >
                         <label htmlFor="password">Mot de passe</label>
@@ -331,6 +316,7 @@ const Form = (props) => {
 const ResetPasswordForm = (props) => {
     const {visible, hide, data, setData, callback } = props.resetPasswordForm;
     const {setYesNo} = props;
+
     const[loading, setLoading] = useState(false);
 
     const[resetData, setResetData] = useState();
@@ -343,10 +329,10 @@ const ResetPasswordForm = (props) => {
     const bind = (e) => {
         if(e.target.value !== undefined) {
             let value = e.target.value;
-            setData({...data, [e.target.id]: value});
+            setResetData({...resetData, [e.target.id]: value});
         }
         else if(e.checked !== undefined) {
-            setData({...data, [e.target.id]: e.target.checked});
+            setResetData({...resetData, [e.target.id]: e.target.checked});
         }else{
             alert("Binding fails.")
         }
@@ -392,7 +378,7 @@ const ResetPasswordForm = (props) => {
                     </div>
                     <div className="field">
                         <label htmlFor="newPassword">Nouveau mot de passe</label>
-                        <InputText id="newPassword" onChange={bind} required autoFocus />
+                        <InputText id="newPassword" value={resetData?.newPassword} onChange={bind} required autoFocus />
                     </div>   
                 
                 </>                
