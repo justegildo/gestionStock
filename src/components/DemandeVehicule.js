@@ -164,7 +164,6 @@ const Form = (props) => {
     const bind = (e) => {
         if(e.target.value !== undefined) {
             let value = e.target.value;
-            //value = value.id ? {id: value.id} : value;
             setData({...data, [e.target.id]: value});
         }
         else if(e.checked !== undefined) {
@@ -190,7 +189,6 @@ const Form = (props) => {
                             hide();
                             callback();
                     }
-                    //console.log(JSON.stringify(data, null, 2))
                     if(data.id) DemandeService.update(request, onResponse); 
                     else DemandeService.add(request, onResponse);
                 },
@@ -227,12 +225,12 @@ const Form = (props) => {
                 <div className="field">
                     <label htmlFor="nbreParticipant">Nombre de participants</label>
                     <InputNumber id="nbreParticipant" value={data?.nbreParticipant} 
-                        onChange={bind} required  />
+                        onValueChange={bind} required  />
                 </div>
                 <div className="field">
                     <label htmlFor="nbreVehicule">Nombre de véhicules</label>
                     <InputNumber id="nbreVehicule" value={data?.nbreVehicule} 
-                        onChange={bind} required  />
+                        onValueChange={bind} required  />
                 </div>
                 <div className="field">
                     <label htmlFor="dateDebutActivite">Date début de l'activité</label>

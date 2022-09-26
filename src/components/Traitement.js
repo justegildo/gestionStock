@@ -140,6 +140,9 @@ const ChefParcForm = (props) => {
     const [vehicules, setVehicules] = useState([]);
     const [chauffeurs, setChauffeurs] = useState([]);
 
+    const [selectedVehicule, setSelectedVehicule] = useState();
+    const [selectedChauffeur, setSelectedChauffeur] = useState();
+
     const [reponse, setReponse] = useState({
         coupleVehiculeCva : [], 
         demandeVehiculeId: 0, 
@@ -147,10 +150,12 @@ const ChefParcForm = (props) => {
     });
 
     useEffect(() => {
-        setActiveIndex(0);
         if (!visible) return;
         loadVehicules();
-        loadChauffeurs()
+        loadChauffeurs();
+        //
+        setActiveIndex(0);
+        history.replace("/traitement")
     }, [visible])
 
     const loadVehicules = () => {
@@ -158,13 +163,6 @@ const ChefParcForm = (props) => {
     }
     const loadChauffeurs = ()=>{
         CvaService.get((data)=> data && setChauffeurs(data), {size: pageMaxSize})
-    }
-
-    const addChoice = ()=>{
-        const recupChoice = reponse;
-        console.log(JSON.stringify(recupChoice, null, 2));
-        console.log(recupChoice.nom.prenom)
-       
     }
 
     const bind = (e) => {
@@ -204,6 +202,14 @@ const ChefParcForm = (props) => {
             history.replace("/traitement/step3")
         }
     }
+
+    const addChoice = ()=>{
+        const recupChoice = reponse;
+        console.log(JSON.stringify(recupChoice, null, 2));
+        console.log(recupChoice.nom.prenom)
+       
+    }
+
     const submit = (e) => {
         if(goNext()) return;
         console.log(JSON.stringify(reponse, null, 2))
@@ -275,24 +281,24 @@ const ChefParcForm = (props) => {
         <div className='p-fluid'>
            <div className="field">
                 <label htmlFor="immatriculation">Véhicules</label>
-                <Dropdown id="immatriculation" options={vehicules} value={reponse?.immatriculation} 
-                    onChange={bind}
-                    optionLabel="immatriculation" 
-                    placeholder="Aucune option selectionéé" 
-                    />
+                <Dropdown id="vehicule" onChange={(e)=> {setSelectedVehicule(e.value);}}
+                    placeholder="Aucune sélection"
+                    options={vehicules}
+                    value={selectedVehicule}
+                    optionLabel="immatriculation" />
             </div>
             <div className="field">
                 <label htmlFor="chauffeur">Chauffeurs</label>
-                <Dropdown id="nom" options={chauffeurs} value={reponse.nom}  
-                    onChange={bind}
-                    optionLabel={(reponse)=> reponse.nom + " " + reponse.prenom}
-                    placeholder="Aucune option selectionéé" 
-                    />
+                <Dropdown id="chauffeur" onChange={(e)=> {setSelectedChauffeur(e.value); }}
+                    placeholder="Aucune sélection"
+                    options={chauffeurs} 
+                    value={selectedChauffeur}
+                    optionLabel={(data)=> data.nom + " " + data.prenom} />
             </div>
             <div className="field">
                 <Button label="Ajouter" className="mr-2 mb-2" onClick={addChoice}/>
             </div>
-            <DataTable dataKey="id" value={vehicules} responsiveLayout="scroll" 
+            <DataTable dataKey="id" value={reponse.coupleVehiculeCva} responsiveLayout="scroll" 
                 paginator rows={10}>
                 <Column field="immatriculation" header="Immatriculation"></Column>
                 <Column field="marque" header="Marque"></Column>
