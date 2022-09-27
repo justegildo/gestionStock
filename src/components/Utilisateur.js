@@ -115,6 +115,7 @@ const Table = (props) => {
 
                 <Column field="id" header="Identifiant" sortable  hidden />
                 <Column field="matricule" header="Matricule" sortable />
+                <Column field="image" header="Photo" sortable />
                 <Column header="Nom" sortable style={{fontWeight: 'bold'}} body={(item)=> item.nom + " " + item.prenom}/>
                 <Column field="telephone" header="Téléphone" sortable />
                 <Column field="typeUtilisateur" header="Type utilisateur" sortable body={ (item)=> 
