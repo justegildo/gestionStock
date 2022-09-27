@@ -14,7 +14,7 @@ import { Dropdown } from 'primereact/dropdown';
 import { TabView, TabPanel } from 'primereact/tabview';
 import { Steps } from 'primereact/steps';
 import { Toast } from 'primereact/toast'
-import { Route, Switch, useHistory } from 'react-router-dom';
+import { Route, Switch, useHistory, useLocation } from 'react-router-dom';
 import { InputTextarea } from 'primereact/inputtextarea';
 import { MultiSelect } from 'primereact/multiselect';
 import VehiculeService from '../services/VehiculeService';
@@ -134,6 +134,7 @@ const ChefParcForm = (props) => {
     const { visible, hide, data, setData, callback } = props.chefParcform;
     const { setYesNo } = props;
     const history = useHistory();
+    const location = useLocation();
 
     const [loading, setLoading] = useState(false);
     const [activeIndex, setActiveIndex] = useState(0);
@@ -294,7 +295,7 @@ const ChefParcForm = (props) => {
                     optionLabel={(data)=> data.nom + " " + data.prenom} />
             </div>
             <div className="field">
-                <Button label="Ajouter" className="mr-2 mb-2" onClick={addChoice}/>
+                <Button label="Ajouter" className="my-2" onClick={addChoice}/>
             </div>
             <DataTable dataKey="id" value={coupleVehiculeChauffeurs} responsiveLayout="scroll" 
                 paginator rows={10}>
@@ -347,7 +348,10 @@ const ChefParcForm = (props) => {
             <Steps className='mt-1'
                 model={[
                     { label: 'Détails demande', command: () => history.push('/traitement') },
-                    { label: 'Ajout véhicules', command: () => history.push('/traitement/step2') }
+                    { 
+                        label: `${location.pathname === "/traitement/step3" ? "Observation" : 'Ajout véhicules'}`, 
+                        command: () => history.push('/traitement/step2') 
+                    }
                 ]}
                 activeIndex={activeIndex} onSelect={(e) => setActiveIndex(e.index)} readOnly={true} 
                 />
