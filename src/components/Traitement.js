@@ -100,6 +100,10 @@ const Table = (props) => {
         })
     }
 
+    const showvehiculeDetails = ()=>{
+        
+    }
+
     const table = (
         <DataTable dataKey="id" value={items}
             paginator rows={itemPerPage}
@@ -169,12 +173,12 @@ const Table = (props) => {
                     {item.etatDemande}
                 </span>
             } />
-            {/* <Column body={(selectedItem) =>
+            <Column body={(selectedItem) =>
                 <div className="flex justify-content-end">
                     <Button icon="pi pi-eye" className="p-button-rounded p-button-success mr-2"
-                        onClick={() => showDemandeDetails(selectedItem)} />
+                        onClick={() => showvehiculeDetails(selectedItem)} />
                 </div>
-            } /> */}
+            } />
         </DataTable>
     );
 
@@ -221,6 +225,14 @@ const Table = (props) => {
         <>
             <h5>Liste des demandes</h5>
             <Toolbar className="mb-4"
+                left={
+                    <React.Fragment>
+                        <div className="my-2">
+                            <Button label="Actualiser" icon="pi pi-refresh" className="p-button-primry mr-2" 
+                                onClick={()=>{setLoading(true); loadItems()}} />
+                        </div>
+                    </React.Fragment>
+                } 
                 right={
                     <React.Fragment>
                         <span className="block mt-2 md:mt-0 p-input-icon-left">
@@ -344,6 +356,9 @@ const ChefParcForm = (props) => {
             }
         )
     }
+
+    const data2 = coupleVehiculeChauffeurs;
+    console.log(JSON.stringify(data2, null, 2))
 
     const step1Form = (
         <div className='p-fluid'>
@@ -626,7 +641,6 @@ const ResponsableStructureForm = (props) => {
         </Dialog>
     )
 }
-
 
 const Confirmation = (props) => {
     const { visible, hide, message, callback } = props;

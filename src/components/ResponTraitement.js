@@ -216,6 +216,14 @@ const Table = (props) => {
         <>
             <h5>Liste des demandes</h5>
             <Toolbar className="mb-4"
+                left={
+                    <React.Fragment>
+                        <div className="my-2">
+                            <Button label="Actualiser" icon="pi pi-refresh" className="p-button-primry mr-2" 
+                                onClick={()=>{setLoading(true); loadItems()}} />
+                        </div>
+                    </React.Fragment>
+                } 
                 right={
                     <React.Fragment>
                         <span className="block mt-2 md:mt-0 p-input-icon-left">
