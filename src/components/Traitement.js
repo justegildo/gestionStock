@@ -55,7 +55,7 @@ const Table = (props) => {
         loadItems();
         //initFilters1();
     }, [activeIndex]);
-
+    
     const loadItems = () => {
         setLoading(true);
         let onResponse = (data, status) => {

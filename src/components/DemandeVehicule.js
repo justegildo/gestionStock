@@ -143,8 +143,8 @@ const Table = (props) => {
                     + selectedItem.utilisateur.prenom)
                 } />
                 <Column field="lieu.libelle" header="Lieu" sortable />
-                <Column field="nbreParticipant" header="Nombre de participants" sortable />
-                <Column field="nbreVehicule" header="Nombre de véhicules" sortable style={{fontWeight: 'bold'}}/>
+                <Column field="nbreParticipant" header="Nombre de participants" sortable body={item=>item.nbreParticipant.toLocaleString()} />
+                <Column field="nbreVehicule" header="Nombre de véhicules" sortable style={{fontWeight: 'bold'}} body={item=>item.nbreVehicule.toLocaleString()} />
                 <Column field="dateDebutActivite" header="Date début de l'activité" sortable 
                     body={(item)=> new Date(item.dateDebutActivite).toLocaleDateString()} />
                 <Column field="dateFinActivite" header="Date fin de l'activité" sortable 
