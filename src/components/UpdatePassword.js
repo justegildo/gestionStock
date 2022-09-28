@@ -7,6 +7,7 @@ import { InputText } from 'primereact/inputtext';
 import { Dialog } from 'primereact/dialog';
 import UtilisateurService from '../services/UtilisateurService';
 import { itemPerPage} from '../baseUrls/consts';
+import { Password } from 'primereact/password';
 
 
 const UpdatePassword = () => {
@@ -76,22 +77,31 @@ const Form = (props) => {
     }
 
     return(  
-            <>
-                <h5>Formulaire de modification de mot de passe</h5>
-                <div className="field">
-                    <label htmlFor="nom">Ancien mot de passe</label>
-                    <InputText id="nom"s onChange={bind} required  />
+        <div style={{display: 'flex', flexDirection: 'row', height: '100vh', justifyContent: 'center', alignItems: 'center'}}>
+            <div className="surface-card p-5 shadow-2 w-full lg:w-8 border-round w-12/12 h-4 ">
+            
+                <div className="text-center mb-5">
+                    <img src="images/blocks/logos/hyper.svg" alt="hyper" height="50" className="mb-3" />
+                    <div className="text-900 text-3xl font-medium mb-3">Formulaire de modification de mot de passe</div>
                 </div>
-                <div className="field">
-                    <label htmlFor="prenom">Nouveau mot de passe</label>
-                    <InputText id="prenom"  onChange={bind} required  />
+
+                <div className='p-fluid '>
+                    <label htmlFor="ancien" className="block text-900 font-medium mb-2">Ancien mot de passe</label>
+                    <Password id="ancien" type="text" className="w-full mb-3" toggleMask required value={data?.ancien} onChange={bind}  />
+                    
+                    <label htmlFor="password" className="block text-900 font-medium mb-2">Nouveau mot de passe</label>
+                    <Password inputId="password" className="w-full mb-3" toggleMask required value={data?.password} onChange={bind}
+                         />
+                    <label htmlFor="password" className="block text-900 font-medium mb-2">Taper à nouveau le mot de passe</label>
+                    <Password inputId="password" className="w-full mb-3" toggleMask required value={data?.password} onChange={bind}
+                         />
+                    
+                    <Button autoFocus label="Modifier" icon="pi pi-user" iconPos="right" className="w-full" loading={loading} /*onClick={authenticate}*/ />
+                
                 </div>
-                <div className="field">
-                    <label htmlFor="telephone">Taper à nouveau le mot de passe</label>
-                    <InputText id="telephone"  onChange={bind} required  />
-                </div>
-                <Button label="Modifier" icon="pi pi-pencil" />
-            </>
+
+        </div>
+    </div>
     )
 }
 

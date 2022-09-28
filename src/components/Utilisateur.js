@@ -265,9 +265,9 @@ const Form = (props) => {
                         optionLabel="libelle" />
                 </div>
                 <div className="field">
-                    <FileUpload mode="basic" accept="images/profile/*" maxFileSize={1000000} 
+                    <FileUpload mode="basic" accept="image/*" maxFileSize={1000000} 
                         label="Import" chooseLabel="Importer une photo" className="mr-2 inline-block" 
-                        
+                        name="photo" url="./upload" 
                         />
                 </div>
             
