@@ -10,6 +10,8 @@ import { itemPerPage, pageMaxSize } from '../baseUrls/consts';
 import { Dropdown } from 'primereact/dropdown';
 import StructureService from '../services/StructureService';
 import InstitutionService from '../services/InstitutionService';
+import { Image } from 'primereact/image';
+import { FileUpload } from 'primereact/fileupload';
 
 
 const Utilisateur = () => {
@@ -87,6 +89,16 @@ const Table = (props) => {
             },
         });
     }
+
+    const imgProfil = ()=>{
+        //const data = item.utilisateur;
+        return(
+            <React.Fragment>
+                <img src="images/profile/person.png"  /*src={`images/profile/${data.image}`}*/
+                    alt=" " className="shadow-2" width={30}  />
+            </React.Fragment>
+        )
+    }
     
     return (
         <>
@@ -115,7 +127,7 @@ const Table = (props) => {
 
                 <Column field="id" header="Identifiant" sortable  hidden />
                 <Column field="matricule" header="Matricule" sortable />
-                <Column field="image" header="Photo" sortable />
+                <Column field="image" header="Photo" sortable body={imgProfil} />
                 <Column header="Nom" sortable style={{fontWeight: 'bold'}} body={(item)=> item.nom + " " + item.prenom}/>
                 <Column field="telephone" header="Téléphone" sortable />
                 <Column field="typeUtilisateur" header="Type utilisateur" sortable body={ (item)=> 
@@ -198,7 +210,7 @@ const Form = (props) => {
         )
     
     }
-
+    
     return(
         <Dialog visible={visible} style={{ width: '800px' }} header="Détails de l'utilisateur" modal className="p-fluid" 
             footer={
@@ -249,6 +261,12 @@ const Form = (props) => {
                         options={structures}
                         value={data?.structure}
                         optionLabel="libelle" />
+                </div>
+                <div className="field">
+                    <FileUpload mode="basic" accept="images/profile/*" maxFileSize={1000000} 
+                        label="Import" chooseLabel="Importer une photo" className="mr-2 inline-block" 
+                        
+                        />
                 </div>
             
             </Dialog>
