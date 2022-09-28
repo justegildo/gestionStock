@@ -5,6 +5,7 @@ export default new class ReponseService {
     
     save = (data, callback) => AxiosService.put(apiUrl('/api/crud/reponse/save-all'), data, callback);
     
+    
     /*
     get = (callback, queryParams) => AxiosService.get(apiUrl('/api/crud/vehicule/get'), callback, queryParams);
     getById = (id, callback) => AxiosService.get(apiUrl(`/api/crud/vehicule/get/${id}`), callback);

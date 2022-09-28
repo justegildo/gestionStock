@@ -14,7 +14,7 @@ import { Dropdown } from 'primereact/dropdown';
 import { TabView, TabPanel } from 'primereact/tabview';
 import { Steps } from 'primereact/steps';
 import { Toast } from 'primereact/toast'
-import { Route, Switch, useHistory } from 'react-router-dom';
+import { Route, Switch, useHistory, useLocation } from 'react-router-dom';
 import { InputTextarea } from 'primereact/inputtextarea';
 import { MultiSelect } from 'primereact/multiselect';
 import VehiculeService from '../services/VehiculeService';
@@ -25,13 +25,15 @@ import { FilterMatchMode, FilterOperator } from 'primereact/api';
 
 const Traitement = () => {
     const [yesNo, setYesNo] = useState({});
-    const [chefParcform, setChefParcForm] = useState({});
+    const [chefParcForm, setChefParcForm] = useState({});
+    const [responsableStructureForm, setResponsableStructureForm] = useState({});
 
     return (
         <div>
             <div className="card">
                 <Table {...{ setChefParcForm, setYesNo }} />
-                <ChefParcForm {...{ chefParcform, setYesNo }} />
+                <ChefParcForm {...{ chefParcForm, setYesNo }} />
+                <ResponsableStructureForm {...{ responsableStructureForm, setYesNo }} />
                 <Confirmation {...yesNo} />
             </div>
 
@@ -239,9 +241,10 @@ const Table = (props) => {
 }
 
 const ChefParcForm = (props) => {
-    const { visible, hide, data, setData, callback } = props.chefParcform;
+    const { visible, hide, data, setData, callback } = props.chefParcForm;
     const { setYesNo } = props;
     const history = useHistory();
+    const location = useLocation();
 
     const [loading, setLoading] = useState(false);
     const [activeIndex, setActiveIndex] = useState(0);
@@ -251,12 +254,9 @@ const ChefParcForm = (props) => {
 
     const [selectedCoupleVehiculeChauffeur, setSelectedCoupleVehiculeChauffeur] = useState();
     const [coupleVehiculeChauffeurs, setCoupleVehiculeChauffeurs] = useState([]);
+    const [observation, setObservation] = useState();
 
-    const [reponse, setReponse] = useState({
-        coupleVehiculeCva : [], 
-        demandeVehiculeId: 0, 
-        observation: null
-    });
+    const [acceptanceScreen, onAcceptanceScreen] = useState(false);
 
     useEffect(() => {
         if (!visible) return;
@@ -275,19 +275,6 @@ const ChefParcForm = (props) => {
         CvaService.get((data)=> data && setChauffeurs(data), {size: pageMaxSize})
     }
 
-    const bind = (e) => {
-        //console.log(JSON.stringify(reponse, null, 2))
-        if (e.target.value !== undefined) {
-            let value = e.target.value;
-            setReponse({ ...reponse, [e.target.id]: value });
-        }
-        else if (e.checked !== undefined) {
-            setReponse({ ...reponse, [e.target.id]: e.target.checked });
-        } else {
-            alert("Binding fails.")
-        }
-    }
-
     const goBack = (e) => {
         if (activeIndex === 1) {
             setActiveIndex(0);
@@ -300,6 +287,7 @@ const ChefParcForm = (props) => {
     const goNext = (e) => {
         if (activeIndex !== 1) {
             setActiveIndex(1);
+            onAcceptanceScreen(true);
             history.replace("/traitement/step2")
             return true;
         }
@@ -309,6 +297,7 @@ const ChefParcForm = (props) => {
     const goNext2 = (e)=>{
         if (activeIndex !== 1) {
             setActiveIndex(1);
+            onAcceptanceScreen(false);
             history.replace("/traitement/step3")
         }
     }
@@ -318,13 +307,23 @@ const ChefParcForm = (props) => {
         let items = [...coupleVehiculeChauffeurs, ...[selectedCoupleVehiculeChauffeur]];
         setCoupleVehiculeChauffeurs(items);
         setSelectedCoupleVehiculeChauffeur(null);
-        //console.log(JSON.stringify(items, null, 2));
+    }
+
+    const removeSelectedCoupleVehiculeChauffeur = (selectedCoupleVehiculeChauffeur)=> {
+        let index = coupleVehiculeChauffeurs.indexOf(selectedCoupleVehiculeChauffeur);
+        coupleVehiculeChauffeurs.splice(index, 1);
+        setCoupleVehiculeChauffeurs([...coupleVehiculeChauffeurs]);
     }
 
     const submit = (e) => {
         if(goNext()) return;
-        let tmpCoupleVehiculeChauffeurs = coupleVehiculeChauffeurs.map(item=> ({cvaId: item.chauffeur.id, vehiculeId: item.vehicule.id}));
-        let payload = {demandeVehiculeId: data.id, coupleVehiculeCva: tmpCoupleVehiculeChauffeurs};
+        let payload;
+        if(acceptanceScreen) {
+            let tmpCoupleVehiculeChauffeurs = coupleVehiculeChauffeurs
+                .map(item=> ({cvaId: item.chauffeur.id, vehiculeId: item.vehicule.id}));
+
+            payload = {demandeVehiculeId: data.id, coupleVehiculeCva: tmpCoupleVehiculeChauffeurs};    
+        }
         //console.log(JSON.stringify(payload, null, 2))
         setYesNo(
             {
@@ -339,7 +338,8 @@ const ChefParcForm = (props) => {
                             hide();
                             callback();
                     }
-                    ReponseService.save(payload, onResponse); 
+                    if(acceptanceScreen) ReponseService.save(payload, onResponse); 
+                    else DemandeService.updateEtat(onResponse, {demandeId: data.id, nouvelEtat: "REJETEE", observation: observation})
                 }
             }
         )
@@ -402,7 +402,7 @@ const ChefParcForm = (props) => {
                     optionLabel={(data)=> data.nom + " " + data.prenom} />
             </div>
             <div className="field">
-                <Button label="Ajouter" className="mr-2 mb-2" onClick={addChoice}/>
+                <Button label="Ajouter" className="my-2" onClick={addChoice} />
             </div>
             <DataTable dataKey="id" value={coupleVehiculeChauffeurs} responsiveLayout="scroll" 
                 paginator rows={10}>
@@ -412,13 +412,8 @@ const ChefParcForm = (props) => {
                 <Column header="Chauffeur" body={(item)=> item.chauffeur.nom + " " + item.chauffeur.prenom}></Column>
                 <Column body={ (selectedItem)=>
                     <div className="flex justify-content-end">
-                        <Button icon="pi pi-pencil" className="p-button-rounded p-button-success mr-2" 
-                            //onClick={() => editItem(selectedItem)}
-                            />
                         <Button icon="pi pi-trash" className="p-button-rounded p-button-warning mr-2" 
-                            //onClick={()=> deleteItem(selectedItem)}
-                            />
-                        
+                            onClick={()=> removeSelectedCoupleVehiculeChauffeur(selectedItem)} />
                     </div>
                 } />   
             </DataTable>
@@ -429,12 +424,11 @@ const ChefParcForm = (props) => {
         <div className='p-fluid'>
             <div className="field" >
                 <label htmlFor="observation">Observation</label>
-                <InputTextarea id="observation" value={reponse?.observation} onChange={bind} autoResize autoFocus required />
+                <InputTextarea id="observation" value={observation} onChange={(e)=>setObservation(e.target.value)} autoResize autoFocus required />
             </div>
         </div>
-        
     )
-
+    
     return (
         <Dialog visible={visible} style={{ width: '800px' }} modal className="p-fluid"
             header={
@@ -465,7 +459,10 @@ const ChefParcForm = (props) => {
             <Steps className='mt-1'
                 model={[
                     { label: 'Détails demande', command: () => history.push('/traitement') },
-                    { label: 'Ajout véhicules', command: () => history.push('/traitement/step2') }
+                    { 
+                        label: `${location.pathname === "/traitement/step3" ? "Observation" : 'Ajout véhicules'}`, 
+                        command: () => history.push('/traitement/step2') 
+                    }
                 ]}
                 activeIndex={activeIndex} onSelect={(e) => setActiveIndex(e.index)} readOnly={true} 
                 />
@@ -477,6 +474,159 @@ const ChefParcForm = (props) => {
         </Dialog>
     )
 }
+
+
+const ResponsableStructureForm = (props) => {
+    const { visible, hide, data, setData, callback } = props.responsableStructureForm;
+    const { setYesNo } = props;
+    const history = useHistory();
+    const location = useLocation();
+
+    const [loading, setLoading] = useState(false);
+    const [activeIndex, setActiveIndex] = useState(0);
+    
+    const [observation, setObservation] = useState();
+
+    const [acceptanceScreen, onAcceptanceScreen] = useState(true);
+
+    useEffect(() => {
+        if (!visible) return;
+        //
+        setActiveIndex(0);
+        history.replace("/traitement")
+    }, [visible])
+
+    const goBack = (e) => {
+        if (activeIndex === 1) {
+            setActiveIndex(0);
+            history.replace("/traitement")
+        } else {
+            hide(e);
+        }
+    }
+
+    const goNext2 = (e)=>{
+        if (activeIndex !== 1) {
+            setActiveIndex(1);
+            onAcceptanceScreen(false);
+            history.replace("/traitement/step2")
+        }
+    }
+
+    const submit = (e) => {
+        let payload;
+        //console.log(JSON.stringify(payload, null, 2))
+        setYesNo(
+            {
+                visible: true,
+                message : "Confirmez-vous l'ajout ?",
+                hide: ()=> setYesNo((prev)=>({...prev, visible: false})),
+                callback : ()=> {
+                    setLoading(true);
+                    let onResponse = (data, status)=> {
+                            setLoading(false);
+                            if(!status) return;
+                            hide();
+                            callback();
+                    }
+                    if(acceptanceScreen) ReponseService.save(payload, onResponse); 
+                    else DemandeService.updateEtat(onResponse, {demandeId: data.id, nouvelEtat: "REJETEE", observation: observation})
+                }
+            }
+        )
+    }
+
+    const step1Form = (
+        <div className='p-fluid'>
+            <div className="field" hidden>
+                <label htmlFor="id">Identifiant</label>
+                <InputText id="id" value={data?.id} />
+            </div>
+            <div className="field" >
+                <label htmlFor="dateDemande">Date de demande</label>
+                <Calendar id="dateDemande" value={data && new Date(data.dateDemande)} 
+                    mask="99/99/9999" readOnlyInput showOnFocus={false} />
+            </div>
+            <div className="field" >
+                <label htmlFor="lieu">Lieu</label>
+                <InputText id="lieu" value={data?.lieu?.libelle} readOnly />
+            </div>
+            <div className="field">
+                <label htmlFor="nbreParticipant">Nombre de participants</label>
+                <InputNumber id="nbreParticipant" value={data?.nbreParticipant} 
+                    required readOnly />
+            </div>
+            <div className="field">
+                <label htmlFor="nbreVehicule">Nombre de véhicules</label>
+                <InputNumber id="nbreVehicule" value={data?.nbreVehicule} readOnly/>
+            </div>
+            <div className="field">
+                <label htmlFor="dateDebutActivite">Date début de l'activité</label>
+                <Calendar id="dateDebutActivite" value={data && new Date(data.dateDebutActivite)} 
+                    mask="99/99/9999" readOnlyInput showOnFocus={false} />
+                    
+            </div>
+            <div className="field">
+                <label htmlFor="dateFinActivite">Date fin de l'activité</label>
+                <Calendar id="dateFinActivite" value={data && new Date(data.dateFinActivite)} 
+                    mask="99/99/9999" readOnlyInput showOnFocus={false} />
+            </div>
+        </div>
+    )
+
+    const step2Form = (
+        <div className='p-fluid'>
+            <div className="field" >
+                <label htmlFor="observation">Observation</label>
+                <InputTextarea id="observation" value={observation} onChange={(e)=>setObservation(e.target.value)} autoResize autoFocus required />
+            </div>
+        </div>
+    )
+    
+    return (
+        <Dialog visible={visible} style={{ width: '800px' }} modal className="p-fluid"
+            header={
+                <div className='flex flex-row align-items-center'>
+                    <Button icon="pi pi-arrow-left" className="p-button-rounded p-button-text mr-2"
+                        onClick={goBack} />
+                    <h5 className='m-0'>Traitement demande</h5>
+                </div>
+            }
+            footer={
+                <>
+                    <Button label="Annuler" icon="pi pi-times" className="p-button-text" onClick={hide} />
+                    {activeIndex === 0 &&
+                        <Button icon="pi pi-ban" className="p-button-danger p-button-text" 
+                            label={ "Rejeter" }
+                            onClick={goNext2}  
+                            />
+                    }
+                    <Button className="p-button-text" loading={loading}
+                        label={activeIndex === 1 ? "Terminer" : "Approuver"}
+                        icon="pi pi-check"
+                        onClick={submit} />
+                </>
+            }
+            onHide={hide} >
+
+            <Steps className='mt-1'
+                model={[
+                    { label: 'Détails demande', command: () => history.push('/traitement') },
+                    { 
+                        label: "Observation", 
+                        command: () => history.push('/traitement/step2') 
+                    }
+                ]}
+                activeIndex={activeIndex} onSelect={(e) => setActiveIndex(e.index)} readOnly={true} 
+                />
+            
+            <Route path={'/traitement'} exact render={() => <div className='mt-5'>{step1Form}</div>} />
+            <Route path={'/traitement/step2'} render={() => <div className='mt-5'>{step2Form}</div>} />
+
+        </Dialog>
+    )
+}
+
 
 const Confirmation = (props) => {
     const { visible, hide, message, callback } = props;

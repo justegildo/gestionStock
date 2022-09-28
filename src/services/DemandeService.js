@@ -9,4 +9,6 @@ export default new class DeamandeVehiculeService {
     update = (data, callback) => AxiosService.put(apiUrl('/api/crud/demande-vehicule/update'), data, callback);
     delete = (id, callback) => AxiosService.delete(apiUrl(`/api/crud/demande-vehicule/delete/${id}`), callback);
 
+    updateEtat = (callback, queryParams) => AxiosService.put(apiUrl('/api/crud/demande-vehicule/update-etat'), null, callback, queryParams);
+
 }
