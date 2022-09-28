@@ -25,8 +25,8 @@ class AxiosService {
         );
     }
     
-    put(path, payload, callback) {
-        return axios.put(path, payload, {headers: AxiosToken.getAuthorization()})
+    put(path, payload, callback, queryParams) {
+        return axios.put(path, payload, {...queryParams && {params: queryParams}, headers: AxiosToken.getAuthorization()})
         .then(
             (response) => callback(response.data, response.status, response.headers)
         ).catch(
