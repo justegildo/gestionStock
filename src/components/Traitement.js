@@ -27,13 +27,15 @@ const Traitement = () => {
     const [yesNo, setYesNo] = useState({});
     const [chefParcForm, setChefParcForm] = useState({});
     const [responsableStructureForm, setResponsableStructureForm] = useState({});
+    const [readOnlyForm, setReadOnlyForm] = useState({});
 
     return (
         <div>
             <div className="card">
-                <Table {...{ setChefParcForm, setYesNo }} />
+                <Table {...{ setChefParcForm, setResponsableStructureForm, setReadOnlyForm, setYesNo }} />
                 <ChefParcForm {...{ chefParcForm, setYesNo }} />
                 <ResponsableStructureForm {...{ responsableStructureForm, setYesNo }} />
+                <ReadOnlyForm {...{ readOnlyForm, setYesNo }} />
                 <Confirmation {...yesNo} />
             </div>
 
@@ -45,11 +47,9 @@ const Table = (props) => {
     const [items, setItems] = useState([]);
     const [globalFilter, setGlobalFilter] = useState(null);
     const [loading, setLoading] = useState(true);
-    const {setChefParcForm, setYesNo} = props;
+    const {setChefParcForm, setResponsableStructureForm, setReadOnlyForm, setYesNo} = props;
     const [activeIndex, setActiveIndex] = useState(0);
-    const [filters1, setFilters1] = useState(null);
-    const [filters2, setFilters2] = useState(null);
-    const [filters3, setFilters3] = useState(null);
+    //const [filters1, setFilters1] = useState(null);
 
     useEffect(() => {
         loadItems();
@@ -82,13 +82,25 @@ const Table = (props) => {
         })
     }
 
-    const showDemandeDetails = (item) => {
-        setChefParcForm({
+    const processDemandeDetails2 = (item) => {
+        setResponsableStructureForm({
             visible: true,
-            hide: () => setChefParcForm((prev) => ({ ...prev, visible: false })),
+            hide: () => setResponsableStructureForm((prev) => ({ ...prev, visible: false })),
             data: item,
-            setData: (data) => setChefParcForm((prev) => ({ ...prev, data })),
-            readOnly: true,
+            setData: (data) => setResponsableStructureForm((prev) => ({ ...prev, data })),
+            callback: () => {
+                setLoading(true);
+                loadItems();
+            }
+        })
+    }
+
+    const showReponse = (item) => {
+        setReadOnlyForm({
+            visible: true,
+            hide: () => setReadOnlyForm((prev) => ({ ...prev, visible: false })),
+            data: item,
+            setData: (data) => setReadOnlyForm((prev) => ({ ...prev, data })),
             callback: () => {
                 setLoading(true);
                 loadItems();
@@ -140,12 +152,15 @@ const Table = (props) => {
                     <div className="flex justify-content-end">
                         <Button icon="pi pi-eye" className="p-button-rounded p-button-success mr-2"
                             onClick={() => processDemandeDetails(selectedItem)} />
+
+                        <Button icon="pi pi-eye" className="p-button-rounded p-button-success mr-2"
+                            onClick={() => processDemandeDetails2(selectedItem)} />
                     </div>
                 } />
             :   <Column body={(selectedItem) =>
                     <div className="flex justify-content-end">
                         <Button icon="pi pi-eye" className="p-button-rounded p-button-success mr-2"
-                            onClick={() => showDemandeDetails(selectedItem)} />
+                            onClick={() => showReponse(selectedItem)} />
                     </div>
                 } />
             }    
@@ -184,7 +199,7 @@ const Table = (props) => {
 }
 
 const ChefParcForm = (props) => {
-    const { visible, hide, data, setData, readOnly, callback } = props.chefParcForm;
+    const { visible, hide, data, setData, callback } = props.chefParcForm;
     const { setYesNo } = props;
     const history = useHistory();
     const location = useLocation();
@@ -210,8 +225,6 @@ const ChefParcForm = (props) => {
         setActiveIndex(0);
         history.replace("/traitement")
         //
-        readOnly && setCoupleVehiculeChauffeurs(data.reponses.map(couple=>({vehicule: couple.vehicule, chauffeur: couple.cva})))
-        readOnly && setObservation(data.observation)
     }, [visible])
 
     const loadVehicules = () => {
@@ -331,65 +344,42 @@ const ChefParcForm = (props) => {
 
     const step2Form = (
         <div className='p-fluid'>
-            {!readOnly 
-            ? 
-            <>
-                <div className="field">
-                    <label htmlFor="immatriculation">Véhicules</label>
-                    <Dropdown id="vehicule" onChange={(e)=> {setSelectedCoupleVehiculeChauffeur({...selectedCoupleVehiculeChauffeur, vehicule: e.value})}}
-                        placeholder="Aucune sélection"
-                        options={vehicules}
-                        value={selectedCoupleVehiculeChauffeur?.vehicule}
-                        optionLabel="immatriculation" />
-                </div>
-                <div className="field">
-                    <label htmlFor="chauffeur">Chauffeurs</label>
-                    <Dropdown id="chauffeur" onChange={(e)=> {setSelectedCoupleVehiculeChauffeur({...selectedCoupleVehiculeChauffeur, chauffeur: e.value})}}
-                        placeholder="Aucune sélection"
-                        options={chauffeurs} 
-                        value={selectedCoupleVehiculeChauffeur?.chauffeur}
-                        optionLabel={(data)=> data.nom + " " + data.prenom} />
-                </div>
-                <div className="field">
-                    <Button label="Ajouter" className="my-2" onClick={addChoice} />
-                </div>
-     
-                <DataTable dataKey="id" value={coupleVehiculeChauffeurs} responsiveLayout="scroll" 
-                    paginator rows={10}>
-                    <Column field="vehicule.immatriculation" header="Immatriculation"></Column>
-                    <Column field="vehicule.marque" header="Marque"></Column>
-                    <Column field="vehicule.nbrePlace" header="Nombre de places"></Column>
-                    <Column header="Chauffeur" body={(item)=> item.chauffeur.nom + " " + item.chauffeur.prenom}></Column>
-                    <Column body={ (selectedItem)=>
-                        <div className="flex justify-content-end">
-                            <Button icon="pi pi-trash" className="p-button-rounded p-button-warning mr-2" 
-                                onClick={()=> removeSelectedCoupleVehiculeChauffeur(selectedItem)} />
-                        </div>
-                    } />   
-                </DataTable>
-            </>
-            :(
-                data.etatDemande === 'REJETEE' 
-                ?   <div className='p-fluid'>
-                        <div className="field" >
-                            <label htmlFor="observation">Observation</label>
-                            <InputTextarea id="observation" value={observation} onChange={(e)=>setObservation(e.target.value)} 
-                                readOnly autoResize autoFocus required />
-                        </div>
+           <div className="field">
+                <label htmlFor="immatriculation">Véhicules</label>
+                <Dropdown id="vehicule" onChange={(e)=> {setSelectedCoupleVehiculeChauffeur({...selectedCoupleVehiculeChauffeur, vehicule: e.value})}}
+                    placeholder="Aucune sélection"
+                    options={vehicules}
+                    value={selectedCoupleVehiculeChauffeur?.vehicule}
+                    optionLabel="immatriculation" />
+            </div>
+            <div className="field">
+                <label htmlFor="chauffeur">Chauffeurs</label>
+                <Dropdown id="chauffeur" onChange={(e)=> {setSelectedCoupleVehiculeChauffeur({...selectedCoupleVehiculeChauffeur, chauffeur: e.value})}}
+                    placeholder="Aucune sélection"
+                    options={chauffeurs} 
+                    value={selectedCoupleVehiculeChauffeur?.chauffeur}
+                    optionLabel={(data)=> data.nom + " " + data.prenom} />
+            </div>
+            <div className="field">
+                <Button label="Ajouter" className="my-2" onClick={addChoice} />
+            </div>
+    
+            <DataTable dataKey="id" value={coupleVehiculeChauffeurs} responsiveLayout="scroll" 
+                paginator rows={10}>
+                <Column field="vehicule.immatriculation" header="Immatriculation"></Column>
+                <Column field="vehicule.marque" header="Marque"></Column>
+                <Column field="vehicule.nbrePlace" header="Nombre de places"></Column>
+                <Column header="Chauffeur" body={(item)=> item.chauffeur.nom + " " + item.chauffeur.prenom}></Column>
+                <Column body={ (selectedItem)=>
+                    <div className="flex justify-content-end">
+                        <Button icon="pi pi-trash" className="p-button-rounded p-button-warning mr-2" 
+                            onClick={()=> removeSelectedCoupleVehiculeChauffeur(selectedItem)} />
                     </div>
-                :
-                   <DataTable dataKey="id" value={coupleVehiculeChauffeurs} responsiveLayout="scroll" 
-                        paginator rows={10}>
-                        <Column field="vehicule.immatriculation" header="Immatriculation"></Column>
-                        <Column field="vehicule.marque" header="Marque"></Column>
-                        <Column field="vehicule.nbrePlace" header="Nombre de places"></Column>
-                        <Column header="Chauffeur" body={(item)=> item.chauffeur.nom + " " + item.chauffeur.prenom}></Column>   
-                    </DataTable> 
-            )
-        }
+                } />   
+            </DataTable>
         </div>
     )
-
+    
     const step3Form = (
         <div className='p-fluid'>
             <div className="field" >
@@ -593,6 +583,158 @@ const ResponsableStructureForm = (props) => {
             <Route path={'/traitement'} exact render={() => <div className='mt-5'>{step1Form}</div>} />
             <Route path={'/traitement/step2'} render={() => <div className='mt-5'>{step2Form}</div>} />
 
+        </Dialog>
+    )
+}
+
+
+const ReadOnlyForm = (props) => {
+    const { visible, hide, data, setData, readOnly, callback } = props.readOnlyForm;
+    const history = useHistory();
+
+    const [loading, setLoading] = useState(false);
+    const [activeIndex, setActiveIndex] = useState(0);
+    const [stepCount, setStepCount] = useState(0);
+    
+    const [coupleVehiculeChauffeurs, setCoupleVehiculeChauffeurs] = useState([]);
+    const [observation, setObservation] = useState();
+
+    useEffect(() => {
+        if (!visible) return;
+        setCoupleVehiculeChauffeurs([]);
+        //
+        computeStepCount();
+        setActiveIndex(0);
+        history.replace("/traitement")
+        //
+        setCoupleVehiculeChauffeurs(data.reponses.map(couple=>({vehicule: couple.vehicule, chauffeur: couple.cva})))
+        setObservation(data.observation)
+    }, [visible])
+
+    const goBack = (e) => {
+        if (activeIndex > 0) {
+            setActiveIndex(activeIndex -1);
+            history.replace("/traitement")
+        } else {
+            hide(e);
+        }
+    }
+
+    const goNext = (e) => {
+        if (activeIndex !== (stepCount -1)) {
+            setActiveIndex(1);
+            history.replace("/traitement/step2")
+        }else{
+            hide(e);
+        }
+    }
+
+    const computeStepCount = () => {
+        if(!data) return;
+        if(data.etatDemande === 'INITIEE' || data.etatDemande === 'APPROUVEE')
+            setStepCount(1);
+        else
+            setStepCount(2);
+    }
+
+    const step1Form = data && (
+        <div className='p-fluid'>
+            <div className="field" hidden>
+                <label htmlFor="id">Identifiant</label>
+                <InputText id="id" value={data?.id} />
+            </div>
+            <div className="field" >
+                <label htmlFor="dateDemande">Date de demande</label>
+                <Calendar id="dateDemande" value={data && new Date(data.dateDemande)} 
+                    mask="99/99/9999" readOnlyInput showOnFocus={false} />
+            </div>
+            <div className="field" >
+                <label htmlFor="lieu">Lieu</label>
+                <InputText id="lieu" value={data?.lieu?.libelle} readOnly />
+            </div>
+            <div className="field">
+                <label htmlFor="nbreParticipant">Nombre de participants</label>
+                <InputNumber id="nbreParticipant" value={data?.nbreParticipant} 
+                    required readOnly />
+            </div>
+            <div className="field">
+                <label htmlFor="nbreVehicule">Nombre de véhicules</label>
+                <InputNumber id="nbreVehicule" value={data?.nbreVehicule} readOnly/>
+            </div>
+            <div className="field">
+                <label htmlFor="dateDebutActivite">Date début de l'activité</label>
+                <Calendar id="dateDebutActivite" value={data && new Date(data.dateDebutActivite)} 
+                    mask="99/99/9999" readOnlyInput showOnFocus={false} />
+                    
+            </div>
+            <div className="field">
+                <label htmlFor="dateFinActivite">Date fin de l'activité</label>
+                <Calendar id="dateFinActivite" value={data && new Date(data.dateFinActivite)} 
+                    mask="99/99/9999" readOnlyInput showOnFocus={false} />
+            </div>
+        </div>
+    )
+
+    const step2Form = data && (
+        <div className='p-fluid'>
+            {data.etatDemande === 'ACCEPTEE' &&
+                <DataTable dataKey="id" value={coupleVehiculeChauffeurs} responsiveLayout="scroll" 
+                    paginator rows={10}>
+                    <Column field="vehicule.immatriculation" header="Immatriculation"></Column>
+                    <Column field="vehicule.marque" header="Marque"></Column>
+                    <Column field="vehicule.nbrePlace" header="Nombre de places"></Column>
+                    <Column header="Chauffeur" body={(item)=> item.chauffeur.nom + " " + item.chauffeur.prenom}></Column>   
+                </DataTable> 
+            }
+            {data.etatDemande === 'REJETEE' &&
+               <div className='p-fluid'>
+                    <div className="field" >
+                        <label htmlFor="observation">Observation</label>
+                        <InputTextarea id="observation" value={observation} onChange={(e)=>setObservation(e.target.value)} 
+                            readOnly autoResize autoFocus required />
+                    </div>
+                </div>
+            }
+        </div>
+    )
+    
+    return ( !data ? null :
+        <Dialog visible={visible} style={{ width: '800px' }} modal className="p-fluid"
+            header={
+                <div className='flex flex-row align-items-center'>
+                    <Button icon="pi pi-arrow-left" className="p-button-rounded p-button-text mr-2"
+                        onClick={goBack} />
+                    <h5 className='m-0'>Traitement demande</h5>
+                </div>
+            }
+            footer={
+                <>
+                    <Button label="Annuler" icon="pi pi-times" className="p-button-text" onClick={hide} />
+                    <Button className="p-button-text" loading={loading}
+                        label={activeIndex === (stepCount-1) ? "Terminer" : "Continuer"}
+                        icon={`pi pi-${activeIndex === (stepCount-1) ? "check" : "angle-right"}`}
+                        iconPos={`${activeIndex === (stepCount-1) ? "left" : "right"}`}
+                        onClick={goNext} />
+                </>
+            }
+            onHide={hide} >
+
+            <Steps className='mt-1'
+                model={[
+                    { label: 'Détails demande', command: () => history.push('/traitement') },
+                    { ...(stepCount > 1) && 
+                        {
+                            label: `${data.etatDemande === 'REJETEE' ? "Observation" : 'Véhicules'}`, 
+                            command: () => history.push('/traitement/step2') 
+                        }
+                    }
+                ]}
+                activeIndex={activeIndex} onSelect={(e) => setActiveIndex(e.index)} readOnly={true} 
+                />
+            
+            <Route path={'/traitement'} exact render={() => <div className='mt-5'>{step1Form}</div>} />
+            <Route path={'/traitement/step2'} render={() => <div className='mt-5'>{step2Form}</div>} />
+            
         </Dialog>
     )
 }
