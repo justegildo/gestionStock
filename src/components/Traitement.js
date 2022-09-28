@@ -53,38 +53,20 @@ const Table = (props) => {
 
     useEffect(() => {
         loadItems();
-        initFilters1();
-        initFilters2();
-        initFilters3();
-    }, []);
-
-    const initFilters1 = () => {
-        setFilters1({
-            'etatDemande': { operator: FilterOperator.AND, 
-                constraints: [{ value: 'INITIEE', matchMode: FilterMatchMode.EQUALS }] },
-        });
-    }
-
-    const initFilters2 = () => {
-        setFilters2({
-            'etatDemande': { operator: FilterOperator.AND, 
-                constraints: [{ value: 'ACCEPTEE', matchMode: FilterMatchMode.EQUALS }] },
-        });
-    }
-
-    const initFilters3 = () => {
-        setFilters3({
-            'etatDemande': { operator: FilterOperator.AND, 
-                constraints: [{ value: 'REJETEE', matchMode: FilterMatchMode.EQUALS }] },
-        });
-    }
+        //initFilters1();
+    }, [activeIndex]);
 
     const loadItems = () => {
-        DemandeService.get((data, status) => {
+        setLoading(true);
+        let onResponse = (data, status) => {
             setLoading(false);
             if (status) setItems(data);
-        },
-        { size: itemPerPage });
+        };
+        let etatDemande;
+        if(activeIndex === 0) etatDemande = "INITIEE";
+        if(activeIndex === 1) etatDemande = "ACCEPTEE";
+        if(activeIndex === 2) etatDemande = "REJETEE";
+        DemandeService.get(onResponse, { etatDemande, size: itemPerPage });
     }
     
     const showDemandeDetails = (item) => {
@@ -100,10 +82,19 @@ const Table = (props) => {
         })
     }
 
+    /*
+    const initFilters1 = () => {
+        setFilters1({
+            'etatDemande': { operator: FilterOperator.AND, 
+                constraints: [{ value: 'INITIEE', matchMode: FilterMatchMode.EQUALS }] },
+        });
+    }
+    */
+
     const table = (
         <DataTable dataKey="id" value={items}
             paginator rows={itemPerPage}
-            filters={filters1}
+            //filters={filters1}
             loading={loading} globalFilter={globalFilter}
             responsiveLayout="scroll" emptyMessage="Aucune donnée disponible.">
 
@@ -130,97 +121,29 @@ const Table = (props) => {
                     {item.etatDemande}
                 </span>
             } />
+            {activeIndex !== 2 && 
             <Column body={(selectedItem) =>
                 <div className="flex justify-content-end">
                     <Button icon="pi pi-eye" className="p-button-rounded p-button-success mr-2"
                         onClick={() => showDemandeDetails(selectedItem)} />
                 </div>
             } />
+            }
         </DataTable>
     );
-
-    const table2 = (
-        <DataTable dataKey="id" value={items}
-            paginator rows={itemPerPage}
-            loading={loading} globalFilter={globalFilter}
-            filters={filters2}
-            responsiveLayout="scroll" emptyMessage="Aucune donnée disponible.">
-
-            <Column field="id" header="Identifiant" sortable hidden />
-            {/* <Column field="dateDemande" header="Date de demande" sortable 
-                    body={(item)=> new Date(item.dateDemande).toLocaleDateString()}/> */}
-            <Column field="utilisateur.nom" header="Demandeur" sortable body={(selectedItem) =>
-                selectedItem.utilisateur && (selectedItem.utilisateur.nom + " "
-                    + selectedItem.utilisateur.prenom)
-            } />
-            <Column field="lieu.libelle" header="Lieu" sortable />
-            {/* <Column field="nbreParticipant" header="Nombre de participants" sortable /> */}
-            <Column field="nbreVehicule" header="Nombre de véhicules" sortable style={{ fontWeight: 'bold' }} />
-            <Column field="dateDebutActivite" header="Date début de l'activité" sortable
-                body={(item) => new Date(item.dateDebutActivite).toLocaleDateString()} />
-            <Column field="dateFinActivite" header="Date fin de l'activité" sortable
-                body={(item) => new Date(item.dateFinActivite).toLocaleDateString()} />
-
-            <Column field="etatDemande" header="Etat" sortable body={(item) =>
-                <span className={`customer-badge status-${item.etatDemande === 'ACCEPTEE'
-                    ? 'qualified'
-                    : (item.etatDemande === 'APPROUVEE' ? 'new'
-                        : item.etatDemande === 'REJETEE' ? 'unqualified' : 'proposal')}`}>
-                    {item.etatDemande}
-                </span>
-            } />
-            {/* <Column body={(selectedItem) =>
-                <div className="flex justify-content-end">
-                    <Button icon="pi pi-eye" className="p-button-rounded p-button-success mr-2"
-                        onClick={() => showDemandeDetails(selectedItem)} />
-                </div>
-            } /> */}
-        </DataTable>
-    );
-
-    const table3 = (
-        <DataTable dataKey="id" value={items}
-            paginator rows={itemPerPage}
-            filters={filters3}
-            loading={loading} globalFilter={globalFilter}
-            responsiveLayout="scroll" emptyMessage="Aucune donnée disponible.">
-
-            <Column field="id" header="Identifiant" sortable hidden />
-            {/* <Column field="dateDemande" header="Date de demande" sortable 
-                    body={(item)=> new Date(item.dateDemande).toLocaleDateString()}/> */}
-            <Column field="utilisateur.nom" header="Demandeur" sortable body={(selectedItem) =>
-                selectedItem.utilisateur && (selectedItem.utilisateur.nom + " "
-                    + selectedItem.utilisateur.prenom)
-            } />
-            <Column field="lieu.libelle" header="Lieu" sortable />
-            {/* <Column field="nbreParticipant" header="Nombre de participants" sortable /> */}
-            <Column field="nbreVehicule" header="Nombre de véhicules" sortable style={{ fontWeight: 'bold' }} />
-            <Column field="dateDebutActivite" header="Date début de l'activité" sortable
-                body={(item) => new Date(item.dateDebutActivite).toLocaleDateString()} />
-            <Column field="dateFinActivite" header="Date fin de l'activité" sortable
-                body={(item) => new Date(item.dateFinActivite).toLocaleDateString()} />
-
-            <Column field="etatDemande" header="Etat" sortable body={(item) =>
-                <span className={`customer-badge status-${item.etatDemande === 'ACCEPTEE'
-                    ? 'qualified'
-                    : (item.etatDemande === 'APPROUVEE' ? 'new'
-                        : item.etatDemande === 'REJETEE' ? 'unqualified' : 'proposal')}`}>
-                    {item.etatDemande}
-                </span>
-            } />
-            {/* <Column body={(selectedItem) =>
-                <div className="flex justify-content-end">
-                    <Button icon="pi pi-eye" className="p-button-rounded p-button-success mr-2"
-                        onClick={() => showDemandeDetails(selectedItem)} />
-                </div>
-            } /> */}
-        </DataTable>
-    );
-
+    
     return (
         <>
             <h5>Liste des demandes</h5>
             <Toolbar className="mb-4"
+                left={
+                    <>
+                        <div className="my-2">
+                            <Button label="Actualiser" icon="pi pi-refresh" className="p-button-primry mr-2" 
+                                onClick={()=>{setLoading(true); loadItems()}} />
+                        </div>
+                    </>
+                }
                 right={
                     <React.Fragment>
                         <span className="block mt-2 md:mt-0 p-input-icon-left">
@@ -233,8 +156,8 @@ const Table = (props) => {
 
             <TabView activeIndex={activeIndex} onTabChange={(e) => { setActiveIndex(e.index);/* alert(e.index)*/ }} >
                 <TabPanel header="Demandes en traitement">{table}</TabPanel>
-                <TabPanel header="Demandes traitées">{table2}</TabPanel>
-                <TabPanel header="Demandes rejetées">{table3}</TabPanel>
+                <TabPanel header="Demandes traitées">{table}</TabPanel>
+                <TabPanel header="Demandes rejetées">{table}</TabPanel>
             </TabView>
         </>
     );
