@@ -69,12 +69,26 @@ const Table = (props) => {
         DemandeService.get(onResponse, { etatDemande, size: itemPerPage });
     }
     
+    const processDemandeDetails = (item) => {
+        setChefParcForm({
+            visible: true,
+            hide: () => setChefParcForm((prev) => ({ ...prev, visible: false })),
+            data: item,
+            setData: (data) => setChefParcForm((prev) => ({ ...prev, data })),
+            callback: () => {
+                setLoading(true);
+                loadItems();
+            }
+        })
+    }
+
     const showDemandeDetails = (item) => {
         setChefParcForm({
             visible: true,
             hide: () => setChefParcForm((prev) => ({ ...prev, visible: false })),
             data: item,
             setData: (data) => setChefParcForm((prev) => ({ ...prev, data })),
+            readOnly: true,
             callback: () => {
                 setLoading(true);
                 loadItems();
@@ -121,14 +135,20 @@ const Table = (props) => {
                     {item.etatDemande}
                 </span>
             } />
-            {activeIndex !== 2 && 
-            <Column body={(selectedItem) =>
-                <div className="flex justify-content-end">
-                    <Button icon="pi pi-eye" className="p-button-rounded p-button-success mr-2"
-                        onClick={() => showDemandeDetails(selectedItem)} />
-                </div>
-            } />
-            }
+            {activeIndex == 0 
+            ?   <Column body={(selectedItem) =>
+                    <div className="flex justify-content-end">
+                        <Button icon="pi pi-eye" className="p-button-rounded p-button-success mr-2"
+                            onClick={() => processDemandeDetails(selectedItem)} />
+                    </div>
+                } />
+            :   <Column body={(selectedItem) =>
+                    <div className="flex justify-content-end">
+                        <Button icon="pi pi-eye" className="p-button-rounded p-button-success mr-2"
+                            onClick={() => showDemandeDetails(selectedItem)} />
+                    </div>
+                } />
+            }    
         </DataTable>
     );
     
@@ -164,7 +184,7 @@ const Table = (props) => {
 }
 
 const ChefParcForm = (props) => {
-    const { visible, hide, data, setData, callback } = props.chefParcForm;
+    const { visible, hide, data, setData, readOnly, callback } = props.chefParcForm;
     const { setYesNo } = props;
     const history = useHistory();
     const location = useLocation();
@@ -189,6 +209,9 @@ const ChefParcForm = (props) => {
         //
         setActiveIndex(0);
         history.replace("/traitement")
+        //
+        readOnly && setCoupleVehiculeChauffeurs(data.reponses.map(couple=>({vehicule: couple.vehicule, chauffeur: couple.cva})))
+        readOnly && setObservation(data.observation)
     }, [visible])
 
     const loadVehicules = () => {
@@ -308,38 +331,62 @@ const ChefParcForm = (props) => {
 
     const step2Form = (
         <div className='p-fluid'>
-           <div className="field">
-                <label htmlFor="immatriculation">Véhicules</label>
-                <Dropdown id="vehicule" onChange={(e)=> {setSelectedCoupleVehiculeChauffeur({...selectedCoupleVehiculeChauffeur, vehicule: e.value})}}
-                    placeholder="Aucune sélection"
-                    options={vehicules}
-                    value={selectedCoupleVehiculeChauffeur?.vehicule}
-                    optionLabel="immatriculation" />
-            </div>
-            <div className="field">
-                <label htmlFor="chauffeur">Chauffeurs</label>
-                <Dropdown id="chauffeur" onChange={(e)=> {setSelectedCoupleVehiculeChauffeur({...selectedCoupleVehiculeChauffeur, chauffeur: e.value})}}
-                    placeholder="Aucune sélection"
-                    options={chauffeurs} 
-                    value={selectedCoupleVehiculeChauffeur?.chauffeur}
-                    optionLabel={(data)=> data.nom + " " + data.prenom} />
-            </div>
-            <div className="field">
-                <Button label="Ajouter" className="my-2" onClick={addChoice} />
-            </div>
-            <DataTable dataKey="id" value={coupleVehiculeChauffeurs} responsiveLayout="scroll" 
-                paginator rows={10}>
-                <Column field="vehicule.immatriculation" header="Immatriculation"></Column>
-                <Column field="vehicule.marque" header="Marque"></Column>
-                <Column field="vehicule.nbrePlace" header="Nombre de places"></Column>
-                <Column header="Chauffeur" body={(item)=> item.chauffeur.nom + " " + item.chauffeur.prenom}></Column>
-                <Column body={ (selectedItem)=>
-                    <div className="flex justify-content-end">
-                        <Button icon="pi pi-trash" className="p-button-rounded p-button-warning mr-2" 
-                            onClick={()=> removeSelectedCoupleVehiculeChauffeur(selectedItem)} />
+            {!readOnly 
+            ? 
+            <>
+                <div className="field">
+                    <label htmlFor="immatriculation">Véhicules</label>
+                    <Dropdown id="vehicule" onChange={(e)=> {setSelectedCoupleVehiculeChauffeur({...selectedCoupleVehiculeChauffeur, vehicule: e.value})}}
+                        placeholder="Aucune sélection"
+                        options={vehicules}
+                        value={selectedCoupleVehiculeChauffeur?.vehicule}
+                        optionLabel="immatriculation" />
+                </div>
+                <div className="field">
+                    <label htmlFor="chauffeur">Chauffeurs</label>
+                    <Dropdown id="chauffeur" onChange={(e)=> {setSelectedCoupleVehiculeChauffeur({...selectedCoupleVehiculeChauffeur, chauffeur: e.value})}}
+                        placeholder="Aucune sélection"
+                        options={chauffeurs} 
+                        value={selectedCoupleVehiculeChauffeur?.chauffeur}
+                        optionLabel={(data)=> data.nom + " " + data.prenom} />
+                </div>
+                <div className="field">
+                    <Button label="Ajouter" className="my-2" onClick={addChoice} />
+                </div>
+     
+                <DataTable dataKey="id" value={coupleVehiculeChauffeurs} responsiveLayout="scroll" 
+                    paginator rows={10}>
+                    <Column field="vehicule.immatriculation" header="Immatriculation"></Column>
+                    <Column field="vehicule.marque" header="Marque"></Column>
+                    <Column field="vehicule.nbrePlace" header="Nombre de places"></Column>
+                    <Column header="Chauffeur" body={(item)=> item.chauffeur.nom + " " + item.chauffeur.prenom}></Column>
+                    <Column body={ (selectedItem)=>
+                        <div className="flex justify-content-end">
+                            <Button icon="pi pi-trash" className="p-button-rounded p-button-warning mr-2" 
+                                onClick={()=> removeSelectedCoupleVehiculeChauffeur(selectedItem)} />
+                        </div>
+                    } />   
+                </DataTable>
+            </>
+            :(
+                data.etatDemande === 'REJETEE' 
+                ?   <div className='p-fluid'>
+                        <div className="field" >
+                            <label htmlFor="observation">Observation</label>
+                            <InputTextarea id="observation" value={observation} onChange={(e)=>setObservation(e.target.value)} 
+                                readOnly autoResize autoFocus required />
+                        </div>
                     </div>
-                } />   
-            </DataTable>
+                :
+                   <DataTable dataKey="id" value={coupleVehiculeChauffeurs} responsiveLayout="scroll" 
+                        paginator rows={10}>
+                        <Column field="vehicule.immatriculation" header="Immatriculation"></Column>
+                        <Column field="vehicule.marque" header="Marque"></Column>
+                        <Column field="vehicule.nbrePlace" header="Nombre de places"></Column>
+                        <Column header="Chauffeur" body={(item)=> item.chauffeur.nom + " " + item.chauffeur.prenom}></Column>   
+                    </DataTable> 
+            )
+        }
         </div>
     )
 
@@ -549,7 +596,6 @@ const ResponsableStructureForm = (props) => {
         </Dialog>
     )
 }
-
 
 const Confirmation = (props) => {
     const { visible, hide, message, callback } = props;
