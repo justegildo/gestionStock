@@ -227,26 +227,26 @@ const Form = (props) => {
                     <label htmlFor="id">Identifiant</label>
                     <InputText id="id" value={data?.id} onChange={bind} />
                 </div>
-                <div className="grid p-fluid mt-3" >
-                    <div className="field col-4">
-                        <div className='card'>
-                            <FileUpload name="demo[]" url="./upload.php" /*onUpload={onUpload}*/ multiple accept="image/*" maxFileSize={1000000} 
-                                 />
-                        </div>
-                    </div>
-                        
-                    <div className="field col-8 " >
-                        <label htmlFor="matricule">Matricule</label>
-                        <InputText id="matricule" value={data?.matricule} onChange={bind} required  />
-
-                        <label htmlFor="nom">Nom</label>
-                        <InputText id="nom" value={data?.nom} onChange={bind} required  />
-
-                        <label htmlFor="prenom">Prénoms</label>
-                        <InputText id="prenom" value={data?.prenom} onChange={bind} required  />
-                    </div>
+                <div className="field" style={{width: "400px", position: "relative", left: "160px"}} >
+    
+                    <img style={{ width: "80px", position: "relative", left: "40%"}} className="mx-auto " src="/images/profile/person.png" alt=" Profil" 
+                        />
+            
+                    <FileUpload name="demo[]" url="./upload.php" /*onUpload={onUpload}*/ accept="image/*" maxFileSize={1000000} 
+                        />
+                </div> 
+                <div className="field"> 
+                    <label htmlFor="matricule">Matricule</label>
+                    <InputText id="matricule" value={data?.matricule} onChange={bind} required  />
                 </div>
-                
+                <div className="field"> 
+                    <label htmlFor="nom">Nom</label>
+                    <InputText id="nom" value={data?.nom} onChange={bind} required  />
+                </div>
+                <div className="field"> 
+                    <label htmlFor="prenom">Prénoms</label>
+                    <InputText id="prenom" value={data?.prenom} onChange={bind} required  />
+                </div>
                 <div className="field">
                     <label htmlFor="telephone">Téléphone</label>
                     <InputText id="telephone" value={data?.telephone} onChange={bind} required  />
