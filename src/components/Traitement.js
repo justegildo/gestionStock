@@ -64,8 +64,9 @@ const Table = (props) => {
         };
         let etatDemande;
         if(activeIndex === 0) etatDemande = "INITIEE";
-        if(activeIndex === 1) etatDemande = "ACCEPTEE";
-        if(activeIndex === 2) etatDemande = "REJETEE";
+        if(activeIndex === 1) etatDemande = "APPROUVEE";
+        if(activeIndex === 2) etatDemande = "ACCEPTEE";
+        if(activeIndex === 3) etatDemande = "REJETEE";
         DemandeService.get(onResponse, { etatDemande, size: itemPerPage });
     }
     
@@ -191,6 +192,7 @@ const Table = (props) => {
 
             <TabView activeIndex={activeIndex} onTabChange={(e) => { setActiveIndex(e.index);/* alert(e.index)*/ }} >
                 <TabPanel header="Demandes en traitement">{table}</TabPanel>
+                <TabPanel header="Demandes approuvées">{table}</TabPanel>
                 <TabPanel header="Demandes traitées">{table}</TabPanel>
                 <TabPanel header="Demandes rejetées">{table}</TabPanel>
             </TabView>
@@ -447,8 +449,6 @@ const ResponsableStructureForm = (props) => {
     
     const [observation, setObservation] = useState();
 
-    const [acceptanceScreen, onAcceptanceScreen] = useState(true);
-
     useEffect(() => {
         if (!visible) return;
         //
@@ -468,32 +468,53 @@ const ResponsableStructureForm = (props) => {
     const goNext2 = (e)=>{
         if (activeIndex !== 1) {
             setActiveIndex(1);
-            onAcceptanceScreen(false);
             history.replace("/traitement/step2")
         }
     }
 
     const submit = (e) => {
-        let payload;
-        //console.log(JSON.stringify(payload, null, 2))
-        setYesNo(
-            {
-                visible: true,
-                message : "Confirmez-vous l'ajout ?",
-                hide: ()=> setYesNo((prev)=>({...prev, visible: false})),
-                callback : ()=> {
-                    setLoading(true);
-                    let onResponse = (data, status)=> {
-                            setLoading(false);
-                            if(!status) return;
-                            hide();
-                            callback();
+
+        //Demande approuvée
+        if(activeIndex == 0) {
+            setYesNo(
+                {
+                    visible: true,
+                    message : "Confirmez-vous l'approbation ?",
+                    hide: ()=> setYesNo((prev)=>({...prev, visible: false})),
+                    callback : ()=> {
+                        setLoading(true);
+                        let onResponse = (data, status)=> {
+                                setLoading(false);
+                                if(!status) return;
+                                hide();
+                                callback();
+                        }
+                        DemandeService.updateEtat(onResponse, {demandeId: data.id, nouvelEtat: "APPROUVEE", observation: observation})
                     }
-                    if(acceptanceScreen) ReponseService.save(payload, onResponse); 
-                    else DemandeService.updateEtat(onResponse, {demandeId: data.id, nouvelEtat: "REJETEE", observation: observation})
                 }
-            }
-        )
+            )
+        }
+
+        //Demande rejetée
+        if(activeIndex == 1) {
+            setYesNo(
+                {
+                    visible: true,
+                    message : "Confirmez-vous le rejet ?",
+                    hide: ()=> setYesNo((prev)=>({...prev, visible: false})),
+                    callback : ()=> {
+                        setLoading(true);
+                        let onResponse = (data, status)=> {
+                                setLoading(false);
+                                if(!status) return;
+                                hide();
+                                callback();
+                        }
+                        DemandeService.updateEtat(onResponse, {demandeId: data.id, nouvelEtat: "REJETEE", observation: observation})
+                    }
+                }
+            )
+        }        
     }
 
     const step1Form = (
@@ -609,6 +630,15 @@ const ReadOnlyForm = (props) => {
         //
         setCoupleVehiculeChauffeurs(data.reponses.map(couple=>({vehicule: couple.vehicule, chauffeur: couple.cva})))
         setObservation(data.observation)
+
+        /*
+        const i =2;
+        const test = [
+            { label: 'Détails demande'},
+            ...[(i === 1) && {label: "label" }]
+        ]
+        alert(JSON.stringify(test, null, 2))
+        */
     }, [visible])
 
     const goBack = (e) => {
