@@ -196,19 +196,19 @@ const Form = (props) => {
                 </div>
                 <div className="field">
                     <label htmlFor="matricule">Matricule</label>
-                    <InputText id="matricule" value={data && data.matricule} onChange={bind} required  />
+                    <InputText id="matricule" value={data && data.matricule} onChange={bind} required placeholder='ex: AZ125' />
                 </div>
                 <div className="field">
                     <label htmlFor="nom">Nom</label>
-                    <InputText id="nom" value={data && data.nom} onChange={bind} required  />
+                    <InputText id="nom" value={data && data.nom} onChange={bind} required placeholder='ex: AGOSSOU' />
                 </div>
                 <div className="field">
                     <label htmlFor="prenom">Pénoms</label>
-                    <InputText id="prenom" value={data && data.prenom} onChange={bind} required  />
+                    <InputText id="prenom" value={data && data.prenom} onChange={bind} required placeholder='ex: Zinsou' />
                 </div>
                 <div className="field">
                     <label htmlFor="telephone">Téléphone</label>
-                    <InputText id="telephone" value={data && data.telephone} onChange={bind} />
+                    <InputText id="telephone" value={data && data.telephone} onChange={bind} placeholder='ex: +229 98 00 00 00' />
                 </div>
                 <div className="field">
                     <label htmlFor="institution">Institution</label>

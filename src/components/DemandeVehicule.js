@@ -244,27 +244,27 @@ const Form = (props) => {
                 <div className="field" hidden>
                     <label htmlFor="dateDemande">Date de demande</label>
                     <Calendar id="dateDemande" value={data && new Date(data.dateDemande)} 
-                        onChange={bind}  mask="99/99/9999" required  />
+                        onChange={bind}  mask="99/99/9999" required placeholder='ex: 01/01/2022' />
                 </div>
                 <div className="field">
                     <label htmlFor="nbreParticipant">Nombre de participants</label>
                     <InputNumber id="nbreParticipant" value={data?.nbreParticipant} 
-                        onValueChange={bind} required  />
+                        onValueChange={bind} required placeholder='ex: 10' />
                 </div>
                 <div className="field">
                     <label htmlFor="nbreVehicule">Nombre de véhicules</label>
                     <InputNumber id="nbreVehicule" value={data?.nbreVehicule} 
-                        onValueChange={bind} required  />
+                        onValueChange={bind} required placeholder='ex: 02' />
                 </div>
                 <div className="field">
                     <label htmlFor="dateDebutActivite">Date début de l'activité</label>
                     <Calendar id="dateDebutActivite" value={data && new Date(data.dateDebutActivite)} 
-                        onChange={bind} mask="99/99/9999" required />
+                        onChange={bind} mask="99/99/9999" required placeholder='ex: 01/01/2022'/>
                 </div>
                 <div className="field">
                     <label htmlFor="dateFinActivite">Date fin de l'activité</label>
                     <Calendar id="dateFinActivite" value={data && new Date(data.dateFinActivite)} 
-                        onChange={bind} mask="99/99/9999" required  />
+                        onChange={bind} mask="99/99/9999" required placeholder='ex: 12/01/2022' />
                 </div>
             </Dialog>
     )

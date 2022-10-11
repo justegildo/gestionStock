@@ -191,7 +191,7 @@ const Form = (props) => {
                 </div>
                 <div className="field">
                     <label htmlFor="libelle">Libellé</label>
-                    <InputText id="libelle" value={data && data.libelle} onChange={bind} required  />
+                    <InputText id="libelle" value={data && data.libelle} onChange={bind} required placeholder=" ex: DPAF" />
                 </div>
                 {/*
                 <div className="field">
@@ -201,7 +201,7 @@ const Form = (props) => {
                  */}
                 <div className="field">
                     <label htmlFor="telephone">Téléphone</label>
-                    <InputText id="telephone" value={data && data.telephone} onChange={bind} />
+                    <InputText id="telephone" value={data && data.telephone} onChange={bind} placeholder="ex: +229 98 00 00 00" />
                 </div>
                 <div className="field">
                     <label htmlFor="institution">Institution</label>

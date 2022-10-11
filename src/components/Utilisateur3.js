@@ -229,27 +229,27 @@ const Form = (props) => {
                 </div>
                 <div className="grid p-fluid mt-3" >
                     <div className="field col-4">
-                        <div className='card' >
-                            <Image imageStyle={{width: "130px", height: "130px"}} src="/images/profile/person.png" 
-                                alt="Image Text" />
+                        <div className='card'>
+                            <FileUpload name="demo[]" url="./upload.php" /*onUpload={onUpload}*/ multiple accept="image/*" maxFileSize={1000000} 
+                                 />
                         </div>
                     </div>
                         
                     <div className="field col-8 " >
                         <label htmlFor="matricule">Matricule</label>
-                        <InputText id="matricule" value={data?.matricule} onChange={bind} required  placeholder="ex: AZ145" />
+                        <InputText id="matricule" value={data?.matricule} onChange={bind} required  />
 
                         <label htmlFor="nom">Nom</label>
-                        <InputText id="nom" value={data?.nom} onChange={bind} required placeholder="ex: AGOSSOU" />
+                        <InputText id="nom" value={data?.nom} onChange={bind} required  />
 
                         <label htmlFor="prenom">Prénoms</label>
-                        <InputText id="prenom" value={data?.prenom} onChange={bind} required placeholder="ex: Sonagnon" />
+                        <InputText id="prenom" value={data?.prenom} onChange={bind} required  />
                     </div>
                 </div>
                 
                 <div className="field">
                     <label htmlFor="telephone">Téléphone</label>
-                    <InputText id="telephone" value={data?.telephone} onChange={bind} required placeholder="ex: +229 98 00 00 00" />
+                    <InputText id="telephone" value={data?.telephone} onChange={bind} required  />
                 </div>
                 <div className="field">
                     <label htmlFor="typeUtilisateur">Type utilisateur</label>

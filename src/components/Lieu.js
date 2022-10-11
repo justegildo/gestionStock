@@ -196,7 +196,8 @@ const Form = (props) => {
                 </div>
                 <div className="field">
                     <label htmlFor="libelle">Libellé</label>
-                    <InputText id="libelle" value={data && data.libelle} onChange={bind} required />
+                    <InputText id="libelle" value={data && data.libelle} onChange={bind} required 
+                        placeholder='ex: '/>
                 </div>
         </Dialog>
     )

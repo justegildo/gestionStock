@@ -20,7 +20,7 @@ export const AppTopbar = (props) => {
     let recup = JSON.parse(data);
     //console.log(JSON.parse(data));
     console.log(recup.utilisateur.structure.institution.libelle);
-    const profile = () =>{
+    const funct = () =>{
         let name = recup.utilisateur.nom;
         let name2 = recup.utilisateur.prenom;
         let type = recup.utilisateur.typeUtilisateur;
@@ -36,8 +36,7 @@ export const AppTopbar = (props) => {
             message: "Voulez-vous vraiment se déconnecter ?",
             hide: ()=> setYesNo((prev)=>({...prev, visible: false})),
             callback: ()=>{
-                localStorage.clear('token');
-                history.push("/login");
+                history.push("/login")
             }
         })
     }
@@ -85,13 +84,25 @@ export const AppTopbar = (props) => {
             </button>
             
             <ul className={classNames("layout-topbar-menu lg:flex origin-top", {'layout-topbar-menu-mobile-active': props.mobileTopbarMenuActive })}>
-                
-                
-                <Button label='Modifier mot de passe' className="p-button-text mr-2 mb-2" /> 
-                <Button label='Profile' className="p-button-text mr-2 mb-2" onClick={profile} >
-                    <Toast ref={toast} />
-                </Button>
-                <Button label=' Déconnexion' className='p-button-danger p-button-text mr-2 mb-2' onClick={logout}/>
+                <li>
+                    <button className="p-link layout-topbar-button" onClick={props.onMobileSubTopbarMenuClick}>
+                        <i className="pi pi-cog"/>
+                        <span>Modifier mot de passe</span>
+                    </button>
+                </li>
+                <li>
+                    <button className="p-link layout-topbar-button" onClick={funct}>
+                        <Toast ref={toast} />
+                        <i className="pi pi-user"/>
+                        <span>Profile</span>
+                    </button>
+                </li>
+                <li>
+                    <button className="p-link layout-topbar-button" onClick={logout}>
+                        <i className="pi pi-users"/>
+                        <span>Déconnexion</span>
+                    </button>
+                </li>
             </ul>
         </div>
     );

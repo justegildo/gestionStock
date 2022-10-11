@@ -304,11 +304,11 @@ const Form = (props) => {
                     </div>
                     <div className="field">
                         <label htmlFor="username">Nom de compte</label>
-                        <InputText id="username" value={data?.username} onChange={bind} required />
+                        <InputText id="username" value={data?.username} onChange={bind} required placeholder='ex: AGOSSOU Zinsou'/>
                     </div>
                     <div className="field" >
                         <label htmlFor="password">Mot de passe</label>
-                        <InputText id="password" type="password" onChange={bind}  required />
+                        <InputText id="password" type="password" onChange={bind}  required placeholder='ex: ************' />
                     </div>      
                 </>
             </Dialog>

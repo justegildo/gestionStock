@@ -10,6 +10,7 @@ import { itemPerPage, pageMaxSize } from '../baseUrls/consts';
 import Institution from './Institution';
 import { Dropdown } from 'primereact/dropdown';
 import InstitutionService from '../services/InstitutionService';
+import { InputNumber } from 'primereact/inputnumber';
 
 const Vehicule = () => {
     const [yesNo, setYesNo] = useState({});
@@ -214,19 +215,20 @@ const Form = (props) => {
                 </div>
                 <div className="field">
                     <label htmlFor="immatriculation">Immatriculation</label>
-                    <InputText id="immatriculation" value={data && data.immatriculation} onChange={bind} required  />
+                    <InputText id="immatriculation" value={data && data.immatriculation} onChange={bind} required  
+                        placeholder="ex: BA 1452" />
                 </div>
                 <div className="field">
                     <label htmlFor="marque">Marque</label>
-                    <InputText id="marque" value={data && data.marque} onChange={bind} required  />
+                    <InputText id="marque" value={data && data.marque} onChange={bind} required placeholder="ex: BMW" />
                 </div>
                 <div className="field">
                     <label htmlFor="modele">Modèle</label>
-                    <InputText id="modele" value={data && data.modele} onChange={bind} required  />
+                    <InputText id="modele" value={data && data.modele} onChange={bind} required placeholder="ex: Pickup" />
                 </div>
                 <div className="field">
                     <label htmlFor="nbrePlace">Nombre de places</label>
-                    <InputText id="nbrePlace" value={data && data.nbrePlace} onChange={bind} required  />
+                    <InputText id="nbrePlace" value={data && data.nbrePlace} onChange={bind} required placeholder="ex: 6" />
                 </div>
                 <div className="field">
                     <label htmlFor="institution">Institution</label>
