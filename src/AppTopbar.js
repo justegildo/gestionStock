@@ -19,7 +19,7 @@ export const AppTopbar = (props) => {
     let data = localStorage.getItem('user');
     let recup = JSON.parse(data);
     //console.log(JSON.parse(data));
-    console.log(recup.utilisateur.structure.institution.libelle);
+   /*  console.log(recup.utilisateur.structure.institution.libelle);
     const profile = () =>{
         let name = recup.utilisateur.nom;
         let name2 = recup.utilisateur.prenom;
@@ -27,7 +27,7 @@ export const AppTopbar = (props) => {
         let nameInst = recup.utilisateur.structure.institution.libelle;
         console.log();
         toast.current.show({ severity: 'info', summary: 'Success Message', detail: 'Nom: ' +name + ' ' + name2 + ' Type: '+type + '; Instituiton: '+nameInst, life: 8000 });
-    } 
+    }  */
 
     const logout =()=>{
         //console.log("coucou")
@@ -86,12 +86,19 @@ export const AppTopbar = (props) => {
             
             <ul className={classNames("layout-topbar-menu lg:flex origin-top", {'layout-topbar-menu-mobile-active': props.mobileTopbarMenuActive })}>
                 
-                
-                <Button label='Modifier mot de passe' className="p-button-text mr-2 mb-2" /> 
-                <Button label='Profile' className="p-button-text mr-2 mb-2" onClick={profile} >
-                    <Toast ref={toast} />
-                </Button>
-                <Button label=' Déconnexion' className='p-button-danger p-button-text mr-2 mb-2' onClick={logout}/>
+                <li>
+                    <Link to="/update" >
+                        <Button label='Modifier mot de passe' className="p-button-text mr-2 mb-2" /> 
+                    </Link>
+                </li>
+               {/*  <li>
+                    <Button label='Profile' className="p-button-text mr-2 mb-2" onClick={profile} >
+                        <Toast ref={toast} />
+                    </Button>
+                </li> */}
+                <li>
+                    <Button label=' Déconnexion' className='p-button-danger p-button-text mr-2 mb-2' onClick={logout}/>
+                </li>
             </ul>
         </div>
     );

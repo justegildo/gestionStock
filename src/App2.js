@@ -27,18 +27,25 @@ import IconsDemo from './components2/IconsDemo';
 import Crud from './pages/Crud';
 import EmptyPage from './pages/EmptyPage';
 import TimelineDemo from './pages/TimelineDemo';
-
-import Approvision from './components/Approvision';
-import Vente from './components/Vente';
-import Ajustement from './components/Ajustement';
-import Inventaire from './components/Inventaire';
-import Depense from './components/Depense';
-import Produit from './components/Produit';
-import TypeProduit from './components/TypeProduit';
+import Institution from './components/Institution';
+import Institution2 from './components2/Institution2';
+import TextTable from './components2/TextTable';
+import TestTableIns from './components2/TestTableIns';
+import Suppression from './components2/Suppression';
+import Lieu from './components/Lieu';
+import Niveau from './components/Niveau';
+import Structure from './components/Structure';
 import Utilisateur from './components/Utilisateur';
-import Journee from './components/Journee';
+import Vehicule from './components/Vehicule';
+import Chauffeur from './components/Chauffeur';
 import Compte from './components/Compte';
-import LigneInventaire from './components/LigneInventaire';
+import DemandeVehicule from './components/DemandeVehicule';
+import Form from './components2/Form';
+import './App.scss';
+import { CommonService } from './util/CommonService';
+import UpdatePassword from './components/UpdatePassword';
+import Traitement from './components/Traitement';
+import ResponTraitement from './components/ResponTraitement';
 
 
 const App = (props) => {
@@ -51,25 +58,41 @@ const App = (props) => {
             }]
         },
         {
-            label: 'Opération',
+            label: 'Operation',
             items: [
-                { label: 'Approvisionnement', icon: 'pi pi-fw pi-list', to: '/approvisionnement' },
-                { label: 'Vente', icon: 'pi pi-fw pi-list', to: '/vente' },
-                { label: 'Ajustement', icon: 'pi pi-fw pi-list', to: '/ajustement' },
-                { label: 'Inventaire', icon: 'pi pi-fw pi-list', to:'/inventaire' },
-                { label: 'Ligne inventaire', icon: 'pi pi-fw pi-list', to:'/ligneInventaire' },
-                { label: 'Dépense', icon: 'pi pi-fw pi-list', to:'/depense' },
-                { label: 'Utilisateur', icon: 'pi pi-fw pi-list', to:'/utilisateur' },
-                { label: 'Compte', icon: 'pi pi-fw pi-list', to:'/compte' },
+                { label: 'Demande de véhicule', icon: 'pi pi-fw pi-list', to: '/demande' },
+                { label: 'Traitement des demandes', icon: 'pi pi-fw pi-list', to: '/traitement' },
+                { label: 'Responsable Structure', icon: 'pi pi-fw pi-list', to: '/responsable' },
+                { label: 'Point du parking', icon: 'pi pi-fw pi-list' },
             ]
         },
         {
             label: 'Paramètre',
             items: [
-                { label: 'Produit', icon: ' pi pi-fw pi-list', to: '/produit' },
-                { label: 'Type de produit', icon: ' pi pi-fw pi-list', to: '/typeProduit' },
-                { label: 'Journée', icon: 'pi pi-fw pi-list', to:'/journee' },
-               
+                { label: 'Chauffeur', icon: ' pi pi-fw pi-list', to: '/chauffeur' },
+                { label: 'Compte', icon: ' pi pi-fw pi-list', to: '/compte' },
+                { label: 'Institution', icon: 'pi pi-fw pi-list', to: '/institution' },
+                { label: 'Lieu', icon: ' pi pi-fw pi-list', to: '/lieu' },
+                { label: 'Niveau', icon: 'pi pi-fw pi-list', to: '/niveau' },
+                { label: 'Structure', icon: 'pi pi-fw pi-list', to: '/structure' },
+                { label: 'Utilisateur', icon: 'pi pi-fw pi-list', to: '/utilisateur' },
+                { label: 'Véhicule', icon: 'pi pi-fw pi-list', to: '/vehicule' }
+            ]
+        },
+        {
+            label: 'Administration',
+            items: [
+                { label: 'Modifier mot de passe', icon: 'pi pi-fw pi-cog', to: '/update' },
+                { label: 'Réinitialiser mot de passe', icon: 'pi pi-fw pi-list', },
+            ] 
+        },
+        {
+            label: 'Test',
+            items: [
+                { label: 'Institution2', icon: 'pi pi-fw pi-calendar', to: '/institution2' },
+                { label: 'TestTable', icon: 'pi pi-fw pi-calendar', to: '/textTable' },
+                { label: 'TestTableIns', icon: 'pi pi-fw pi-calendar', to: '/testTableIns' },
+                { label: 'Sup', icon: 'pi pi-fw pi-calendar', to: '/sup' }
             ]
         },
         {
@@ -192,19 +215,19 @@ const App = (props) => {
             <div className="layout-main-container">
                 <div className="layout-main">
                     <Route path="/dashboard" exact render={() => <Dashboard colorMode={props.layoutColorMode} location={props.location} />} />
-                
-                    <Route path="/approvisionnement" component={Approvision} />
-                    <Route path="/vente" component={Vente} />
-                    <Route path="/ajustement" component={Ajustement} />
-                    <Route path="/inventaire" component={Inventaire} />
-                    <Route path="/depense" component={Depense} />
-                    <Route path="/produit" component={Produit} />
-                    <Route path="/typeProduit" component={TypeProduit} />
+                    <Route path="/lieu" component={Lieu} />
+                    <Route path="/niveau" component={Niveau} />
+                    <Route path="/structure" component={Structure} />
                     <Route path="/utilisateur" component={Utilisateur} />
-                    <Route path="/journee" component={Journee} />
+                    <Route path="/vehicule" component={Vehicule} />
+                    <Route path="/chauffeur" component={Chauffeur} />
                     <Route path="/compte" component={Compte} />
-                    <Route path="/ligneInventaire" component={LigneInventaire} />
-
+                    <Route path="/demande" component={DemandeVehicule} />
+                    <Route path="/update" component={UpdatePassword} />
+                    <Route path="/traitement" component={Traitement} />
+                    <Route path="/responsable" component={ResponTraitement} />
+                    <Route path="/updatePassword" component={UpdatePassword} />
+                
                     <Route path="/formlayout" component={FormLayoutDemo} />
                     <Route path="/input" component={InputDemo} />
                     <Route path="/floatlabel" component={FloatLabelDemo} />
@@ -228,6 +251,12 @@ const App = (props) => {
                     <Route path="/crud" component={Crud} />
                     <Route path="/empty" component={EmptyPage} />
                     <Route path="/documentation" component={Documentation} />
+                    <Route path="/institution" component={Institution} />
+                    <Route path="/institution2" component={Institution2} />
+                    <Route path="/textTable" component={TextTable} />
+                    <Route path="/testTableIns" component={TestTableIns} />
+                    <Route path="/sup" component={Suppression} />
+                    <Route path="/form" component={Form} />
                 </div>
                 {/* <AppFooter layoutColorMode={layoutColorMode} /> */}
             </div>

@@ -9,6 +9,8 @@ import CompteService from '../services/CompteService';
 import { itemPerPage, pageMaxSize } from '../baseUrls/consts';
 import { Menu } from 'primereact/menu';
 import { Dropdown } from 'primereact/dropdown';
+import InstitutionService from '../services/InstitutionService';
+import StructureService from '../services/StructureService';
 import UtilisateurService from '../services/UtilisateurService'
 
 const Compte = () => {
@@ -202,13 +204,30 @@ const Form = (props) => {
     const {setYesNo} = props;
     const[loading, setLoading] = useState(false);
 
+    const [institutions, setInstitutions] = useState([]);
+    const [structures, setStructures] = useState([]);
     const [utilisateurs, setUtilisateurs] = useState([]);
+    
+    const [selectedInstitution, setSelectedInstitution] = useState();
+    const [selectedStructure, setSelectedStructure] = useState();
     const [selectedUtilisateur, setSelectedUtilisateur] = useState();
+    
     useEffect(()=> {
         if(!visible) return;
-        UtilisateurService.get((data)=> data && setUtilisateurs(data), {size: pageMaxSize})
-    }, [visible])
-  
+        loadInstitutions();
+    }, [visible]);
+
+    const loadInstitutions = () => {
+        InstitutionService.get((data)=> data && setInstitutions(data), {size: pageMaxSize})
+    }
+
+    const loadStructures = (institutionId) => {
+        StructureService.getByInstitutionId(institutionId, (data)=> data && setStructures(data), {size: pageMaxSize});
+    }
+
+    const loadUtilisateurs =(structureId) =>{
+        UtilisateurService.getByStructureId(structureId, (data)=> data && setUtilisateurs(data), {size: pageMaxSize})
+    }
 
     const bind = (e) => {
         if(e.target.value !== undefined) {
@@ -255,6 +274,22 @@ const Form = (props) => {
             onHide={hide}
             >  
                 <>
+                    <div className="field">
+                        <label htmlFor="institution">Institution</label>
+                        <Dropdown id="institution" onChange={(e)=>{setSelectedInstitution(e.value); loadStructures(e.value.id)}} 
+                            placeholder="Aucune sélection"
+                            options={institutions} 
+                            value={selectedInstitution}
+                            optionLabel="libelle" />
+                    </div>
+                    <div className="field">
+                        <label htmlFor="structure">Structure</label>
+                        <Dropdown id="structure" onChange={(e)=> {setSelectedStructure(e.value); loadUtilisateurs(e.value.id)}}
+                            placeholder="Aucune sélection"
+                            options={structures} 
+                            value={selectedStructure} 
+                            optionLabel="libelle" />
+                    </div>
                     <div className="field">
                         <label htmlFor="utilisateur">Utilisateur</label>
                         <Dropdown id="utilisateur" onChange={(e)=> {setSelectedUtilisateur(e.value);} }

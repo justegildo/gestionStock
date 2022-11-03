@@ -8,6 +8,8 @@ import { Dialog } from 'primereact/dialog';
 import UtilisateurService from '../services/UtilisateurService';
 import { itemPerPage, pageMaxSize } from '../baseUrls/consts';
 import { Dropdown } from 'primereact/dropdown';
+import StructureService from '../services/StructureService';
+import InstitutionService from '../services/InstitutionService';
 import { Image } from 'primereact/image';
 import { FileUpload } from 'primereact/fileupload';
 
@@ -87,6 +89,16 @@ const Table = (props) => {
             },
         });
     }
+
+    const imgProfil = ()=>{
+        //const data = item.utilisateur;
+        return(
+            <React.Fragment>
+                <img src="images/profile/person.png"  /*src={`images/profile/${data.image}`}*/
+                    alt=" " className="shadow-2" width={30}  />
+            </React.Fragment>
+        )
+    }
     
     return (
         <>
@@ -117,6 +129,7 @@ const Table = (props) => {
 
                 <Column field="id" header="Identifiant" sortable  hidden />
                 <Column field="matricule" header="Matricule" sortable />
+                <Column field="image" header="Photo" sortable body={imgProfil} />
                 <Column header="Nom" sortable style={{fontWeight: 'bold'}} body={(item)=> item.nom + " " + item.prenom}/>
                 <Column field="telephone" header="Téléphone" sortable />
                 <Column field="typeUtilisateur" header="Type utilisateur" sortable body={ (item)=> 
@@ -127,8 +140,9 @@ const Table = (props) => {
                         {item.typeUtilisateur}
                     </span>
                 } />
-                <Column field="sexe" header="Sexe" sortable />
-                <Column field="ville" header="Ville" sortable />
+                <Column field="structure.libelle" header="Structure" sortable />
+                <Column field="structure.institution.libelle" header="Institution" sortable />
+
                 <Column body={ (selectedItem)=>
                     <div className="flex justify-content-end">
                         <Button icon="pi pi-pencil" className="p-button-rounded p-button-success mr-2" onClick={() => editItem(selectedItem)}/>
@@ -144,6 +158,26 @@ const Form = (props) => {
     const {visible, hide, data, setData, callback } = props.form;
     const {setYesNo} = props;
     const[loading, setLoading] = useState(false);
+
+    const [structures, setStructures] = useState([]);
+    const [institutions, setInstitutions] = useState([]);
+
+    const[selectedInstitution, setSelectedInstitution] = useState();
+
+    useEffect(()=> {
+        if(!visible) return;
+        loadInstitutions();
+        data && loadStructures(data.structure.institution.id);
+        data && setSelectedInstitution(data?.structure?.institution);
+    }, [visible]);
+
+    const loadInstitutions = () => {
+        InstitutionService.get((data)=> data && setInstitutions(data), {size: pageMaxSize})
+    }
+
+    const loadStructures = (institutionId) => {
+        StructureService.getByInstitutionId(institutionId, (data)=> data && setStructures(data), {size: pageMaxSize});
+    }
     
     const bind = (e) => {
         if(e.target.value !== undefined) {
@@ -193,19 +227,26 @@ const Form = (props) => {
                     <label htmlFor="id">Identifiant</label>
                     <InputText id="id" value={data?.id} onChange={bind} />
                 </div>
-                <div className="field">
-                    <label htmlFor="matricule">Matricule</label>
-                    <InputText id="matricule" value={data?.matricule} onChange={bind} required  placeholder="ex: AZ145" />
+                <div className="grid p-fluid mt-3" >
+                    <div className="field col-4">
+                        <div className='card' >
+                            <Image imageStyle={{width: "130px", height: "130px"}} src="/images/profile/person.png" 
+                                alt="Image Text" />
+                        </div>
+                    </div>
+                        
+                    <div className="field col-8 " >
+                        <label htmlFor="matricule">Matricule</label>
+                        <InputText id="matricule" value={data?.matricule} onChange={bind} required  placeholder="ex: AZ145" />
+
+                        <label htmlFor="nom">Nom</label>
+                        <InputText id="nom" value={data?.nom} onChange={bind} required placeholder="ex: AGOSSOU" />
+
+                        <label htmlFor="prenom">Prénoms</label>
+                        <InputText id="prenom" value={data?.prenom} onChange={bind} required placeholder="ex: Sonagnon" />
+                    </div>
                 </div>
-                <div className="field">
-                    <label htmlFor="nom">Nom</label>
-                    <InputText id="nom" value={data?.nom} onChange={bind} required placeholder="ex: AGOSSOU" />
-                </div>
-                <div className="field">
-                    <label htmlFor="prenom">Prénoms</label>
-                    <InputText id="prenom" value={data?.prenom} onChange={bind} required placeholder="ex: Sonagnon" />
-                </div>
-               
+                
                 <div className="field">
                     <label htmlFor="telephone">Téléphone</label>
                     <InputText id="telephone" value={data?.telephone} onChange={bind} required placeholder="ex: +229 98 00 00 00" />
@@ -217,9 +258,26 @@ const Form = (props) => {
                         value={data?.typeUtilisateur} />
                 </div>
                 <div className="field">
-                    <label htmlFor="sexe">Sexe</label>
-                    <InputText id="sexe" value={data?.sexe} onChange={bind} required placeholder="" />
+                    <label htmlFor="institution">Institution</label>
+                    <Dropdown id="institution" onChange={(e)=>{setSelectedInstitution(e.value); loadStructures(e.value.id);} } 
+                        placeholder="Aucune sélection"
+                        options={institutions} 
+                        value={selectedInstitution} 
+                        optionLabel="libelle" />
                 </div>
+                <div className="field">
+                    <label htmlFor="structure">Structure</label>
+                    <Dropdown id="structure" onChange={bind} placeholder="Aucune sélection"
+                        options={structures}
+                        value={data?.structure}
+                        optionLabel="libelle" />
+                </div>
+                {/* <div className="field">
+                    <FileUpload mode="basic" accept="image/*" maxFileSize={1000000} 
+                        label="Import" chooseLabel="Importer une photo" className="mr-2 inline-block" 
+                        name="photo" url="./upload" 
+                        />
+                </div> */}
             
             </Dialog>
     )

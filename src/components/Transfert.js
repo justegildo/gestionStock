@@ -5,14 +5,11 @@ import { Column } from 'primereact/column';
 import { Toolbar } from 'primereact/toolbar';
 import { InputText } from 'primereact/inputtext';
 import { Dialog } from 'primereact/dialog';
-import UtilisateurService from '../services/UtilisateurService';
+import TransfertService from '../services/TransfertService';
 import { itemPerPage, pageMaxSize } from '../baseUrls/consts';
 import { Dropdown } from 'primereact/dropdown';
-import { Image } from 'primereact/image';
-import { FileUpload } from 'primereact/fileupload';
 
-
-const Utilisateur = () => {
+const Transfert = () => {
     const [yesNo, setYesNo] = useState({});
     const [form, setForm] = useState({});
     
@@ -39,9 +36,9 @@ const Table = (props) => {
     }, []);
 
     const loadItems = () => {
-        UtilisateurService.get((data, status) => {
+        TransfertService.get((data, status) => {
                 setLoading(false);
-                if(status) setItems(data);  
+                if(status) setItems(data);   
             },
             {size: itemPerPage}
         );
@@ -80,7 +77,7 @@ const Table = (props) => {
             hide: ()=> setYesNo((prev)=>({...prev, visible: false})),
             callback : ()=> {
                 setLoading(true);
-                UtilisateurService.delete(item.id, (data, status)=>{
+                TransfertService.delete(item.id, (data, status)=>{
                     setLoading(false);
                     loadItems();
                 });
@@ -90,7 +87,7 @@ const Table = (props) => {
     
     return (
         <>
-            <h5>Liste des utilisateurs</h5>
+            <h5>Liste des transferts</h5>
             <Toolbar className="mb-4" 
                 left={
                     <React.Fragment>
@@ -115,20 +112,12 @@ const Table = (props) => {
                 loading={loading} globalFilter={globalFilter} 
                 responsiveLayout="scroll" emptyMessage="Aucune donnée disponible.">
 
-                <Column field="id" header="Identifiant" sortable  hidden />
-                <Column field="matricule" header="Matricule" sortable />
-                <Column header="Nom" sortable style={{fontWeight: 'bold'}} body={(item)=> item.nom + " " + item.prenom}/>
-                <Column field="telephone" header="Téléphone" sortable />
-                <Column field="typeUtilisateur" header="Type utilisateur" sortable body={ (item)=> 
-                    <span className={`customer-badge status-${item.typeUtilisateur === 'ADMINISTRATEUR'
-                            ? 'new' 
-                            : (item.typeUtilisateur ==='RESPONSABLE_STRUCTURE' ? 'renewal' 
-                            : item.typeUtilisateur === 'CHEF_PARC' ? 'proposal' : 'qualified' )}`}>
-                        {item.typeUtilisateur}
-                    </span>
-                } />
-                <Column field="sexe" header="Sexe" sortable />
-                <Column field="ville" header="Ville" sortable />
+                <Column field="id" header="Identifiant" hidden sortable />
+                <Column field="libelle" header="Libellé" sortable style={{fontWeight: 'bold'}} />
+                <Column field="prixVenteUnitaire" header="Prix vente unitaire" sortable />
+                <Column field="stockAlerte" header="Stock alerte" sortable />
+                <Column field="typeTransfert.libelle" header="Type Transfert" sortable />
+                
                 <Column body={ (selectedItem)=>
                     <div className="flex justify-content-end">
                         <Button icon="pi pi-pencil" className="p-button-rounded p-button-success mr-2" onClick={() => editItem(selectedItem)}/>
@@ -158,6 +147,7 @@ const Form = (props) => {
     }
     
     const submit = () => {
+        if(!data) return;
         setYesNo(
             {   
                 visible: true,
@@ -171,16 +161,15 @@ const Form = (props) => {
                             hide();
                             callback();
                     }
-                    console.log(JSON.stringify(data, null, 2))
-                    if(data.id) UtilisateurService.update(data, onResponse); else UtilisateurService.add(data, onResponse);
+                    if(data.id) TransfertService.update(data, onResponse); else TransfertService.add(data, onResponse);
                 },
             }
         )
     
     }
-    
+
     return(
-        <Dialog visible={visible} style={{ width: '800px' }} header="Détails de l'utilisateur" modal className="p-fluid" 
+        <Dialog visible={visible} style={{ width: '800px' }} header="Détails d'un transfert" modal className="p-fluid" 
             footer={
                 <>
                     <Button label="Annuler" icon="pi pi-times" className="p-button-text" onClick={hide}  />
@@ -194,33 +183,30 @@ const Form = (props) => {
                     <InputText id="id" value={data?.id} onChange={bind} />
                 </div>
                 <div className="field">
-                    <label htmlFor="matricule">Matricule</label>
-                    <InputText id="matricule" value={data?.matricule} onChange={bind} required  placeholder="ex: AZ145" />
+                    <label htmlFor="libelle">Libellé</label>
+                    <InputText id="libelle" value={data?.libelle} onChange={bind} required placeholder='ex: ' />
                 </div>
                 <div className="field">
-                    <label htmlFor="nom">Nom</label>
-                    <InputText id="nom" value={data?.nom} onChange={bind} required placeholder="ex: AGOSSOU" />
+                    <label htmlFor="prixVenteUnitaire">Prix vente unitaire</label>
+                    <InputText id="prixVenteUnitaire" value={data && data.prixVenteUnitaire} onChange={bind} placeholder="ex: " />
                 </div>
                 <div className="field">
-                    <label htmlFor="prenom">Prénoms</label>
-                    <InputText id="prenom" value={data?.prenom} onChange={bind} required placeholder="ex: Sonagnon" />
+                    <label htmlFor="stockAlerte">Stock alerte</label>
+                    <InputText id="stockAlerte" value={data && data.stockAlerte} onChange={bind} placeholder="ex: " />
                 </div>
-               
-                <div className="field">
-                    <label htmlFor="telephone">Téléphone</label>
-                    <InputText id="telephone" value={data?.telephone} onChange={bind} required placeholder="ex: +229 98 00 00 00" />
+                
+                {/*
+                <div className="formgrid grid">
+                    <div className="field col">
+                        <label htmlFor="nomResponsable">Nom Chef parc</label>
+                        <InputNumber id="nomResponsable" value={institut.nomResponsable} onValueChange={(e) => onInputChange(e, 'nomResponsable')} required rows={3} cols={20} />
+                    </div>
+                    <div className="field col">
+                        <label htmlFor="email">Email</label>
+                        <InputNumber id="email" value={institut.email} onValueChange={(e) => onInputChange(e, 'email')} required rows={3} cols={20} />
+                    </div>
                 </div>
-                <div className="field">
-                    <label htmlFor="typeUtilisateur">Type utilisateur</label>
-                    <Dropdown id="typeUtilisateur" onChange={bind} placeholder="Aucune sélection"
-                        options={["ADMINISTRATEUR", "RESPONSABLE_STRUCTURE", "SIMPLE_UTILISATEUR", "CHEF_PARC"]} 
-                        value={data?.typeUtilisateur} />
-                </div>
-                <div className="field">
-                    <label htmlFor="sexe">Sexe</label>
-                    <InputText id="sexe" value={data?.sexe} onChange={bind} required placeholder="" />
-                </div>
-            
+                */}
             </Dialog>
     )
 }
@@ -249,4 +235,4 @@ const Confirmation = (props) => {
     )
 }
 
-export default Utilisateur;
+export default Transfert;

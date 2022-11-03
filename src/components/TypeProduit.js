@@ -5,14 +5,10 @@ import { Column } from 'primereact/column';
 import { Toolbar } from 'primereact/toolbar';
 import { InputText } from 'primereact/inputtext';
 import { Dialog } from 'primereact/dialog';
-import UtilisateurService from '../services/UtilisateurService';
-import { itemPerPage, pageMaxSize } from '../baseUrls/consts';
-import { Dropdown } from 'primereact/dropdown';
-import { Image } from 'primereact/image';
-import { FileUpload } from 'primereact/fileupload';
+import TypeProduitService from '../services/TypeProduitService';
+import { itemPerPage } from '../baseUrls/consts';
 
-
-const Utilisateur = () => {
+const TypeProduit = () => {
     const [yesNo, setYesNo] = useState({});
     const [form, setForm] = useState({});
     
@@ -39,9 +35,9 @@ const Table = (props) => {
     }, []);
 
     const loadItems = () => {
-        UtilisateurService.get((data, status) => {
+        TypeProduitService.get((data, status) => {
                 setLoading(false);
-                if(status) setItems(data);  
+                if(status) setItems(data);   
             },
             {size: itemPerPage}
         );
@@ -80,7 +76,7 @@ const Table = (props) => {
             hide: ()=> setYesNo((prev)=>({...prev, visible: false})),
             callback : ()=> {
                 setLoading(true);
-                UtilisateurService.delete(item.id, (data, status)=>{
+                TypeProduitService.delete(item.id, (data, status)=>{
                     setLoading(false);
                     loadItems();
                 });
@@ -90,7 +86,7 @@ const Table = (props) => {
     
     return (
         <>
-            <h5>Liste des utilisateurs</h5>
+            <h5>Liste des types de produit</h5>
             <Toolbar className="mb-4" 
                 left={
                     <React.Fragment>
@@ -113,41 +109,44 @@ const Table = (props) => {
             <DataTable dataKey="id" value={items} 
                 paginator rows={itemPerPage}  
                 loading={loading} globalFilter={globalFilter} 
-                responsiveLayout="scroll" emptyMessage="Aucune donnée disponible.">
+                responsiveLayout="scroll" emptyMessage="Aucun donnée disponible.">
 
-                <Column field="id" header="Identifiant" sortable  hidden />
-                <Column field="matricule" header="Matricule" sortable />
-                <Column header="Nom" sortable style={{fontWeight: 'bold'}} body={(item)=> item.nom + " " + item.prenom}/>
-                <Column field="telephone" header="Téléphone" sortable />
-                <Column field="typeUtilisateur" header="Type utilisateur" sortable body={ (item)=> 
-                    <span className={`customer-badge status-${item.typeUtilisateur === 'ADMINISTRATEUR'
-                            ? 'new' 
-                            : (item.typeUtilisateur ==='RESPONSABLE_STRUCTURE' ? 'renewal' 
-                            : item.typeUtilisateur === 'CHEF_PARC' ? 'proposal' : 'qualified' )}`}>
-                        {item.typeUtilisateur}
-                    </span>
-                } />
-                <Column field="sexe" header="Sexe" sortable />
-                <Column field="ville" header="Ville" sortable />
+                <Column field="id" header="Identifiant" hidden sortable  />
+                <Column field="libelle" header="Libellé" sortable style={{fontWeight: 'bold'}} />
+                
                 <Column body={ (selectedItem)=>
                     <div className="flex justify-content-end">
                         <Button icon="pi pi-pencil" className="p-button-rounded p-button-success mr-2" onClick={() => editItem(selectedItem)}/>
                         <Button icon="pi pi-trash" className="p-button-rounded p-button-warning mr-2" onClick={()=> deleteItem(selectedItem)}/>
                     </div>
+                    /*
+                    <div style={{display: 'flex', flexDirection: 'row-reverse'}}>
+                        <Button icon="pi pi-pencil" className="p-button-rounded p-button-success" onClick={() => editItem(selectedItem)}/>
+                        <span style={{padding: '.3rem'}}/>
+                        <Button icon="pi pi-trash" className="p-button-rounded p-button-warning" onClick={()=> deleteItem(selectedItem)}/>
+                    </div>
+                    */
                 } />
             </DataTable>
         </>
     );
-}
+} 
 
 const Form = (props) => {
     const {visible, hide, data, setData, callback } = props.form;
     const {setYesNo} = props;
     const[loading, setLoading] = useState(false);
-    
+        
+    const bind_bak = (e) => {
+        let type = e.target.type;
+        if(type === 'text' || 'password')  setData({...data, [e.target.id]: e.target.value});
+        if(type === 'checkbox') setData({...data, [e.target.id]: e.target.checked});
+    }
+
     const bind = (e) => {
         if(e.target.value !== undefined) {
             let value = e.target.value;
+            //value = value.id ? {id: value.id} : value;
             setData({...data, [e.target.id]: value});
         }
         else if(e.checked !== undefined) {
@@ -155,9 +154,12 @@ const Form = (props) => {
         }else{
             alert("Binding fails.")
         }
+        //alert(JSON.stringify(data))
     }
-    
+
     const submit = () => {
+        if(!data) return;
+
         setYesNo(
             {   
                 visible: true,
@@ -171,16 +173,15 @@ const Form = (props) => {
                             hide();
                             callback();
                     }
-                    console.log(JSON.stringify(data, null, 2))
-                    if(data.id) UtilisateurService.update(data, onResponse); else UtilisateurService.add(data, onResponse);
+                    if(data.id) TypeProduitService.update(data, onResponse); else TypeProduitService.add(data, onResponse);
                 },
             }
         )
     
     }
-    
+
     return(
-        <Dialog visible={visible} style={{ width: '800px' }} header="Détails de l'utilisateur" modal className="p-fluid" 
+        <Dialog visible={visible} style={{ width: '800px' }} header="Détails du type produit" modal className="p-fluid" 
             footer={
                 <>
                     <Button label="Annuler" icon="pi pi-times" className="p-button-text" onClick={hide}  />
@@ -191,37 +192,14 @@ const Form = (props) => {
             >  
                 <div className="field" hidden>
                     <label htmlFor="id">Identifiant</label>
-                    <InputText id="id" value={data?.id} onChange={bind} />
+                    <InputText id="id" value={data && data.id} onChange={bind} /*readOnly*/ />
                 </div>
                 <div className="field">
-                    <label htmlFor="matricule">Matricule</label>
-                    <InputText id="matricule" value={data?.matricule} onChange={bind} required  placeholder="ex: AZ145" />
+                    <label htmlFor="libelle">Libellé</label>
+                    <InputText id="libelle" value={data && data.libelle} onChange={bind} required 
+                        placeholder="ex: " />
                 </div>
-                <div className="field">
-                    <label htmlFor="nom">Nom</label>
-                    <InputText id="nom" value={data?.nom} onChange={bind} required placeholder="ex: AGOSSOU" />
-                </div>
-                <div className="field">
-                    <label htmlFor="prenom">Prénoms</label>
-                    <InputText id="prenom" value={data?.prenom} onChange={bind} required placeholder="ex: Sonagnon" />
-                </div>
-               
-                <div className="field">
-                    <label htmlFor="telephone">Téléphone</label>
-                    <InputText id="telephone" value={data?.telephone} onChange={bind} required placeholder="ex: +229 98 00 00 00" />
-                </div>
-                <div className="field">
-                    <label htmlFor="typeUtilisateur">Type utilisateur</label>
-                    <Dropdown id="typeUtilisateur" onChange={bind} placeholder="Aucune sélection"
-                        options={["ADMINISTRATEUR", "RESPONSABLE_STRUCTURE", "SIMPLE_UTILISATEUR", "CHEF_PARC"]} 
-                        value={data?.typeUtilisateur} />
-                </div>
-                <div className="field">
-                    <label htmlFor="sexe">Sexe</label>
-                    <InputText id="sexe" value={data?.sexe} onChange={bind} required placeholder="" />
-                </div>
-            
-            </Dialog>
+        </Dialog>
     )
 }
 
@@ -249,4 +227,4 @@ const Confirmation = (props) => {
     )
 }
 
-export default Utilisateur;
+export default TypeProduit;

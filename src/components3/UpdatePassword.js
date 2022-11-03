@@ -77,12 +77,12 @@ const Form = (props) => {
     }
 
     return(  
-        <div style={{display: 'flex', flexDirection: 'row', height: '100vh', justifyContent: 'center', alignItems: 'center'}}>
-            <div className="surface-card p-5 shadow-2 w-full lg:w-8 border-round w-12/12 h-4 ">
+        <div style={{display: 'flex', flexDirection: 'row', height: '80vh', justifyContent: 'center', alignItems: 'center'}}>
+            <div className="surface-card p-5 shadow-2 w-full lg:w-6 border-round w-12/12 h-4 ">
             
                 <div className="text-center mb-5">
-                    <img src="images/blocks/logos/hyper.svg" alt="hyper" height="50" className="mb-3" />
-                    <div className="text-900 text-3xl font-medium mb-3">Formulaire de modification de mot de passe</div>
+                    {/* <img src="images/blocks/logos/hyper.svg" alt="hyper" height="50" className="mb-3" /> */}
+                    <div className="text-900 text-3xl font-medium mb-3">Modifier votre mot de passe</div>
                 </div>
 
                 <div className='p-fluid '>
@@ -100,8 +100,8 @@ const Form = (props) => {
                 
                 </div>
 
+            </div>
         </div>
-    </div>
     )
 }
 
