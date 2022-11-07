@@ -59,15 +59,14 @@ const Table = (props) => {
         });
     }
 
-    const closeItem = (item) => {
+    const closeItem = (journee) => {
         setYesNo({
             visible: true,
                 message : "Voulez-vous vraiment clôturer la journée ?" ,
                 hide: ()=> setYesNo((prev)=>({...prev, visible: false})),
                 callback : ()=> {
                     setLoading(true);
-                    JourneeService.close(item.id, (data) => {
-                        setLoading(false);
+                    JourneeService.close({journeeId: journee.id}, (response, status)=> {
                         loadItems();
                     });
                     
@@ -118,14 +117,12 @@ const Table = (props) => {
                 responsiveLayout="scroll" emptyMessage="Aucun donnée disponible.">
 
                 <Column field="id" header="Identifiant" hidden sortable  />
-                <Column field="dateOuverture" header="Date ouverture"  
-                    sortable style={{fontWeight: 'bold'}} />
+                <Column field="dateOuverture" header="Date ouverture"  sortable style={{fontWeight: 'bold'}} />
                 <Column field="observation" header="Observation" sortable style={{fontWeight: 'bold'}} />
-                <Column field="statutCloture" header="Statut clôture"
+                <Column field="statutCloture" header="La journée en cours ?"
                     body={(item) =>
-                        <span className={`customer-badge status-${item.statutCloture ? 'qualified' : 'unqualified'}`}>
-                            Avez-vous déjà clôturé la journée ? 
-                            {item.statutCloture ? " oui" : " non"}
+                        <span className={`customer-badge status-${item.statutCloture ? 'unqualified' : 'qualified'}`}>
+                            {item.statutCloture ? " non" : " oui"}
                         </span> 
                     }
                     sortable style={{fontWeight: 'bold'}} />
@@ -158,6 +155,7 @@ const Form = (props) => {
             let value = e.target.value;
             //value = value.id ? {id: value.id} : value;
             setData({...data, [e.target.id]: value});
+            console.log(data);
         }
         else if(e.checked !== undefined) {
             setData({...data, [e.target.id]: e.target.checked});
@@ -207,7 +205,7 @@ const Form = (props) => {
                 <div className="field">
                     <label htmlFor="dateOuverture">Date ouverture</label>
                     <Calendar id="dateOuverture" value={data && new Date(data.dateOuverture)} 
-                    mask="99/99/9999" showOnFocus={true} onChange={bind} />
+                    mask="99/99/9999" onChange={bind} />
                 </div>
                 <div className="field">
                     <label htmlFor="observation">Observation</label>
